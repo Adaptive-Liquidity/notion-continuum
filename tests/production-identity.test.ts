@@ -15,7 +15,7 @@ import { pool } from "../src/db.js";
 import { admin, gov, bootstrap, makeOp, fence } from "./helpers.js";
 import { serveController } from "../src/controller-server.js";
 import { EffectController } from "../src/controller.js";
-import { FixtureAdapter } from "../src/provider-adapter.js";
+import { FixtureAdapter } from "../internal/fixtures/provider-adapter.js";
 import { callController } from "../src/controller-client.js";
 import { config, start, stop, secrets } from "./process-helpers.js";
 import type http from "node:http";

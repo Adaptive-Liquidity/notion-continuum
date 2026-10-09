@@ -1,6 +1,6 @@
 // Dedicated LOCAL TEST executable. Never imported by the staging server.
-import {ContextService} from '../context-service.js';
-import {fixture} from '../../tests/implementation-helpers.js';import {admin,gov,fence} from '../../tests/helpers.js';import {pool} from '../db.js';import {randomBytes} from 'node:crypto';import fs from 'node:fs/promises';import {ConsoleReads} from './reads.js';import {ConsoleCommands} from './commands.js';import {CursorCodec} from './pagination.js';import {WorkCoordination} from './coordination.js';import {consoleApi} from './api.js';
+import {ContextService} from '../../src/context-service.js';
+import {fixture} from '../../tests/implementation-helpers.js';import {admin,gov,fence} from '../../tests/helpers.js';import {pool} from '../../src/db.js';import {randomBytes} from 'node:crypto';import fs from 'node:fs/promises';import {ConsoleReads} from '../../src/console/reads.js';import {ConsoleCommands} from '../../src/console/commands.js';import {CursorCodec} from '../../src/console/pagination.js';import {WorkCoordination} from '../../src/console/coordination.js';import {consoleApi} from '../../src/console/api.js';
 if(process.env.CT_CONSOLE_MODE!=='LOCAL_FIXTURE'||!['ct_console_browser','ct_console_dev'].includes(process.env.CT_DATABASE??''))throw Error('Explicit disposable console fixture database/mode required');
 const f=await fixture('focus'),reader=pool('ct_console_reader'),writer=pool('ct_authority_api');const coord=new WorkCoordination(writer,fence),owner=await f.actor('user');
 await coord.project(owner,'operations','Operating week','Local test: exact decisions, durable continuity and honest outcomes.');

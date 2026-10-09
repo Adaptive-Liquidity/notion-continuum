@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { EffectController } from "../src/controller.js";
-import { FixtureAdapter } from "../src/provider-adapter.js";
+import { FixtureAdapter } from "../internal/fixtures/provider-adapter.js";
 import { pool } from "../src/db.js";
 import { verifyCapability } from "../src/capability.js";
 import { gov, admin, makeOp, count, fence } from "./helpers.js";

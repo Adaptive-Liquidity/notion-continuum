@@ -10,5 +10,10 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": false
   },
-  "include": ["src/**/*.ts", "scheduler/**/*.ts", "tests/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "scheduler/**/*.ts",
+    "tests/**/*.ts",
+    "internal/**/*.ts"
+  ]
 }

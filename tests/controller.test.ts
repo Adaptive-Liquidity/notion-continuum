@@ -14,7 +14,7 @@ import {
 } from "./helpers.js";
 import { pool, sha, canonical, tx } from "../src/db.js";
 import { EffectController } from "../src/controller.js";
-import { FixtureAdapter } from "../src/provider-adapter.js";
+import { FixtureAdapter } from "../internal/fixtures/provider-adapter.js";
 import { callController } from "../src/controller-client.js";
 import { verifyCapability } from "../src/capability.js";
 import { readContext } from "../src/memory.js";

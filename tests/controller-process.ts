@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { pool } from "../src/db.js";
-import { FixtureAdapter } from "../src/provider-adapter.js";
+import { FixtureAdapter } from "../internal/fixtures/provider-adapter.js";
 import { EffectController } from "../src/controller.js";
 import { serveController } from "../src/controller-server.js";
 const config = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));

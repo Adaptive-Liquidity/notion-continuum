@@ -1,5 +1,5 @@
 import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';import {randomBytes,timingSafeEqual} from 'node:crypto';
-import type {VerifiedIdentity} from './identity-provider.js';import type {ProductService} from './product-service.js';import type {AuthorityService} from './authority-service.js';import type {ContextService} from './context-service.js';
+import type {VerifiedIdentity} from '../../src/identity-provider.js';import type {ProductService} from '../../src/product-service.js';import type {AuthorityService} from '../../src/authority-service.js';import type {ContextService} from '../../src/context-service.js';
 export interface DeskAuthentication {actor:VerifiedIdentity;csrf:string;}
 export interface DeskConfig {mode:'fixture'|'approved-staging';origin:()=>string;approvalReference?:string;authenticate?:(req:http.IncomingMessage)=>Promise<DeskAuthentication>;fixtureActor?:()=>Promise<VerifiedIdentity>;assets:string;}
 export function deskServer(config:DeskConfig,product:ProductService,authority:AuthorityService,context?:ContextService){
