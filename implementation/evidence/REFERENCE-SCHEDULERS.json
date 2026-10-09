@@ -1,0 +1,43 @@
+{
+  "scope": "actual local Temporal and pg-boss; local test issuer/provider; 5.5 seconds, NOT 24 hours",
+  "results": [
+    {
+      "engine": "temporal",
+      "case": "retained-v1 restart/expired prior capability/fresh renewal",
+      "status": "PASS",
+      "effects": 10,
+      "realWaitMs": 5500,
+      "nativePinning": "NOT RUN"
+    },
+    {
+      "engine": "temporal",
+      "case": "revoked-on-resume",
+      "status": "PASS",
+      "effects": 7
+    },
+    {
+      "engine": "pg-boss",
+      "case": "restart/durable timer/fresh renewal",
+      "status": "PASS",
+      "effects": 10,
+      "realWaitMs": 5500
+    },
+    {
+      "engine": "pg-boss",
+      "case": "revoked-on-resume",
+      "status": "PASS",
+      "effects": 7
+    },
+    {
+      "engine": "both",
+      "case": "explicit v2 with v1 retained",
+      "status": "PASS",
+      "nativeDeployment": "NOT RUN"
+    }
+  ],
+  "issuedCapabilityCount": 54,
+  "historyTokensStored": false,
+  "liveTrial": "NOT RUN",
+  "nativeVersionPinning": "NOT RUN",
+  "schedulerDecision": "HELD"
+}

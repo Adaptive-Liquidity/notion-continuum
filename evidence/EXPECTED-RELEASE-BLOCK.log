@@ -1,0 +1,6 @@
+
+> continuum-target-validation@0.1.0 release-check
+> python3 tools/check-release.py --enforce
+
+{"productionReady": false, "canonPromotionAllowed": false, "blockedGates": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"], "schedulerDecision": "HELD \u2014 both pass bounded workload; required long-wait/production burden tests incomplete"}
+release_check_exit=1 (expected 1)

@@ -1,0 +1,130 @@
+✖ Backend intent -> independent approval -> capability -> verified status (31.608736ms)
+✖ Backend tenant and machine-principal boundaries (0.721277ms)
+✖ Backend machines cannot grant, approve, assign, cancel or disable (0.076844ms)
+✖ Backend HTTP rejects tenant, approval, credential and arbitrary action flags (0.049984ms)
+✖ Backend stable operation identity tolerates exact replay but rejects altered intent (0.081274ms)
+✖ Backend checks grant scope, cost, deadline and input bounds (0.05961ms)
+✖ Backend cancellation races final send; no later admission, in-flight promise honest (0.051858ms)
+✖ Backend cancellation CAS accepts one owner action and never uncancels (0.059003ms)
+✖ Backend UNKNOWN and empty tasks are never displayed as completed (0.225366ms)
+✖ Backend database role cannot grant authority, approve or claim effect success (0.1423ms)
+✖ Backend rejected issuer subject and stale identities cannot access tasks (0.050718ms)
+✖ Backend owner disable invalidates a previously minted capability (0.052794ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 0
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 184.949971
+
+✖ failing tests:
+
+test at dist/tests/product-backend.test.js:14:1
+✖ Backend intent -> independent approval -> capability -> verified status (31.608736ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:24:1
+✖ Backend tenant and machine-principal boundaries (0.721277ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:30:1
+✖ Backend machines cannot grant, approve, assign, cancel or disable (0.076844ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:38:1
+✖ Backend HTTP rejects tenant, approval, credential and arbitrary action flags (0.049984ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:45:1
+✖ Backend stable operation identity tolerates exact replay but rejects altered intent (0.081274ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:52:1
+✖ Backend checks grant scope, cost, deadline and input bounds (0.05961ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:58:1
+✖ Backend cancellation races final send; no later admission, in-flight promise honest (0.051858ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:67:1
+✖ Backend cancellation CAS accepts one owner action and never uncancels (0.059003ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:73:1
+✖ Backend UNKNOWN and empty tasks are never displayed as completed (0.225366ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:83:1
+✖ Backend database role cannot grant authority, approve or claim effect success (0.1423ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:94:1
+✖ Backend rejected issuer subject and stale identities cannot access tasks (0.050718ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)
+
+test at dist/tests/product-backend.test.js:100:1
+✖ Backend owner disable invalidates a previously minted capability (0.052794ms)
+  Error: public EdDSA keys only
+      at new PublicCapabilityVerifier (file:///data/continuum-safe-implementation/dist/src/production-capability.js:36:19)
+      at fixture (file:///data/continuum-safe-implementation/dist/tests/implementation-helpers.js:35:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///data/continuum-safe-implementation/dist/tests/product-backend.test.js:9:26)
+      at async TestHook.run (node:internal/test_runner/test:1125:7)

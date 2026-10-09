@@ -1,0 +1,91 @@
+{
+  "$ref": "#/definitions/AuthorityGrant",
+  "definitions": {
+    "AuthorityGrant": {
+      "type": "object",
+      "properties": {
+        "v": {
+          "type": "number",
+          "const": 1
+        },
+        "authority_id": {
+          "type": "string",
+          "pattern": "^grt_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "tenant_id": {
+          "type": "string",
+          "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "principal_id": {
+          "type": "string",
+          "pattern": "^prn_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "staxion_id": {
+          "type": "string",
+          "pattern": "^stx_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "requires_approval": {
+          "type": "boolean",
+          "default": false
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "version": {
+          "type": "integer"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "$ref": "#/definitions/AuthorityGrant/properties/issued_at"
+        },
+        "revoked_at": {
+          "$ref": "#/definitions/AuthorityGrant/properties/issued_at"
+        }
+      },
+      "required": [
+        "v",
+        "authority_id",
+        "tenant_id",
+        "principal_id",
+        "provider",
+        "actions",
+        "resource",
+        "constraints",
+        "policy_version",
+        "status",
+        "version",
+        "issued_at",
+        "expires_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

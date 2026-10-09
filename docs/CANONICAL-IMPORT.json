@@ -1,0 +1,6 @@
+{
+  "starting_sha": "f22cf76b83195c84c51fd8cf5d071674a02adb96",
+  "remote": "https://github.com/Adaptive-Liquidity/notion-continuum.git",
+  "branch": "build/canonical-continuum",
+  "baseline_sha256": "394e1334098b2b1db1ec85a7f91ec16771bc3a4f7f067047c7c2d794850d6306"
+}

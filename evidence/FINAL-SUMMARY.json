@@ -1,0 +1,36 @@
+{
+  "nodeTestGroups": {
+    "M2-foundation-tests.tap": {
+      "passed": 7,
+      "failed": 0
+    },
+    "M3-controller-tests.tap": {
+      "passed": 14,
+      "failed": 0
+    },
+    "legacy-typescript-guard-tests.tap": {
+      "passed": 2,
+      "failed": 0
+    },
+    "local-release-gates.tap": {
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "nodeTestGroupsPassed": 26,
+  "schedulerWorkloadsPassed": 10,
+  "schedulerEngines": 2,
+  "pythonLegacyGuards": {
+    "dispatch_effect": "503 before DB/adapter access",
+    "_live_dispatch": "disabled before wire/fallback access"
+  },
+  "contractHash": "02b04d213721067464686e7a14c9c7533e506d3c9854505d8eb0fca0864d86ae",
+  "sourceManifestHash": "641fc7f62284d28853cc0e144a377333278c85c1bf7b1729e595ed7437612ab2",
+  "postgres": "17.10",
+  "node": "24.14.1",
+  "temporalSdk": "1.24.0",
+  "pgBoss": "12.37.1",
+  "productionReady": false,
+  "canon": false,
+  "scope": "Fresh fixtures after expiry-race and fence corrections; provider emulator, local process/network isolation only."
+}

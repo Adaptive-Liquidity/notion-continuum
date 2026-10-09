@@ -1,0 +1,6 @@
+
+> continuum-target-validation@0.1.0 build
+> tsc
+
+src/controller.ts(28,23): error TS2345: Argument of type 'Record<string, any>' is not assignable to parameter of type '{ tenant: string; id: string; }'.
+  Type 'Record<string, any>' is missing the following properties from type '{ tenant: string; id: string; }': tenant, id

@@ -1,0 +1,1 @@
+{"corrections":["Set explicit UTF8 client encoding because sandbox initdb defaulted to SQL_ASCII","Test malformed revoke statement at bind/execute time, not only PREPARE"],"production_code_modified":false,"initial_failed_logs_retained":true}

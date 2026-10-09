@@ -1,0 +1,23 @@
+✔ Migration dry run preserves identities, treats partial effects as UNKNOWN and imports no authority (1.426699ms)
+✔ Migration requires approved tenant/principal/computer mapping and rejects identity conflicts (0.402149ms)
+✔ Migration local green, PARTIAL or missing review cannot enable canary (0.291789ms)
+✔ Migration even eligible review never deploys or runs production by itself (0.164194ms)
+✔ Resources concurrent reservations serialize against configured limit (60.419091ms)
+✔ Resources stable identity reserves once and refuses changed budget (13.812703ms)
+✔ Resources forged completion cannot release quota; uncertainty remains reserved (15.111161ms)
+✔ Resources unbounded actual usage and closed identity reuse refused (10.32745ms)
+✔ Resources product/worker cannot widen configured limits (10.496739ms)
+✔ Resources artifact lost acknowledgement retains storage budget across rollback/retry (31.638866ms)
+✔ Security product INSERT cannot fabricate terminal effect state (48.962892ms)
+✔ Security logs exclude secret-bearing error messages (0.583895ms)
+✔ Security bounded request budget prevents retry storms and unlimited identity entries (0.490637ms)
+✔ Security staging assembly disabled; restricted roles/TLS required (0.448004ms)
+✔ Security expired provider read-back retention does not permit UNKNOWN resend (61.486208ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 463.03367

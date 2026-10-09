@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: Resources concurrent reservations serialize against configured limit
+ok 1 - Resources concurrent reservations serialize against configured limit
+  ---
+  duration_ms: 45.848612
+  type: 'test'
+  ...
+# Subtest: Resources stable identity reserves once and refuses changed budget
+ok 2 - Resources stable identity reserves once and refuses changed budget
+  ---
+  duration_ms: 8.958306
+  type: 'test'
+  ...
+# Subtest: Resources forged completion cannot release quota; uncertainty remains reserved
+ok 3 - Resources forged completion cannot release quota; uncertainty remains reserved
+  ---
+  duration_ms: 11.635252
+  type: 'test'
+  ...
+# Subtest: Resources unbounded actual usage and closed identity reuse refused
+ok 4 - Resources unbounded actual usage and closed identity reuse refused
+  ---
+  duration_ms: 8.390119
+  type: 'test'
+  ...
+# Subtest: Resources product/worker cannot widen configured limits
+ok 5 - Resources product/worker cannot widen configured limits
+  ---
+  duration_ms: 9.046386
+  type: 'test'
+  ...
+# Subtest: Resources artifact lost acknowledgement retains storage budget across rollback/retry
+ok 6 - Resources artifact lost acknowledgement retains storage budget across rollback/retry
+  ---
+  duration_ms: 26.463103
+  type: 'test'
+  ...
+# Subtest: Security product INSERT cannot fabricate terminal effect state
+ok 7 - Security product INSERT cannot fabricate terminal effect state
+  ---
+  duration_ms: 38.306041
+  type: 'test'
+  ...
+# Subtest: Security logs exclude secret-bearing error messages
+ok 8 - Security logs exclude secret-bearing error messages
+  ---
+  duration_ms: 0.626163
+  type: 'test'
+  ...
+# Subtest: Security bounded request budget prevents retry storms and unlimited identity entries
+ok 9 - Security bounded request budget prevents retry storms and unlimited identity entries
+  ---
+  duration_ms: 0.371637
+  type: 'test'
+  ...
+# Subtest: Security staging assembly disabled; restricted roles/TLS required
+ok 10 - Security staging assembly disabled; restricted roles/TLS required
+  ---
+  duration_ms: 0.367607
+  type: 'test'
+  ...
+# Subtest: Security expired provider read-back retention does not permit UNKNOWN resend
+ok 11 - Security expired provider read-back retention does not permit UNKNOWN resend
+  ---
+  duration_ms: 51.498394
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 317.793593

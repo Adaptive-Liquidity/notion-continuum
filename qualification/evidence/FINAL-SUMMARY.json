@@ -1,0 +1,35 @@
+{
+  "acceptedBaselineZipSha256": "c2435fd62bd5999d1169079bb0f5d70e33a2859b269a440bb3b4ff6851268a7f",
+  "frozenContractSha256": "02b04d213721067464686e7a14c9c7533e506d3c9854505d8eb0fca0864d86ae",
+  "results": {
+    "baselineFoundation": {
+      "pass": 7,
+      "fail": 0,
+      "raw": "BASELINE-FOUNDATION.tap"
+    },
+    "baselineController": {
+      "pass": 14,
+      "fail": 0,
+      "raw": "BASELINE-CONTROLLER.tap"
+    },
+    "identity": {
+      "pass": 14,
+      "fail": 0,
+      "raw": "IDENTITY-TESTS.tap"
+    },
+    "provider": {
+      "pass": 6,
+      "fail": 0,
+      "raw": "REAL-PROVIDER-TESTS.tap"
+    }
+  },
+  "newTestGroups": 20,
+  "baselineRegressionGroups": 21,
+  "realProviderRecordedResponses": 7,
+  "liveIdpCredentialTest": "NOT RUN",
+  "realProviderScope": "Only public immutable GitHub read; client timeout/ack-drop/readback-outage injection, no mutations",
+  "productionReady": false,
+  "scheduler": "HELD",
+  "canary": "NO-GO",
+  "independentSecurityReview": "NOT RUN"
+}

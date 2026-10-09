@@ -1,0 +1,744 @@
+{
+  "repository": "continuum2",
+  "default_branch": "jules-3656268840441091436-cd11f14d",
+  "head": "2501f879a57982edb24e79c30f00f68ccae5a545",
+  "committed_at": "2026-10-05T04:45:43Z",
+  "tree": {
+    "sha": "2501f879a57982edb24e79c30f00f68ccae5a545",
+    "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/2501f879a57982edb24e79c30f00f68ccae5a545",
+    "tree": [
+      {
+        "path": ".audit",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "865dfab08b4fdf5110866320969411944e26530b",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/865dfab08b4fdf5110866320969411944e26530b"
+      },
+      {
+        "path": ".audit/AEON-IQ",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "cd7632a788d61399bfb86966b45963ec1cb15703"
+      },
+      {
+        "path": ".audit/Continuum",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "9ac4723b5390d22ed2d6aed9cf984cb0a32731ca"
+      },
+      {
+        "path": ".audit/Nexus",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "c4343883cc4bd1f1262f2f878ed81f8015cedd0e"
+      },
+      {
+        "path": ".audit/floks-pc",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "08438f55b2081fd64e4aac1a0afaa5fc2c484845"
+      },
+      {
+        "path": ".audit/genesis-runtime",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "dfd9c69a45302034a41e997f03655c0452e93010"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "324ad46310547867d25ea3fc2e8892922ed5507a",
+        "size": 22,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/324ad46310547867d25ea3fc2e8892922ed5507a"
+      },
+      {
+        "path": "README-audit.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "35e94a26a945bc997c58173469053c6b3a8dd6ab",
+        "size": 1466,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/35e94a26a945bc997c58173469053c6b3a8dd6ab"
+      },
+      {
+        "path": "apps",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "9726aedded5c38fb83ccac20657ec6b44395693c",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/9726aedded5c38fb83ccac20657ec6b44395693c"
+      },
+      {
+        "path": "apps/api-mcp",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "1afac023f482a1ed85cba556300ebf050795df74",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/1afac023f482a1ed85cba556300ebf050795df74"
+      },
+      {
+        "path": "apps/api-mcp/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "141bfefddc051e7b6c60758b4e92cf184d07f6de",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/141bfefddc051e7b6c60758b4e92cf184d07f6de"
+      },
+      {
+        "path": "apps/api-mcp/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "429a3f38a65e0312fbe9db8cd2c2df4ffbb7256a",
+        "size": 299,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/429a3f38a65e0312fbe9db8cd2c2df4ffbb7256a"
+      },
+      {
+        "path": "apps/api-mcp/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "429a3f38a65e0312fbe9db8cd2c2df4ffbb7256a",
+        "size": 299,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/429a3f38a65e0312fbe9db8cd2c2df4ffbb7256a"
+      },
+      {
+        "path": "apps/api-mcp/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8a3c5d23c9acc9613b2537cad17297b8d5c7f27c",
+        "size": 1880,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/8a3c5d23c9acc9613b2537cad17297b8d5c7f27c"
+      },
+      {
+        "path": "apps/api-mcp/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e522662f4bfdd966349bf0650ae52befe0db1cb6",
+        "size": 866,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/e522662f4bfdd966349bf0650ae52befe0db1cb6"
+      },
+      {
+        "path": "apps/api-mcp/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "68880b0c4a112568bde60717aa097490b05fcfe7",
+        "size": 379,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/68880b0c4a112568bde60717aa097490b05fcfe7"
+      },
+      {
+        "path": "apps/api-mcp/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "63d6e1aab492daa5d07ef0e8cf25c0982c5b2ad3",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/63d6e1aab492daa5d07ef0e8cf25c0982c5b2ad3"
+      },
+      {
+        "path": "apps/api-mcp/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "712ddce80f7ce3a23350a354dd54c1b631fb126e",
+        "size": 1309,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/712ddce80f7ce3a23350a354dd54c1b631fb126e"
+      },
+      {
+        "path": "conformance",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "4cc58e110878783d39072032a567563b00ec809b",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/4cc58e110878783d39072032a567563b00ec809b"
+      },
+      {
+        "path": "conformance/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a485b9fd06b5111b21a7f60619eb789f2af1b3d4",
+        "size": 185,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/a485b9fd06b5111b21a7f60619eb789f2af1b3d4"
+      },
+      {
+        "path": "conformance/test.spec.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "478ae3f5ba9961695d3da082c9583525c23faf60",
+        "size": 735,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/478ae3f5ba9961695d3da082c9583525c23faf60"
+      },
+      {
+        "path": "package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c8e60c39be39f73f920fad8edf0073f6f4309837",
+        "size": 443,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/c8e60c39be39f73f920fad8edf0073f6f4309837"
+      },
+      {
+        "path": "packages",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "6ddfe9edb94a7feeed72c4f2cf55e2216732f15e",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/6ddfe9edb94a7feeed72c4f2cf55e2216732f15e"
+      },
+      {
+        "path": "packages/contracts",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "19a4c6659f1bff436ec7b46797d2e4390813e512",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/19a4c6659f1bff436ec7b46797d2e4390813e512"
+      },
+      {
+        "path": "packages/contracts/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d4961265f76ccff137cad8158b0f5f656db03204",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/d4961265f76ccff137cad8158b0f5f656db03204"
+      },
+      {
+        "path": "packages/contracts/dist/.gitkeep",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "size": 0,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+      },
+      {
+        "path": "packages/contracts/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6350826bc5312288fd834b48f94b8ba4f2104409",
+        "size": 10612,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/6350826bc5312288fd834b48f94b8ba4f2104409"
+      },
+      {
+        "path": "packages/contracts/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6350826bc5312288fd834b48f94b8ba4f2104409",
+        "size": 10612,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/6350826bc5312288fd834b48f94b8ba4f2104409"
+      },
+      {
+        "path": "packages/contracts/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e69c1cf97bbc85481e542b7439af5d9965852288",
+        "size": 6142,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/e69c1cf97bbc85481e542b7439af5d9965852288"
+      },
+      {
+        "path": "packages/contracts/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9e13f4bd75b1734a70246cf08b3590def79b03d0",
+        "size": 4163,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/9e13f4bd75b1734a70246cf08b3590def79b03d0"
+      },
+      {
+        "path": "packages/contracts/json-schemas",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "95fd840679a6f13c247b6a10a1f25a27c6246ed3",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/95fd840679a6f13c247b6a10a1f25a27c6246ed3"
+      },
+      {
+        "path": "packages/contracts/json-schemas/AuthorityGrant.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "08c158617a2f792a3f330c2f8d8ee948c1361098",
+        "size": 2108,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/08c158617a2f792a3f330c2f8d8ee948c1361098"
+      },
+      {
+        "path": "packages/contracts/json-schemas/Checkpoint.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f3e921e8cb9d67bec9403102492bf8b3feacbda7",
+        "size": 1197,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/f3e921e8cb9d67bec9403102492bf8b3feacbda7"
+      },
+      {
+        "path": "packages/contracts/json-schemas/EvidenceCheckpoint.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b82dc1b0d4d494eb8a2e756f1c4cc3b99219fc3f",
+        "size": 1206,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/b82dc1b0d4d494eb8a2e756f1c4cc3b99219fc3f"
+      },
+      {
+        "path": "packages/contracts/json-schemas/EvidenceEvent.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3876596aef21a31466efac7545a5a1acc4abb44f",
+        "size": 1890,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/3876596aef21a31466efac7545a5a1acc4abb44f"
+      },
+      {
+        "path": "packages/contracts/json-schemas/Operation.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "95b23f1244ecf358bd83ed6147dd87e8e5496585",
+        "size": 3260,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/95b23f1244ecf358bd83ed6147dd87e8e5496585"
+      },
+      {
+        "path": "packages/contracts/json-schemas/Principal.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9a0bd718d1cffb05bb455976c768a5b12464730d",
+        "size": 1352,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/9a0bd718d1cffb05bb455976c768a5b12464730d"
+      },
+      {
+        "path": "packages/contracts/json-schemas/Receipt.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d2742841f45b7d13f65facbedf1b8450f6a3ee3d",
+        "size": 1361,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/d2742841f45b7d13f65facbedf1b8450f6a3ee3d"
+      },
+      {
+        "path": "packages/contracts/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "604a38c2d8d48f30e3def452057958fb3a3d50e8",
+        "size": 407,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/604a38c2d8d48f30e3def452057958fb3a3d50e8"
+      },
+      {
+        "path": "packages/contracts/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "11a9c5714d3e4616772abfaac69aab13fd900dbb",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/11a9c5714d3e4616772abfaac69aab13fd900dbb"
+      },
+      {
+        "path": "packages/contracts/src/export-schemas.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "90b2ac5c75efae8c6b03c2bef8114dbb4fb72807",
+        "size": 748,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/90b2ac5c75efae8c6b03c2bef8114dbb4fb72807"
+      },
+      {
+        "path": "packages/contracts/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3db22ed5447109b219fd6567c8bd63c44fea622c",
+        "size": 4435,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/3db22ed5447109b219fd6567c8bd63c44fea622c"
+      },
+      {
+        "path": "packages/coordinator",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5f433778ca24c95eb6a1bdc1cbce52d6056b75f5",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/5f433778ca24c95eb6a1bdc1cbce52d6056b75f5"
+      },
+      {
+        "path": "packages/coordinator/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "9e70ef101b84c54647a744f90d9b594283b9fbfd",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/9e70ef101b84c54647a744f90d9b594283b9fbfd"
+      },
+      {
+        "path": "packages/coordinator/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bdc7ca6f03195d0561010a3987c32a3450b24c7b",
+        "size": 666,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/bdc7ca6f03195d0561010a3987c32a3450b24c7b"
+      },
+      {
+        "path": "packages/coordinator/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bdc7ca6f03195d0561010a3987c32a3450b24c7b",
+        "size": 666,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/bdc7ca6f03195d0561010a3987c32a3450b24c7b"
+      },
+      {
+        "path": "packages/coordinator/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d340e4d8f50a37ae51e4a45938b930a3592faa98",
+        "size": 2591,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/d340e4d8f50a37ae51e4a45938b930a3592faa98"
+      },
+      {
+        "path": "packages/coordinator/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ace81eb4ac136d2b884319b880422f477f2c7a35",
+        "size": 1514,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/ace81eb4ac136d2b884319b880422f477f2c7a35"
+      },
+      {
+        "path": "packages/coordinator/migrations",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ea740625e2f056c954d95dbe3d060ddc602b99e7",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/ea740625e2f056c954d95dbe3d060ddc602b99e7"
+      },
+      {
+        "path": "packages/coordinator/migrations/0001_continuum_initial.sql",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "50292cbe82b4e27204c67a9286081e141a9ada5a",
+        "size": 6677,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/50292cbe82b4e27204c67a9286081e141a9ada5a"
+      },
+      {
+        "path": "packages/coordinator/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "eacccf17e6c6df88622c91a2a5a371eb43cd67ad",
+        "size": 473,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/eacccf17e6c6df88622c91a2a5a371eb43cd67ad"
+      },
+      {
+        "path": "packages/coordinator/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "aedd427e3144d0bbbcbd86ea7277c6161c296d4b",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/aedd427e3144d0bbbcbd86ea7277c6161c296d4b"
+      },
+      {
+        "path": "packages/coordinator/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4efceba3cb47dcf4a7a78337e6628377cebe4c12",
+        "size": 1803,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/4efceba3cb47dcf4a7a78337e6628377cebe4c12"
+      },
+      {
+        "path": "packages/effect-boundary",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "684c5be67e29c5504441d936e5de6e1355c2b96a",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/684c5be67e29c5504441d936e5de6e1355c2b96a"
+      },
+      {
+        "path": "packages/effect-boundary/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "63aa542bcb56876b28aede5a98d14e8ec40c5af2",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/63aa542bcb56876b28aede5a98d14e8ec40c5af2"
+      },
+      {
+        "path": "packages/effect-boundary/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "17aff1e2270048f2d56985d1ee2d79fa7c2b2d97",
+        "size": 243,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/17aff1e2270048f2d56985d1ee2d79fa7c2b2d97"
+      },
+      {
+        "path": "packages/effect-boundary/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "17aff1e2270048f2d56985d1ee2d79fa7c2b2d97",
+        "size": 243,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/17aff1e2270048f2d56985d1ee2d79fa7c2b2d97"
+      },
+      {
+        "path": "packages/effect-boundary/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ad024ac52e22ff436407b0d323ffa8fa1b096d42",
+        "size": 5013,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/ad024ac52e22ff436407b0d323ffa8fa1b096d42"
+      },
+      {
+        "path": "packages/effect-boundary/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b5894acfa6154d6fc4a9cec588998e64a389123a",
+        "size": 3376,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/b5894acfa6154d6fc4a9cec588998e64a389123a"
+      },
+      {
+        "path": "packages/effect-boundary/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2be7329ae566b25cbebba2691d3063b4dfbed788",
+        "size": 470,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/2be7329ae566b25cbebba2691d3063b4dfbed788"
+      },
+      {
+        "path": "packages/effect-boundary/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "c5fd54833b4114d9a29242251c46a02b3687a173",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/c5fd54833b4114d9a29242251c46a02b3687a173"
+      },
+      {
+        "path": "packages/effect-boundary/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "26657becf8d4d30407e153f666e4a798f86852b2",
+        "size": 3881,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/26657becf8d4d30407e153f666e4a798f86852b2"
+      },
+      {
+        "path": "packages/providers",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "e0d38d881f8d031d54f94ac0993a872ad80894f6",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/e0d38d881f8d031d54f94ac0993a872ad80894f6"
+      },
+      {
+        "path": "packages/providers/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "16e209a634f24cadf5a2a546890bc845db823870",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/16e209a634f24cadf5a2a546890bc845db823870"
+      },
+      {
+        "path": "packages/providers/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6ede5405ff68be2a0174ea711697526e83dac037",
+        "size": 760,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/6ede5405ff68be2a0174ea711697526e83dac037"
+      },
+      {
+        "path": "packages/providers/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6ede5405ff68be2a0174ea711697526e83dac037",
+        "size": 760,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/6ede5405ff68be2a0174ea711697526e83dac037"
+      },
+      {
+        "path": "packages/providers/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5b5500e453a936d4988f22d9b474a03ad9b6169b",
+        "size": 2532,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/5b5500e453a936d4988f22d9b474a03ad9b6169b"
+      },
+      {
+        "path": "packages/providers/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b66e87ccee5561cd1de6775a20d4b967c7508853",
+        "size": 1466,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/b66e87ccee5561cd1de6775a20d4b967c7508853"
+      },
+      {
+        "path": "packages/providers/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c452a527e401bca917fbb00084ff6094ac3c80e4",
+        "size": 400,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/c452a527e401bca917fbb00084ff6094ac3c80e4"
+      },
+      {
+        "path": "packages/providers/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "42c70fb32e4af099277c1f0ba8e9c58f289a00ff",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/42c70fb32e4af099277c1f0ba8e9c58f289a00ff"
+      },
+      {
+        "path": "packages/providers/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3f2081f1e5144b391294ef05420cbbd4687869b4",
+        "size": 1808,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/3f2081f1e5144b391294ef05420cbbd4687869b4"
+      },
+      {
+        "path": "packages/regency",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "9fd7f5f87dbc8b0d0773c80cf5774f925503a30a",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/9fd7f5f87dbc8b0d0773c80cf5774f925503a30a"
+      },
+      {
+        "path": "packages/regency/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "dcf1e618ca6e3ed76009e2261962ea5a812bde4e",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/dcf1e618ca6e3ed76009e2261962ea5a812bde4e"
+      },
+      {
+        "path": "packages/regency/dist/index.cjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bbacba26db74344c8c77a4cf9a62026acb4c9098",
+        "size": 2604,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/bbacba26db74344c8c77a4cf9a62026acb4c9098"
+      },
+      {
+        "path": "packages/regency/dist/index.d.cts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "99ccece76e5ab83dc5f5a75b5389e6f1ab642bf1",
+        "size": 322,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/99ccece76e5ab83dc5f5a75b5389e6f1ab642bf1"
+      },
+      {
+        "path": "packages/regency/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "99ccece76e5ab83dc5f5a75b5389e6f1ab642bf1",
+        "size": 322,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/99ccece76e5ab83dc5f5a75b5389e6f1ab642bf1"
+      },
+      {
+        "path": "packages/regency/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "003f6edf9f0897c97e37cd71f35abb79a3c6dc1b",
+        "size": 981,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/003f6edf9f0897c97e37cd71f35abb79a3c6dc1b"
+      },
+      {
+        "path": "packages/regency/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "84cfeadf40e4339fbf95d418c862a4d7c95e8616",
+        "size": 1028,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/84cfeadf40e4339fbf95d418c862a4d7c95e8616"
+      },
+      {
+        "path": "packages/regency/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7a99a8bb1f47b3e331d0b09b3bfa2ae53031f83d",
+        "size": 445,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/7a99a8bb1f47b3e331d0b09b3bfa2ae53031f83d"
+      },
+      {
+        "path": "packages/regency/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "19c2a997d443eed96600aa3ec43132e4c6187c3a",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/19c2a997d443eed96600aa3ec43132e4c6187c3a"
+      },
+      {
+        "path": "packages/regency/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2addac038d10954cb423dd0e2a1d84d43df540b2",
+        "size": 1199,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/2addac038d10954cb423dd0e2a1d84d43df540b2"
+      },
+      {
+        "path": "packages/regency/test_cedar.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7a0e2b4d1ceb2f6ae4a342b83ee5ba00b6a041de",
+        "size": 71,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/7a0e2b4d1ceb2f6ae4a342b83ee5ba00b6a041de"
+      },
+      {
+        "path": "packages/regency/test_cedar.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7a0e2b4d1ceb2f6ae4a342b83ee5ba00b6a041de",
+        "size": 71,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/7a0e2b4d1ceb2f6ae4a342b83ee5ba00b6a041de"
+      },
+      {
+        "path": "packages/vera",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2104f0fe4b0bda71e806541482c268c15edcf876",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/2104f0fe4b0bda71e806541482c268c15edcf876"
+      },
+      {
+        "path": "packages/vera/dist",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ad9b0e2140d759af7f12acaa0821b49ed35b8390",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/ad9b0e2140d759af7f12acaa0821b49ed35b8390"
+      },
+      {
+        "path": "packages/vera/dist/index.d.mts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "09bad7f8b2bb65db405cf1fda0566ee640aefded",
+        "size": 496,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/09bad7f8b2bb65db405cf1fda0566ee640aefded"
+      },
+      {
+        "path": "packages/vera/dist/index.d.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "09bad7f8b2bb65db405cf1fda0566ee640aefded",
+        "size": 496,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/09bad7f8b2bb65db405cf1fda0566ee640aefded"
+      },
+      {
+        "path": "packages/vera/dist/index.js",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4e2a42eb176558a3c0c391266b7b8d3c4ade3196",
+        "size": 2740,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/4e2a42eb176558a3c0c391266b7b8d3c4ade3196"
+      },
+      {
+        "path": "packages/vera/dist/index.mjs",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4c9869932e4e21661a80988f30b243f8d0e8c77d",
+        "size": 1730,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/4c9869932e4e21661a80988f30b243f8d0e8c77d"
+      },
+      {
+        "path": "packages/vera/package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7d5936d3171bbee72dec654ee68236726d4b5409",
+        "size": 380,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/7d5936d3171bbee72dec654ee68236726d4b5409"
+      },
+      {
+        "path": "packages/vera/src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "caac2221675ad20ee8b7222236f4b7df6a18577a",
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/trees/caac2221675ad20ee8b7222236f4b7df6a18577a"
+      },
+      {
+        "path": "packages/vera/src/index.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "82c2a23802710fad4e560844b66ae2a541687acf",
+        "size": 2056,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/82c2a23802710fad4e560844b66ae2a541687acf"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "606ffb2ea1bd8b3d5f203796066477c11d09cd61",
+        "size": 73789,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/606ffb2ea1bd8b3d5f203796066477c11d09cd61"
+      },
+      {
+        "path": "pnpm-workspace.yaml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "02891894591e27f3aed0b073a90bc9da56fdd8d1",
+        "size": 58,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/02891894591e27f3aed0b073a90bc9da56fdd8d1"
+      },
+      {
+        "path": "test_cedar.ts",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e04c3b4b074b521e22cd8fc5ba7bb52051dd3b5e",
+        "size": 84,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/e04c3b4b074b521e22cd8fc5ba7bb52051dd3b5e"
+      },
+      {
+        "path": "tsconfig.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "fe53b532c755ae6fda4e62a5f2d0808e8f7687be",
+        "size": 336,
+        "url": "https://api.github.com/repos/Adaptive-Liquidity/continuum2/git/blobs/fe53b532c755ae6fda4e62a5f2d0808e8f7687be"
+      }
+    ],
+    "truncated": false
+  }
+}

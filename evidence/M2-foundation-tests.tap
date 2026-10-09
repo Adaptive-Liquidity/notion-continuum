@@ -1,0 +1,15 @@
+✔ M2 runtime roles have no owner/superuser/BYPASSRLS and RLS forced (19.397751ms)
+✔ M2 tenant session role cannot switch tenant with GUC or SET ROLE (22.688293ms)
+✔ M2 composite tenant FK rejects foreign principal/grant (2.709467ms)
+✔ M2 controller cannot forge approvals/grants; provider cannot read domain; readers cannot write (11.142041ms)
+✔ M2 immutable binding and no UNKNOWN -> send transition (9.422851ms)
+✔ M2 evidence concurrent append allocates contiguous hash chain (46.979172ms)
+✔ M2 failed transaction leaves no evidence or outbox (3.117914ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 199.920912

@@ -1,0 +1,229 @@
+✖ Identity issuer/audience/signature/expiry checks reject token confusion (4.585689ms)
+✖ Identity unknown header key URL and unsafe JWKS configuration rejected (0.6933ms)
+✖ Machine cannot create/widen grants even with signed token role=owner (0.073045ms)
+✖ Fresh enrolled owner creates bounded grant; tenant derived from enrollment (0.05354ms)
+✖ Missing/stale human MFA and unknown enrollment cannot approve (0.068095ms)
+✖ Exact-action owner approval and assignment bind machine identity/digest (0.061399ms)
+✖ Unknown assignment, other tenant, machine approval and forged body denied (0.044626ms)
+✖ Renewal after revoke denied; previously issued token cannot dispatch revoked operation (0.052114ms)
+✖ Renewal after approval expiry, disabled enrollment or recovery fence denied (0.068741ms)
+✖ Issuer/controller have public-key-only boundary and cannot issue domain grants directly (0.088679ms)
+✖ Capabilities cannot be forged/widened with controller verification key (0.0587ms)
+✖ Client can obtain fresh bounded capability without reusing expired token (local clock fixture) (0.054161ms)
+✖ /data/continuum-production-qualification/dist/tests/production-identity.test.js (0.304343ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 0
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 159.324636
+
+✖ failing tests:
+
+test at dist/tests/production-identity.test.js:42:1
+✖ Identity issuer/audience/signature/expiry checks reject token confusion (4.585689ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:43:1
+✖ Identity unknown header key URL and unsafe JWKS configuration rejected (0.6933ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:44:1
+✖ Machine cannot create/widen grants even with signed token role=owner (0.073045ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:45:1
+✖ Fresh enrolled owner creates bounded grant; tenant derived from enrollment (0.05354ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:46:1
+✖ Missing/stale human MFA and unknown enrollment cannot approve (0.068095ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:47:1
+✖ Exact-action owner approval and assignment bind machine identity/digest (0.061399ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:48:1
+✖ Unknown assignment, other tenant, machine approval and forged body denied (0.044626ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:49:1
+✖ Renewal after revoke denied; previously issued token cannot dispatch revoked operation (0.052114ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:50:1
+✖ Renewal after approval expiry, disabled enrollment or recovery fence denied (0.068741ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:51:1
+✖ Issuer/controller have public-key-only boundary and cannot issue domain grants directly (0.088679ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:52:1
+✖ Capabilities cannot be forged/widened with controller verification key (0.0587ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:53:1
+✖ Client can obtain fresh bounded capability without reusing expired token (local clock fixture) (0.054161ms)
+  Error: connect ECONNREFUSED 127.0.0.1:55432
+      at /data/continuum-production-qualification/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async tx (file:///data/continuum-production-qualification/dist/src/db.js:38:15)
+      at async bootstrap (file:///data/continuum-production-qualification/dist/tests/helpers.js:5:5)
+      at async TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:23:5)
+      at async TestHook.run (node:internal/test_runner/test:1125:7) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55432
+  }
+
+test at dist/tests/production-identity.test.js:41:1
+✖ /data/continuum-production-qualification/dist/tests/production-identity.test.js (0.304343ms)
+  TypeError: Cannot read properties of undefined (reading 'close')
+      at file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:41:48
+      at new Promise (<anonymous>)
+      at TestContext.<anonymous> (file:///data/continuum-production-qualification/dist/tests/production-identity.test.js:41:27)
+      at TestHook.runInAsyncScope (node:async_hooks:228:14)
+      at TestHook.run (node:internal/test_runner/test:1118:25)
+      at TestHook.run (node:internal/test_runner/test:1442:18)
+      at TestHook.run (node:internal/util:602:20)
+      at Test.runHook (node:internal/test_runner/test:1036:20)
+      at after (node:internal/test_runner/test:1076:20)
+      at Test.run (node:internal/test_runner/test:1144:13)

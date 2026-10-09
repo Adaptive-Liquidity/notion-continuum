@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.local/
+__pycache__/
+*.pyc
+.env
+.env.*
+.npmrc
+*.pem
+*.key
+*.dump
+*.sqlite
+*.sqlite-*
+*.zip

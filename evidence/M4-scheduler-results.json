@@ -1,0 +1,100 @@
+{
+  "results": [
+    {
+      "engine": "Temporal",
+      "test": "worker-upgrade",
+      "passed": true,
+      "effects": 10,
+      "phase": "DONE",
+      "elapsedMs": 2948,
+      "historyEvents": 68,
+      "historyHash": "7bc7a172cead9bbf56e82242aaf8cb70250b789b6e34fc76745bd5bb4e2f5028",
+      "scope": "local dev service; v1 retained in v2 bundle, not native deployment pinning"
+    },
+    {
+      "engine": "Temporal",
+      "test": "partial-revocation",
+      "passed": true,
+      "effects": 7,
+      "phase": "BLOCKED",
+      "elapsedMs": 1546,
+      "historyEvents": 62,
+      "historyHash": "d475dacaae10797262931e0b2821d32d58463aae363f1280f2393b17f1fe4da7",
+      "scope": "local dev service; v1 retained in v2 bundle, not native deployment pinning"
+    },
+    {
+      "engine": "Temporal",
+      "test": "database-outage",
+      "passed": true,
+      "effects": 10,
+      "phase": "DONE",
+      "elapsedMs": 1610,
+      "historyEvents": 71,
+      "historyHash": "884f4a689ec65ee08306174f7258c86cbd04a33f28d75eb6e7b15369647d69da",
+      "scope": "local dev service; v1 retained in v2 bundle, not native deployment pinning"
+    },
+    {
+      "engine": "Temporal",
+      "test": "worker-kill-after-effect-before-ack",
+      "passed": true,
+      "effects": 10
+    },
+    {
+      "engine": "Temporal",
+      "test": "new-v2",
+      "passed": true,
+      "effects": 10
+    },
+    {
+      "engine": "pg-boss",
+      "test": "worker-upgrade",
+      "passed": true,
+      "effects": 10,
+      "phase": "DONE",
+      "elapsedMs": 2391,
+      "revision": "14",
+      "scope": "explicit two-phase state machine with durable scheduling outbox"
+    },
+    {
+      "engine": "pg-boss",
+      "test": "partial-revocation",
+      "passed": true,
+      "effects": 7,
+      "phase": "BLOCKED",
+      "elapsedMs": 2431,
+      "revision": "11",
+      "scope": "explicit two-phase state machine with durable scheduling outbox"
+    },
+    {
+      "engine": "pg-boss",
+      "test": "database-outage",
+      "passed": true,
+      "effects": 10,
+      "phase": "DONE",
+      "elapsedMs": 2482,
+      "revision": "14",
+      "scope": "explicit two-phase state machine with durable scheduling outbox"
+    },
+    {
+      "engine": "pg-boss",
+      "test": "worker-kill-after-effect-before-ack",
+      "passed": true,
+      "effects": 10
+    },
+    {
+      "engine": "pg-boss",
+      "test": "new-v2",
+      "passed": true,
+      "effects": 10
+    }
+  ],
+  "notTested": [
+    "real 24-hour soak",
+    "incompatible native Temporal deployment pinning",
+    "real provider",
+    "full host loss",
+    "HA/PITR",
+    "production costs/scale"
+  ],
+  "decision": "No final production selection from this bounded run. Both viable; unchanged provisional Temporal default pending required workload and operational gates."
+}

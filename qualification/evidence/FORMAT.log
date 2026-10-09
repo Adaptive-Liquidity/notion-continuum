@@ -1,0 +1,15 @@
+src/authority-service.ts 123ms
+src/capability-renewal.ts 8ms (unchanged)
+src/capability.ts 10ms (unchanged)
+src/controller-client.ts 6ms (unchanged)
+src/controller-server.ts 11ms (unchanged)
+src/controller.ts 35ms
+src/db.ts 13ms (unchanged)
+src/identity-api.ts 7ms (unchanged)
+src/identity-provider.ts 8ms (unchanged)
+src/memory.ts 2ms (unchanged)
+src/production-capability.ts 11ms
+src/provider-adapter.ts 6ms (unchanged)
+src/providers/github-readonly.ts 15ms
+tests/production-identity.test.ts 44ms
+tests/real-provider.test.ts 19ms

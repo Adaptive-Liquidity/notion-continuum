@@ -1,0 +1,22 @@
+✔ M3 exact approved action commits once across concurrent duplicates (334.451026ms)
+✔ M3 missing/mismatched approval is denied with zero effects (28.77443ms)
+✔ M3 stale grant, epoch, generation, deadline, scope and cost deny (54.780824ms)
+✔ M3 revocation between reservation and final send denies (22.545264ms)
+✔ M3 expiry during final-send lock wait denies (regression) (251.87655ms)
+✔ M3 budget reservations serialize concurrent independent operations (24.801658ms)
+✔ M3 lost acknowledgement becomes UNKNOWN, never auto-resends, readback recovers (27.632195ms)
+✔ M3 kill whole controller at three boundaries; durable state prevents second sends (899.368598ms)
+✔ M3 duplicate idempotency key/immutable payload conflict never sends (6.645457ms)
+✔ M3 unknown with missing or mismatched provider evidence stays unknown (12.227779ms)
+✔ M3 restored/no-fence and wrong deployment fence fail closed (19.37961ms)
+✔ M3 isolated compromised agent cannot reach provider/DB/secrets or forge completion (115.532292ms)
+✔ M3 tenant memory stale/digest corruption never becomes accepted context (5.787454ms)
+✔ M3 evidence detects privileged tampering; valid chain not provider truth (3.310851ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1919.698538

@@ -1,0 +1,13 @@
+{
+  "scope": "local Linux process/UID/network namespace, not managed VM",
+  "checks": {
+    "uid": true,
+    "noCapabilities": true,
+    "credentialBlocked": true,
+    "peerBlocked": true,
+    "dbBlocked": true,
+    "networkEscapeBlocked": true
+  },
+  "pid": 16132,
+  "uid": 110001
+}

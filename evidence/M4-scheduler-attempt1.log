@@ -1,0 +1,7 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+[Error: Failed to start ephemeral server: failed to download ephemeral server executable: No such file or directory (os error 2): No such file or directory (os error 2)]
+
+Node.js v24.14.1

@@ -1,0 +1,171 @@
+{
+  "scope": "local/test-only; no live identity, VM, cloud DR or 24-hour gate passed",
+  "suites": [
+    {
+      "suite": "BASELINE-CONTROLLER",
+      "evidence": "implementation/evidence/final/BASELINE-CONTROLLER.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "BASELINE-FOUNDATION",
+      "evidence": "implementation/evidence/final/BASELINE-FOUNDATION.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "BASELINE-IDENTITY",
+      "evidence": "implementation/evidence/final/BASELINE-IDENTITY.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "BASELINE-LEGACY",
+      "evidence": "implementation/evidence/final/BASELINE-LEGACY.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 2,
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "BASELINE-RELEASE-LOCAL",
+      "evidence": "implementation/evidence/final/BASELINE-RELEASE-LOCAL.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "COMPUTER-ISOLATION",
+      "evidence": "implementation/evidence/final/COMPUTER-ISOLATION.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "CONTEXT-ARTIFACT",
+      "evidence": "implementation/evidence/final/CONTEXT-ARTIFACT.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "CONTROLLER-HTTPS",
+      "evidence": "implementation/evidence/final/CONTROLLER-HTTPS.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "EVIDENCE-RECOVERY",
+      "evidence": "implementation/evidence/final/EVIDENCE-RECOVERY.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "MIGRATION-PREPARATION",
+      "evidence": "implementation/evidence/final/MIGRATION-PREPARATION.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "OPERATOR-DESK",
+      "evidence": "implementation/evidence/final/OPERATOR-DESK.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "PRODUCT-BACKEND",
+      "evidence": "implementation/evidence/final/PRODUCT-BACKEND.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 12,
+      "pass": 12,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "REFERENCE-SCHEDULER",
+      "evidence": "implementation/evidence/final/REFERENCE-SCHEDULER.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "SECURITY-RESOURCE",
+      "evidence": "implementation/evidence/final/SECURITY-RESOURCE.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "STAGING-PREPARATION",
+      "evidence": "implementation/evidence/final/STAGING-PREPARATION.tap",
+      "environment": "LOCAL_FIXTURE",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "nodeGroups": 121,
+  "passed": 121,
+  "failed": 0,
+  "skipped": 0,
+  "nativeDrCases": [
+    {
+      "case": "native physical base backup",
+      "status": "PASS"
+    },
+    {
+      "case": "streaming standby observes committed effect and revocation",
+      "status": "PASS"
+    },
+    {
+      "case": "primary immediate crash and standby promotion preserve revocation/no duplicate",
+      "status": "PASS"
+    },
+    {
+      "case": "WAL PITR restores deliberately old authority, but independent fence rejects stale deployment",
+      "status": "PASS"
+    },
+    {
+      "case": "read-only gap reconciliation and independent revocation journal prevent resend/resurrection",
+      "status": "PASS"
+    }
+  ],
+  "P1": "PARTIAL",
+  "liveIdentity": "NOT RUN",
+  "scheduler": "HELD",
+  "production": "BLOCKED",
+  "canary": "NO-GO"
+}

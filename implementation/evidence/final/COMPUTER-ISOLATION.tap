@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: Computer public-DNS policy blocks private, metadata, mapped IPv6 and mixed answers
+ok 1 - Computer public-DNS policy blocks private, metadata, mapped IPv6 and mixed answers
+  ---
+  duration_ms: 24.732725
+  type: 'test'
+  ...
+# Subtest: Computer URL policy refuses SSRF, alternate ports, credentials and host tricks
+ok 2 - Computer URL policy refuses SSRF, alternate ports, credentials and host tricks
+  ---
+  duration_ms: 0.497731
+  type: 'test'
+  ...
+# Subtest: Computer managed driver disabled by default; no credential access or network
+ok 3 - Computer managed driver disabled by default; no credential access or network
+  ---
+  duration_ms: 0.398921
+  type: 'test'
+  ...
+# Subtest: Computer official SDK emits only pinned, restricted, secret-free placement parameters
+ok 4 - Computer official SDK emits only pinned, restricted, secret-free placement parameters
+  ---
+  duration_ms: 17.482083
+  type: 'test'
+  ...
+# Subtest: Computer uncertain create has no SDK retry and no second service provisioning attempt
+ok 5 - Computer uncertain create has no SDK retry and no second service provisioning attempt
+  ---
+  duration_ms: 45.175238
+  type: 'test'
+  ...
+# Subtest: Computer managed lifecycle is owner-only and tenant-bound
+ok 6 - Computer managed lifecycle is owner-only and tenant-bound
+  ---
+  duration_ms: 78.94781
+  type: 'test'
+  ...
+# Subtest: Computer actual separate UID/network process cannot read credentials or tenant peer scratch
+ok 7 - Computer actual separate UID/network process cannot read credentials or tenant peer scratch
+  ---
+  duration_ms: 122.558753
+  type: 'test'
+  ...
+# Subtest: Computer destroyed scratch and process fence already-issued effect authority
+ok 8 - Computer destroyed scratch and process fence already-issued effect authority
+  ---
+  duration_ms: 219.618482
+  type: 'test'
+  ...
+# Subtest: Computer product role and agent cannot change generation or placement
+ok 9 - Computer product role and agent cannot change generation or placement
+  ---
+  duration_ms: 7.348535
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 742.119658

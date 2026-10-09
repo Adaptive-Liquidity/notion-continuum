@@ -1,0 +1,10 @@
+✔ Legacy PostgreSQL dispatch guard refuses before SQL and never mints a token (37.88123ms)
+✔ Legacy MCP no longer reports simulated dispatch success (5.745584ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 327.347075

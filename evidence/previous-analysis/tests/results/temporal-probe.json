@@ -1,0 +1,75 @@
+{
+  "scheduler": "Temporal local dev server",
+  "cases": [
+    {
+      "operation": "temporal-duplicate",
+      "scenario": "duplicate",
+      "state": "COMMITTED",
+      "callback_attempts": 3,
+      "provider_effects": 1,
+      "pass": true
+    },
+    {
+      "operation": "temporal-expired",
+      "scenario": "expired",
+      "state": "DENIED",
+      "callback_attempts": 1,
+      "provider_effects": 0,
+      "pass": true
+    },
+    {
+      "operation": "temporal-kill_after_provider",
+      "scenario": "kill_after_provider",
+      "state": "COMMITTED",
+      "callback_attempts": 2,
+      "provider_effects": 1,
+      "pass": true
+    },
+    {
+      "operation": "temporal-kill_after_record",
+      "scenario": "kill_after_record",
+      "state": "COMMITTED",
+      "callback_attempts": 2,
+      "provider_effects": 1,
+      "pass": true
+    },
+    {
+      "operation": "temporal-kill_before_provider",
+      "scenario": "kill_before_provider",
+      "state": "UNKNOWN",
+      "callback_attempts": 2,
+      "provider_effects": 0,
+      "pass": true
+    },
+    {
+      "operation": "temporal-normal",
+      "scenario": "normal",
+      "state": "COMMITTED",
+      "callback_attempts": 1,
+      "provider_effects": 1,
+      "pass": true
+    },
+    {
+      "operation": "temporal-revoked",
+      "scenario": "revoked",
+      "state": "DENIED",
+      "callback_attempts": 1,
+      "provider_effects": 0,
+      "pass": true
+    },
+    {
+      "operation": "temporal-stale_epoch",
+      "scenario": "stale_epoch",
+      "state": "DENIED",
+      "callback_attempts": 1,
+      "provider_effects": 0,
+      "pass": true
+    }
+  ],
+  "unsafe_direct_retry_control": {
+    "operation": "unsafe-temporal",
+    "provider_effects": 2,
+    "result": "Unsafe direct retry duplicated the local provider effect, as expected"
+  },
+  "scope": "Actual Temporal SDK retries and PostgreSQL; SIGKILL of boundary subprocess, LOCAL fake provider oracle; NOT real providers, service/host/regional failover or performance benchmark"
+}

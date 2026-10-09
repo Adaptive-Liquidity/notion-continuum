@@ -1,0 +1,11 @@
+{
+  "logicalComputer": "fixture-computer",
+  "oldGeneration": 1,
+  "newGeneration": 2,
+  "killedUid": 65534,
+  "scratchDestroyed": true,
+  "artifactDigestMatched": true,
+  "oldCapabilityDenied": true,
+  "newApprovedOperationCommitted": true,
+  "scope": "local process/scratch directory; not VM host or managed provider recovery"
+}

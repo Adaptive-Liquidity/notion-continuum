@@ -1,0 +1,17 @@
+✔ Computer public-DNS policy blocks private, metadata, mapped IPv6 and mixed answers (27.142901ms)
+✔ Computer URL policy refuses SSRF, alternate ports, credentials and host tricks (0.546206ms)
+✔ Computer managed driver disabled by default; no credential access or network (0.400707ms)
+✔ Computer official SDK emits only pinned, restricted, secret-free placement parameters (18.43343ms)
+✔ Computer uncertain create has no SDK retry and no second service provisioning attempt (46.761272ms)
+✔ Computer managed lifecycle is owner-only and tenant-bound (90.961182ms)
+✔ Computer actual separate UID/network process cannot read credentials or tenant peer scratch (116.522897ms)
+✔ Computer destroyed scratch and process fence already-issued effect authority (187.086944ms)
+✔ Computer product role and agent cannot change generation or placement (6.463562ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 740.896661

@@ -1,0 +1,1 @@
+{"uid":65534,"checks":{"provider_tcp_blocked":true,"database_tcp_blocked":true,"database_unix_blocked":true,"credential_file_blocked":true,"forged_capability_blocked":true,"request_injection_blocked":true,"scope_bypass_blocked":true,"scoped_request_works":true}}

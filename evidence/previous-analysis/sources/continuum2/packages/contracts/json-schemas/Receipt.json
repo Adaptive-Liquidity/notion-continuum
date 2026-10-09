@@ -1,0 +1,62 @@
+{
+  "$ref": "#/definitions/Receipt",
+  "definitions": {
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "v": {
+          "type": "number",
+          "const": 1
+        },
+        "receipt_id": {
+          "type": "string",
+          "pattern": "^rcp_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "tenant_id": {
+          "type": "string",
+          "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "operation_id": {
+          "type": "string",
+          "pattern": "^op_[0-9A-HJKMNP-TV-Z]{26}$"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "COMMITTED",
+            "FAILED",
+            "UNCERTAIN"
+          ]
+        },
+        "provider_request_id": {
+          "type": "string"
+        },
+        "provider_object_ref": {
+          "type": "string"
+        },
+        "observed_via": {
+          "type": "string",
+          "enum": [
+            "response",
+            "reconcile_readback"
+          ]
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "v",
+        "receipt_id",
+        "tenant_id",
+        "operation_id",
+        "outcome",
+        "observed_via",
+        "at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

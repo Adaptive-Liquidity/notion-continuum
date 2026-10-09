@@ -1,0 +1,10 @@
+test_cross_tenant_reference_not_rejected_by_original_fk (__main__.OriginalSQLTests.test_cross_tenant_reference_not_rejected_by_original_fk) ... ok
+test_normal_role_can_select_other_tenant_by_changing_guc (__main__.OriginalSQLTests.test_normal_role_can_select_other_tenant_by_changing_guc) ... ok
+test_original_revoke_parameter_number_is_invalid (__main__.OriginalSQLTests.test_original_revoke_parameter_number_is_invalid) ... ok
+test_original_set_local_placeholder_is_syntax_error (__main__.OriginalSQLTests.test_original_set_local_placeholder_is_syntax_error) ... ok
+test_owner_bypasses_unforced_rls (__main__.OriginalSQLTests.test_owner_bypasses_unforced_rls) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.057s
+
+OK

@@ -1,0 +1,77 @@
+python3 -m unittest -v proofs/continuum-persistence-slice/test_proof.py
+test_ac1_and_ac2_fail_when_evidence_pids_are_not_a_restart (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac1_and_ac2_fail_when_evidence_pids_are_not_a_restart) ... ok
+test_ac1_fails_when_only_computer_id_changes (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac1_fails_when_only_computer_id_changes) ... ok
+test_ac2_fails_when_only_vera_id_changes (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac2_fails_when_only_vera_id_changes) ... ok
+test_ac3_fails_when_only_state_value_changes (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac3_fails_when_only_state_value_changes) ... ok
+test_ac4_fails_when_denied_capability_differs (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac4_fails_when_denied_capability_differs) ... ok
+test_ac4_fails_when_only_final_grant_state_is_active (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac4_fails_when_only_final_grant_state_is_active) ... ok
+test_ac5_fails_when_mediator_is_modelish (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac5_fails_when_mediator_is_modelish) ... ok
+test_ac6_fails_when_only_sequence_has_a_gap (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac6_fails_when_only_sequence_has_a_gap) ... ok
+test_ac7_fails_when_only_vera_computer_binding_breaks (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac7_fails_when_only_vera_computer_binding_breaks) ... ok
+test_ac8_fails_when_claim_ceiling_is_unbounded (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac8_fails_when_claim_ceiling_is_unbounded) ... ok
+test_ac8_fails_when_host_migration_marked_proven (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac8_fails_when_host_migration_marked_proven) ... ok
+test_ac8_is_never_a_literal_true_in_source (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_ac8_is_never_a_literal_true_in_source) ... ok
+test_process_restart_preserves_principal_state_authority_and_evidence (proofs.continuum-persistence-slice.test_proof.ContinuumPersistenceSliceTest.test_process_restart_preserves_principal_state_authority_and_evidence) ... ok
+test_verifier_recomputes_acceptance_instead_of_trusting_artifact_flags (proofs.continuum-persistence-slice.test_proof.IndependentVerifierTest.test_verifier_recomputes_acceptance_instead_of_trusting_artifact_flags) ... ok
+test_verifier_rejects_independent_ac1_mutation (proofs.continuum-persistence-slice.test_proof.IndependentVerifierTest.test_verifier_rejects_independent_ac1_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 2.267s
+
+OK
+python3 proofs/continuum-persistence-slice/proof.py run --workdir proofs/continuum-persistence-slice/.run
+{
+  "artifact": "proofs/continuum-persistence-slice/.run/continuum-persistence-slice-2a.json",
+  "database": "proofs/continuum-persistence-slice/.run/continuum-persistence-slice.sqlite3",
+  "phase1": {
+    "computer_id": "continuum-computer-de9b8c63-9afa-4948-a515-6bd6442f794d",
+    "grant_id": "grant-1000f47b-9755-4258-a926-961bd1d1ff04",
+    "phase": "pre_restart",
+    "process_id": 642,
+    "vera_id": "vera-16a2c342-f785-41c8-85d3-584d5ca7e068"
+  },
+  "phase2": {
+    "artifact": "proofs/continuum-persistence-slice/.run/continuum-persistence-slice-2a.json",
+    "computer_id": "continuum-computer-de9b8c63-9afa-4948-a515-6bd6442f794d",
+    "effect_after_revocation": "DENIED",
+    "effect_before_revocation": "COMMITTED",
+    "effect_executed_after_restart": true,
+    "phase": "post_restart",
+    "process_id": 643,
+    "state_value": "continuum-state-survives-restart",
+    "vera_id": "vera-16a2c342-f785-41c8-85d3-584d5ca7e068"
+  },
+  "verification": {
+    "acceptance": {
+      "AC-1": true,
+      "AC-2": true,
+      "AC-3": true,
+      "AC-4": true,
+      "AC-5": true,
+      "AC-6": true,
+      "AC-7": true,
+      "AC-8": true
+    },
+    "evidence_events": 11,
+    "producer_acceptance_ignored": true,
+    "sequence_contiguous": true,
+    "valid": true
+  }
+}
+python3 proofs/continuum-persistence-slice/proof.py verify --artifact proofs/continuum-persistence-slice/.run/continuum-persistence-slice-2a.json
+{
+  "acceptance": {
+    "AC-1": true,
+    "AC-2": true,
+    "AC-3": true,
+    "AC-4": true,
+    "AC-5": true,
+    "AC-6": true,
+    "AC-7": true,
+    "AC-8": true
+  },
+  "evidence_events": 11,
+  "producer_acceptance_ignored": true,
+  "sequence_contiguous": true,
+  "valid": true
+}

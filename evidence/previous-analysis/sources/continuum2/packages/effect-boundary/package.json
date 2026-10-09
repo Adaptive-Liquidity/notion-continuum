@@ -1,0 +1,20 @@
+{
+  "name": "@continuum/effect-boundary",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts"
+  },
+  "dependencies": {
+    "@continuum/contracts": "workspace:*",
+    "@continuum/vera": "workspace:*",
+    "@continuum/regency": "workspace:*",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.3"
+  }
+}

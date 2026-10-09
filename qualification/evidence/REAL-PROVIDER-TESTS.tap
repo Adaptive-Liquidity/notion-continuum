@@ -1,0 +1,14 @@
+✔ Real GitHub safe read completes through domain controller and matching second endpoint (421.527629ms)
+✔ Real GitHub acknowledgement discarded after response => UNKNOWN, no resend, authoritative reconciliation (45.665789ms)
+✔ Real GitHub request with deliberately tiny timeout => UNKNOWN; independent read-back resolves (49.566647ms)
+✔ UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends again (50.28445ms)
+✔ Safe adapter refuses URL/resource/repository mutation and stale capability before provider send (4.555323ms)
+✔ Stale idempotency-key payload reuse denied by immutable domain; provider key expiration is not applicable to GET (9.187625ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 703.615522
