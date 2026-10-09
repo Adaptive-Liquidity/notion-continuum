@@ -3,6 +3,7 @@
 set -euo pipefail
 mkdir -p .artifacts/core .artifacts/implementation .artifacts/qualification .artifacts/canonical
 cd "$(dirname "$0")/.."
+source tools/local-fixture-env.sh
 if [ "${CT_RESET_LOCAL_FIXTURE:-}" != 'yes' ]; then echo 'Set CT_RESET_LOCAL_FIXTURE=yes to reset ct_test and ct_restore local fixtures.'; exit 2; fi
 mkdir -p .local/temporal-bin evidence
 export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest

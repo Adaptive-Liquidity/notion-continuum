@@ -2,6 +2,7 @@
 set -euo pipefail
 mkdir -p .artifacts/core .artifacts/implementation .artifacts/qualification .artifacts/canonical
 cd "$(dirname "$0")/.."
+source tools/local-fixture-env.sh
 [ "${CT_RESET_LOCAL_FIXTURE:-}" = yes ] || { echo 'Explicit local-fixture reset required'; exit 2; }
 export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest
 bash tools/local-db.sh

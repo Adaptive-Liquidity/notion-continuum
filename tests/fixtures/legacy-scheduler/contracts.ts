@@ -7,7 +7,7 @@ export interface Job {
   waitMs: number;
 }
 export interface Progress {
-  phase: "BEFORE_WAIT" | "WAITING" | "DONE" | "BLOCKED";
+  phase: 'BEFORE_WAIT' | 'WAITING' | 'DONE' | 'BLOCKED';
   schemaVersion: number;
   done: number[];
 }

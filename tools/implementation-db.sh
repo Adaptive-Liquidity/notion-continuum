@@ -2,6 +2,7 @@
 set -euo pipefail
 mkdir -p .artifacts/core .artifacts/implementation .artifacts/qualification .artifacts/canonical
 cd "$(dirname "$0")/.."
+source tools/local-fixture-env.sh
 export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest
 bash tools/local-db.sh
 actual=$(psql -d postgres -Atc 'SHOW data_directory')

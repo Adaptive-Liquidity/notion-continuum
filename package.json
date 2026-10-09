@@ -6,7 +6,6 @@
   "scripts": {
     "build": "tsc",
     "test": "bash tools/run-safe-implementation.sh",
-    "scheduler": "node dist/tests/scheduler-comparison.js",
     "release-check": "python3 tools/check-release.py --enforce",
     "qualification": "bash qualification/run-first-gates.sh",
     "qualification-check": "python3 qualification/check-gates.py --enforce",
@@ -18,7 +17,11 @@
     "build:console": "bash tools/web-node22.sh build",
     "typecheck:console": "bash tools/web-node22.sh typecheck",
     "test:console": "bash tools/web-node22.sh test",
-    "test:e2e:console": "node --test --test-concurrency=1 --test-reporter=tap dist/tests/console-browser.test.js"
+    "test:e2e:console": "node --test --test-concurrency=1 --test-reporter=tap dist/tests/console-browser.test.js",
+    "build:product": "node tools/build-product.mjs",
+    "scheduler:fixture": "node dist/tests/scheduler-comparison.js",
+    "format": "prettier --write \"{src,scheduler,web,tests,internal}/**/*.{ts,tsx,css}\"",
+    "format:check": "prettier --check \"{src,scheduler,web,tests,internal}/**/*.{ts,tsx,css}\""
   },
   "engines": {
     "node": ">=24 <25"
@@ -28,7 +31,6 @@
     "@runloop/api-client": "2.0.0",
     "@temporalio/activity": "1.24.0",
     "@temporalio/client": "1.24.0",
-    "@temporalio/testing": "1.24.0",
     "@temporalio/worker": "1.24.0",
     "@temporalio/workflow": "1.24.0",
     "ipaddr.js": "2.2.0",
@@ -43,7 +45,8 @@
     "playwright": "1.58.2",
     "prettier": "3.6.2",
     "typescript": "5.9.3",
-    "@axe-core/playwright": "4.13.0"
+    "@axe-core/playwright": "4.13.0",
+    "@temporalio/testing": "1.24.0"
   },
   "workspaces": [
     "web"

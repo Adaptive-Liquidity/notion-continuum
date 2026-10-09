@@ -1,3 +1,6 @@
+import os as _fixture_os
+if _fixture_os.environ.get('NODE_ENV') == 'production' or _fixture_os.environ.get('CT_RUNTIME_ENV') != 'local-test' or _fixture_os.environ.get('CT_ALLOW_LOCAL_FIXTURES') != 'yes' or any(_fixture_os.environ.get(k) for k in ['WORKOS_API_KEY','WORKOS_CLIENT_ID','WORKOS_COOKIE_PASSWORD','DATABASE_URL','CT_DATABASE_URL','CT_PRODUCTION_CONFIG','CT_STAGING_CONFIG']):
+    raise SystemExit('Explicit isolated local DR fixture profile required; staging/production denied')
 #!/usr/bin/env python3
 """Actual native PostgreSQL streaming/failover/WAL-PITR lab; NEVER accepts a remote endpoint."""
 from pathlib import Path

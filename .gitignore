@@ -22,3 +22,7 @@ web/playwright-report/
 .artifacts/
 web/.next-local-test/
 dist-product/
+
+!web/.env.example
+
+web/next-env.d.ts

@@ -2,9 +2,10 @@
 set -euo pipefail
 mkdir -p .artifacts/core .artifacts/implementation .artifacts/qualification .artifacts/canonical
 cd "$(dirname "$0")/.."
+source tools/local-fixture-env.sh
 [ "${CT_RESET_LOCAL_FIXTURE:-}" = yes ] && [ "${CT_RESET_CONSOLE_FIXTURE:-}" = yes ] || { echo 'Explicit CT_RESET_LOCAL_FIXTURE=yes and CT_RESET_CONSOLE_FIXTURE=yes required for owned disposable fixtures.';exit 2; }
 [ "$(node -p 'process.versions.node.split(".")[0]')" = 24 ] || { echo 'Run backend verification with Node 24; web wrapper uses separately installed Node 22.';exit 2; }
-export PATH="${CT_PG_BIN:-/data/toolchains/pg17/bin}:$PATH" NEXT_TELEMETRY_DISABLED=1
+export PATH="${CT_PG_BIN:+$CT_PG_BIN:}$PATH" NEXT_TELEMETRY_DISABLED=1
 export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest
 STAMP=$(date -u +%Y%m%dT%H%M%SZ)
 OUT=.artifacts/canonical/final
@@ -25,6 +26,7 @@ printf 'Testing new canonical domain contracts from a fresh database.\n'
 bash tools/setup-console-db.sh ct_console_test > "$OUT/backend/SETUP.log" 2>&1
 CT_DATABASE=ct_console_test node --test --test-concurrency=1 --test-reporter=tap dist/tests/console-domain.test.js > "$OUT/backend/CONSOLE-DOMAIN.tap" 2>&1
 node --test --test-concurrency=1 --test-reporter=tap dist/tests/console-semantics.test.js > "$OUT/backend/CONSOLE-SEMANTICS.tap" 2>&1
+CT_DATABASE=ct_console_test node --test --test-concurrency=1 --test-reporter=tap dist/tests/security-regressions.test.js > "$OUT/backend/SECURITY-REGRESSIONS.tap" 2>&1
 if [ "${CT_RUN_PUBLIC_READ_FIXTURE:-}" = yes ];then
  printf 'Verifying the existing fixed, unauthenticated GitHub public-read adapter; no provider mutation.\n'
  bash tools/setup-console-db.sh ct_provider_read_test > "$OUT/backend/PUBLIC-READ-SETUP.log" 2>&1
@@ -38,6 +40,10 @@ printf 'Checking and building the authenticated Focus Desk on Node 22.\n'
 bash tools/web-node22.sh typecheck > "$OUT/frontend/TYPECHECK.log" 2>&1
 bash tools/web-node22.sh test > "$OUT/frontend/UNIT-COMPONENT.log" 2>&1
 bash tools/web-node22.sh build > "$OUT/frontend/PRODUCTION-BUILD.log" 2>&1
+npm run build:product > "$OUT/backend/PRODUCT-BUILD.log" 2>&1
+CT_RUNTIME_ENV=local-test CT_ALLOW_LOCAL_FIXTURES=yes node --test --test-reporter=tap dist/tests/fixture-boundaries.test.js > "$OUT/backend/FIXTURE-BOUNDARIES.tap" 2>&1
+node --test --test-concurrency=1 --test-reporter=tap dist/tests/product-build-isolation.test.js > "$OUT/backend/PRODUCT-ISOLATION.tap" 2>&1
+bash tools/web-node22.sh build:local-test > "$OUT/frontend/LOCAL-TEST-BUILD.log" 2>&1
 printf 'Exercising the optimized frontend, backend and 10,000-task fixtures in Chromium.\n'
 bash tools/setup-console-db.sh ct_console_browser > "$OUT/backend/BROWSER-SETUP.log" 2>&1
 if [ -d .artifacts/canonical/browser ];then cp -a .artifacts/canonical/browser ".artifacts/canonical/attempts/browser-$STAMP";fi
