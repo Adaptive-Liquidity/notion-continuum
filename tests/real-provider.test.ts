@@ -1,20 +1,20 @@
-import { test, before, after } from "node:test";
-import assert from "node:assert/strict";
-import fs from "node:fs";
-import { generateKeyPair, exportJWK } from "jose";
-import { admin, gov, bootstrap, fence, state } from "./helpers.js";
-import { pool, tx, bindingDigest, eventOutbox } from "../src/db.js";
+import { test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { generateKeyPair, exportJWK } from 'jose';
+import { admin, gov, bootstrap, fence, state } from './helpers.js';
+import { pool, tx, bindingDigest, eventOutbox } from '../src/db.js';
 import {
   CapabilitySigner,
   PublicCapabilityVerifier,
-} from "../src/production-capability.js";
-import { EffectController } from "../src/controller.js";
+} from '../src/production-capability.js';
+import { EffectController } from '../src/controller.js';
 import {
   GitHubReadOnlyAdapter,
   safeRepository,
-} from "../src/providers/github-readonly.js";
-import type { ProviderAdapter } from "../src/provider-adapter.js";
-const db = pool("ct_controller");
+} from '../src/providers/github-readonly.js';
+import type { ProviderAdapter } from '../src/provider-adapter.js';
+const db = pool('ct_controller');
 let signer: CapabilitySigner, verifier: PublicCapabilityVerifier;
 const observations: Array<unknown> = [];
 async function readOp(id: string, opts: Record<string, any> = {}) {
@@ -27,21 +27,21 @@ async function readOp(id: string, opts: Record<string, any> = {}) {
     const resource = `repo:${safeRepository.owner}/${safeRepository.repo}@${safeRepository.commit}`;
     await c.query(
       "INSERT INTO ct.grants(tenant,id,principal,action,resource,expires,max_cost,budget,approval_required) VALUES('a',$1,'agent','readCommit',$2,now()+interval '1 hour',0,0,true)",
-      ["g-" + id, resource],
+      ['g-' + id, resource],
     );
     const o = {
-      tenant: "a",
+      tenant: 'a',
       id,
-      principal: "agent",
-      grant_id: "g-" + id,
+      principal: 'agent',
+      grant_id: 'g-' + id,
       epoch: p.epoch,
       generation: p.generation,
       fence,
       grant_version: 1,
-      task_id: "task-" + id,
+      task_id: 'task-' + id,
       plan_version: 1,
-      provider: "github-public-readonly",
-      action: "readCommit",
+      provider: 'github-public-readonly',
+      action: 'readCommit',
       resource,
       params: { ...safeRepository },
       idempotency_key: id,
@@ -50,7 +50,7 @@ async function readOp(id: string, opts: Record<string, any> = {}) {
     };
     const digest = bindingDigest(o);
     await c.query(
-      "INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)",
+      'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)',
       [
         o.tenant,
         o.id,
@@ -76,7 +76,7 @@ async function readOp(id: string, opts: Record<string, any> = {}) {
       "INSERT INTO ct.approvals(tenant,operation,digest,grant_version,approved_by,expires) VALUES('a',$1,$2,1,'test-owner',now()+interval '1 hour')",
       [id, digest],
     );
-    await eventOutbox(c, o, "OPERATION_CREATED", { id, digest });
+    await eventOutbox(c, o, 'OPERATION_CREATED', { id, digest });
     return { ...o, digest };
   });
 }
@@ -85,14 +85,14 @@ async function actor(o: Record<string, any>) {
     await signer.sign(
       {
         deploymentFence: fence,
-        tenant: "a",
-        principal: "agent",
+        tenant: 'a',
+        principal: 'agent',
         epoch: o.epoch,
         generation: o.generation,
         operations: [o.id],
         expires: Date.now() + 60000,
       },
-      "provider-machine",
+      'provider-machine',
     ),
   );
 }
@@ -101,33 +101,33 @@ before(async () => {
   await gov.query(
     "INSERT INTO ct.identities(id,issuer,subject,audience,kind,tenant,principal,domain_role) VALUES('provider-machine','https://provider-test.invalid','fixture','urn:provider-test','machine','a','agent','worker')",
   );
-  const kp = await generateKeyPair("EdDSA");
+  const kp = await generateKeyPair('EdDSA');
   signer = new CapabilitySigner(
     kp.privateKey,
-    "provider-test",
-    "https://cap.qualification.invalid",
+    'provider-test',
+    'https://cap.qualification.invalid',
   );
   verifier = new PublicCapabilityVerifier(
     {
       keys: [
         {
           ...(await exportJWK(kp.publicKey)),
-          alg: "EdDSA",
-          use: "sig",
-          kid: "provider-test",
+          alg: 'EdDSA',
+          use: 'sig',
+          kid: 'provider-test',
         },
       ],
     },
-    "https://cap.qualification.invalid",
+    'https://cap.qualification.invalid',
   );
 });
 after(async () => {
   fs.writeFileSync(
-    ".artifacts/qualification/REAL-PROVIDER-REQUESTS.json",
+    '.artifacts/qualification/REAL-PROVIDER-REQUESTS.json',
     JSON.stringify(
       {
         action:
-          "Public immutable commit read only; no provider mutation/idempotency window",
+          'Public immutable commit read only; no provider mutation/idempotency window',
         observations,
       },
       null,
@@ -136,19 +136,19 @@ after(async () => {
   );
   await Promise.all([db, admin, gov].map((p) => p.end()));
 });
-test("Real GitHub safe read completes through domain controller and matching second endpoint", async () => {
-  const o = await readOp("pq-real-success");
+test('Real GitHub safe read completes through domain controller and matching second endpoint', async () => {
+  const o = await readOp('pq-real-success');
   const adapter = new GitHubReadOnlyAdapter();
   const c = new EffectController(db, adapter, fence);
-  assert.equal((await c.dispatch(await actor(o), o.id)).state, "COMMITTED");
+  assert.equal((await c.dispatch(await actor(o), o.id)).state, 'COMMITTED');
   assert.equal(adapter.evidence.length, 2);
   assert.ok(
-    adapter.evidence.every((e) => e.status === 200 && e.method === "GET"),
+    adapter.evidence.every((e) => e.status === 200 && e.method === 'GET'),
   );
-  observations.push({ case: "success", requests: adapter.evidence });
+  observations.push({ case: 'success', requests: adapter.evidence });
 });
-test("Real GitHub acknowledgement discarded after response => UNKNOWN, no resend, authoritative reconciliation", async () => {
-  const o = await readOp("pq-real-lost-ack");
+test('Real GitHub acknowledgement discarded after response => UNKNOWN, no resend, authoritative reconciliation', async () => {
+  const o = await readOp('pq-real-lost-ack');
   const real = new GitHubReadOnlyAdapter();
   let sends = 0;
   const wrapped: ProviderAdapter = {
@@ -157,25 +157,25 @@ test("Real GitHub acknowledgement discarded after response => UNKNOWN, no resend
     send: async (x) => {
       sends++;
       await real.send(x);
-      throw Error("test-only discard after real provider response");
+      throw Error('test-only discard after real provider response');
     },
     lookup: (x) => real.lookup(x),
   };
   const c = new EffectController(db, wrapped, fence);
   const a = await actor(o);
-  assert.equal((await c.dispatch(a, o.id)).state, "UNKNOWN");
+  assert.equal((await c.dispatch(a, o.id)).state, 'UNKNOWN');
   await c.dispatch(a, o.id);
   await c.dispatch(a, o.id);
   assert.equal(sends, 1);
-  assert.equal((await c.reconcile(a, o.id)).state, "COMMITTED");
+  assert.equal((await c.reconcile(a, o.id)).state, 'COMMITTED');
   observations.push({
-    case: "client-discarded-ack",
+    case: 'client-discarded-ack',
     sends,
     requests: real.evidence,
   });
 });
-test("Real GitHub request with deliberately tiny timeout => UNKNOWN; independent read-back resolves", async () => {
-  const o = await readOp("pq-real-timeout");
+test('Real GitHub request with deliberately tiny timeout => UNKNOWN; independent read-back resolves', async () => {
+  const o = await readOp('pq-real-timeout');
   const timeout = new GitHubReadOnlyAdapter(1),
     readback = new GitHubReadOnlyAdapter();
   let sends = 0;
@@ -190,21 +190,21 @@ test("Real GitHub request with deliberately tiny timeout => UNKNOWN; independent
   };
   const c = new EffectController(db, wrapped, fence);
   const a = await actor(o);
-  assert.equal((await c.dispatch(a, o.id)).state, "UNKNOWN");
-  assert.equal((await c.dispatch(a, o.id)).state, "UNKNOWN");
+  assert.equal((await c.dispatch(a, o.id)).state, 'UNKNOWN');
+  assert.equal((await c.dispatch(a, o.id)).state, 'UNKNOWN');
   assert.equal(sends, 1);
-  assert.equal((await c.reconcile(a, o.id)).state, "COMMITTED");
+  assert.equal((await c.reconcile(a, o.id)).state, 'COMMITTED');
   observations.push({
-    case: "client-timeout",
+    case: 'client-timeout',
     sends,
     requests: timeout.evidence,
     readback: readback.evidence,
     limit:
-      "No claim the timed-out first request reached GitHub; immutable read contract allows fresh verification.",
+      'No claim the timed-out first request reached GitHub; immutable read contract allows fresh verification.',
   });
 });
-test("UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends again", async () => {
-  const o = await readOp("pq-real-unverified");
+test('UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends again', async () => {
+  const o = await readOp('pq-real-unverified');
   const real = new GitHubReadOnlyAdapter();
   let sends = 0;
   let allowed = false;
@@ -216,35 +216,35 @@ test("UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends 
       await real.send(x);
     },
     lookup: async (x) => {
-      if (!allowed) throw Error("test-only unavailable verifier");
+      if (!allowed) throw Error('test-only unavailable verifier');
       return real.lookup(x);
     },
   };
   const c = new EffectController(db, wrapped, fence),
     a = await actor(o);
-  assert.equal((await c.dispatch(a, o.id)).state, "UNKNOWN");
-  assert.equal((await c.reconcile(a, o.id)).state, "UNKNOWN");
+  assert.equal((await c.dispatch(a, o.id)).state, 'UNKNOWN');
+  assert.equal((await c.reconcile(a, o.id)).state, 'UNKNOWN');
   await c.dispatch(a, o.id);
   assert.equal(sends, 1);
   allowed = true;
-  assert.equal((await c.reconcile(a, o.id)).state, "COMMITTED");
+  assert.equal((await c.reconcile(a, o.id)).state, 'COMMITTED');
   observations.push({
-    case: "real-read-then-injected-readback-outage",
+    case: 'real-read-then-injected-readback-outage',
     sends,
     requests: real.evidence,
   });
 });
-test("Safe adapter refuses URL/resource/repository mutation and stale capability before provider send", async () => {
+test('Safe adapter refuses URL/resource/repository mutation and stale capability before provider send', async () => {
   const adapter = new GitHubReadOnlyAdapter();
-  const o = await readOp("pq-real-stale-cap");
+  const o = await readOp('pq-real-stale-cap');
   assert.equal(
     adapter.supports({
       ...o,
-      params: { ...o.params, url: "http://169.254.169.254" },
+      params: { ...o.params, url: 'http://169.254.169.254' },
     }),
     false,
   );
-  assert.equal(adapter.supports({ ...o, action: "delete" }), false);
+  assert.equal(adapter.supports({ ...o, action: 'delete' }), false);
   await assert.rejects(
     new EffectController(db, adapter, fence).dispatch(
       { ...(await actor(o)), expires: 0 },
@@ -253,23 +253,23 @@ test("Safe adapter refuses URL/resource/repository mutation and stale capability
   );
   assert.equal(adapter.evidence.length, 0);
   observations.push({
-    case: "stale-capability-and-input-refusal",
+    case: 'stale-capability-and-input-refusal',
     requests: 0,
   });
 });
-test("Stale idempotency-key payload reuse denied by immutable domain; provider key expiration is not applicable to GET", async () => {
-  const o = await readOp("pq-real-key-binding");
+test('Stale idempotency-key payload reuse denied by immutable domain; provider key expiration is not applicable to GET', async () => {
+  const o = await readOp('pq-real-key-binding');
   await assert.rejects(
     admin.query(
-      "UPDATE ct.operations SET params=$2,version=version+1 WHERE id=$1",
-      [o.id, { ...safeRepository, commit: "0".repeat(40) }],
+      'UPDATE ct.operations SET params=$2,version=version+1 WHERE id=$1',
+      [o.id, { ...safeRepository, commit: '0'.repeat(40) }],
     ),
     /immutable/,
   );
   observations.push({
-    case: "idempotency-binding",
+    case: 'idempotency-binding',
     bindingRejected: true,
     providerWindow:
-      "NOT APPLICABLE: read-only GET never uses a provider mutation key; write-provider stale-key gate NOT RUN",
+      'NOT APPLICABLE: read-only GET never uses a provider mutation key; write-provider stale-key gate NOT RUN',
   });
 });

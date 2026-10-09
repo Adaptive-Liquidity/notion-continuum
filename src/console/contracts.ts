@@ -1,25 +1,193 @@
-export const PUBLIC_GITHUB_PROVIDER='github-public-readonly';
-export const PUBLIC_GITHUB_RESOURCE='repo:Adaptive-Liquidity/Continuum@9ac4723b5390d22ed2d6aed9cf984cb0a32731ca';
-import {z} from 'zod';
-export const Identifier=z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/);
-export const Availability=z.enum(['available','not_configured','requires_setup','temporarily_unavailable','qualification_pending','unsupported']);
-export const FeatureSchema=z.object({state:Availability,reason:z.string(),scope:z.enum(['LOCAL_FIXTURE','STAGING','HISTORICAL','NONE']),next_action:z.string().optional()}).strict();
-export const OperationStateSchema=z.enum(['REQUESTED','RESERVED','SENDING','COMMITTED','UNKNOWN','DENIED','FAILED_KNOWN_NO_EFFECT']);
-const OperationFieldsSchema=z.object({operation:Identifier,effectState:OperationStateSchema,digest:z.string().regex(/^[a-f0-9]{64}$/),principal:Identifier,action:z.string().min(1),resource:z.string().min(1),parameters:z.unknown().refine(v=>v!==undefined),canonicalBinding:z.record(z.unknown()),grant:Identifier,grantVersion:z.number().int().positive(),principalEpoch:z.number().int().positive(),placementGeneration:z.number().int().positive(),deadline:z.string(),verificationMethod:z.string(),approvalRevision:z.number().int().nonnegative()}).passthrough();
-export const ItemSchema=z.object({id:z.string(),kind:z.string(),title:z.string(),version:z.number().int().nonnegative(),status:z.string(),subtitle:z.string().optional(),fields:z.record(z.unknown()),eligibility:z.object({allowed:z.boolean(),reason:z.string()}).optional()}).strict().superRefine((item,ctx)=>{if(item.kind==='operation'&&!OperationFieldsSchema.safeParse(item.fields).success)ctx.addIssue({code:z.ZodIssueCode.custom,message:'Unknown or incomplete operation contract'});});
-export const EnvelopeSchema=z.object({schema_version:z.literal(1),server_time:z.string(),observed_at:z.string(),fresh_until:z.string(),projection_version:z.number().int().nonnegative(),source_revision:z.string(),completeness:z.enum(['complete','partial']),cursor:z.string().nullable(),total:z.number().int().nonnegative().nullable(),items:z.array(ItemSchema),features:z.record(FeatureSchema),scope:z.enum(['LOCAL_FIXTURE','STAGING','HISTORICAL']),session:z.object({identity:z.string(),tenant:z.string(),principal:z.string().nullable(),expires:z.number(),fresh_mfa:z.boolean()}).optional()}).strict();
-export type ReadEnvelope=z.infer<typeof EnvelopeSchema>;export type ConsoleItem=z.infer<typeof ItemSchema>;
-export const CommandSchema=z.object({schema_version:z.literal(1),idempotency_key:Identifier,kind:z.enum(['create_task','approve','create_grant','revoke_grant','assign','ack_incident','mark_notification_read','export_evidence']),target:Identifier,expected_version:z.number().int().nonnegative(),input:z.record(z.unknown())}).strict();
-export type HumanCommand=z.infer<typeof CommandSchema>;
-export const CommandInputs={
- create_task:z.object({principal:Identifier,objective:z.string().min(1).max(8000),deadline:z.string().datetime()}).strict(),
- approve:z.object({digest:z.string().regex(/^[a-f0-9]{64}$/),expires:z.string().datetime(),approvalRevision:z.number().int().safe().nonnegative()}).strict(),
- create_grant:z.object({principal:Identifier,action:z.enum(['write','readCommit']),resource:z.string().min(1).max(1024),expires:z.string().datetime(),maxCost:z.number().int().safe().nonnegative(),budget:z.number().int().safe().nonnegative()}).strict(),
- revoke_grant:z.object({}).strict(),assign:z.object({identity:Identifier,expires:z.string().datetime()}).strict(),
- ack_incident:z.object({}).strict(),mark_notification_read:z.object({}).strict(),
- export_evidence:z.object({sequences:z.array(z.number().int().positive()).min(1).max(60),snapshot:z.number().int().nonnegative()}).strict()
+export const PUBLIC_GITHUB_PROVIDER = 'github-public-readonly';
+export const PUBLIC_GITHUB_RESOURCE =
+  'repo:Adaptive-Liquidity/Continuum@9ac4723b5390d22ed2d6aed9cf984cb0a32731ca';
+import { z } from 'zod';
+export const Identifier = z
+  .string()
+  .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/);
+export const Availability = z.enum([
+  'available',
+  'not_configured',
+  'requires_setup',
+  'temporarily_unavailable',
+  'qualification_pending',
+  'unsupported',
+]);
+export const FeatureSchema = z
+  .object({
+    state: Availability,
+    reason: z.string(),
+    scope: z.enum(['LOCAL_FIXTURE', 'STAGING', 'HISTORICAL', 'NONE']),
+    next_action: z.string().optional(),
+  })
+  .strict();
+export const OperationStateSchema = z.enum([
+  'REQUESTED',
+  'RESERVED',
+  'SENDING',
+  'COMMITTED',
+  'UNKNOWN',
+  'DENIED',
+  'FAILED_KNOWN_NO_EFFECT',
+]);
+const OperationFieldsSchema = z
+  .object({
+    operation: Identifier,
+    effectState: OperationStateSchema,
+    digest: z.string().regex(/^[a-f0-9]{64}$/),
+    principal: Identifier,
+    action: z.string().min(1),
+    resource: z.string().min(1),
+    parameters: z.unknown().refine((v) => v !== undefined),
+    canonicalBinding: z.record(z.unknown()),
+    grant: Identifier,
+    grantVersion: z.number().int().positive(),
+    principalEpoch: z.number().int().positive(),
+    placementGeneration: z.number().int().positive(),
+    deadline: z.string(),
+    verificationMethod: z.string(),
+    approvalRevision: z.number().int().nonnegative(),
+  })
+  .passthrough();
+export const ItemSchema = z
+  .object({
+    id: z.string(),
+    kind: z.string(),
+    title: z.string(),
+    version: z.number().int().nonnegative(),
+    status: z.string(),
+    subtitle: z.string().optional(),
+    fields: z.record(z.unknown()),
+    eligibility: z
+      .object({ allowed: z.boolean(), reason: z.string() })
+      .optional(),
+  })
+  .strict()
+  .superRefine((item, ctx) => {
+    if (
+      item.kind === 'operation' &&
+      !OperationFieldsSchema.safeParse(item.fields).success
+    )
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Unknown or incomplete operation contract',
+      });
+  });
+export const EnvelopeSchema = z
+  .object({
+    schema_version: z.literal(1),
+    server_time: z.string(),
+    observed_at: z.string(),
+    fresh_until: z.string(),
+    projection_version: z.number().int().nonnegative(),
+    source_revision: z.string(),
+    completeness: z.enum(['complete', 'partial']),
+    cursor: z.string().nullable(),
+    total: z.number().int().nonnegative().nullable(),
+    items: z.array(ItemSchema),
+    features: z.record(FeatureSchema),
+    scope: z.enum(['LOCAL_FIXTURE', 'STAGING', 'HISTORICAL']),
+    session: z
+      .object({
+        identity: z.string(),
+        tenant: z.string(),
+        principal: z.string().nullable(),
+        expires: z.number(),
+        fresh_mfa: z.boolean(),
+      })
+      .optional(),
+  })
+  .strict();
+export type ReadEnvelope = z.infer<typeof EnvelopeSchema>;
+export type ConsoleItem = z.infer<typeof ItemSchema>;
+export const CommandSchema = z
+  .object({
+    schema_version: z.literal(1),
+    idempotency_key: Identifier,
+    kind: z.enum([
+      'create_task',
+      'approve',
+      'create_grant',
+      'revoke_grant',
+      'assign',
+      'ack_incident',
+      'mark_notification_read',
+      'export_evidence',
+    ]),
+    target: Identifier,
+    expected_version: z.number().int().nonnegative(),
+    input: z.record(z.unknown()),
+  })
+  .strict();
+export type HumanCommand = z.infer<typeof CommandSchema>;
+export const CommandInputs = {
+  create_task: z
+    .object({
+      principal: Identifier,
+      objective: z.string().min(1).max(8000),
+      deadline: z.string().datetime(),
+    })
+    .strict(),
+  approve: z
+    .object({
+      digest: z.string().regex(/^[a-f0-9]{64}$/),
+      expires: z.string().datetime(),
+      approvalRevision: z.number().int().safe().nonnegative(),
+    })
+    .strict(),
+  create_grant: z
+    .object({
+      principal: Identifier,
+      action: z.enum(['write', 'readCommit']),
+      resource: z.string().min(1).max(1024),
+      expires: z.string().datetime(),
+      maxCost: z.number().int().safe().nonnegative(),
+      budget: z.number().int().safe().nonnegative(),
+    })
+    .strict(),
+  revoke_grant: z.object({}).strict(),
+  assign: z
+    .object({ identity: Identifier, expires: z.string().datetime() })
+    .strict(),
+  ack_incident: z.object({}).strict(),
+  mark_notification_read: z.object({}).strict(),
+  export_evidence: z
+    .object({
+      sequences: z.array(z.number().int().positive()).min(1).max(60),
+      snapshot: z.number().int().nonnegative(),
+    })
+    .strict(),
 };
-export const SECTIONS=['work','projects','agents','computers','approvals','authority','context','evidence','recovery','integrations','incidents','notifications','usage','security','settings','setup'] as const;
+export const SECTIONS = [
+  'work',
+  'projects',
+  'agents',
+  'computers',
+  'approvals',
+  'authority',
+  'context',
+  'evidence',
+  'recovery',
+  'integrations',
+  'incidents',
+  'notifications',
+  'usage',
+  'security',
+  'settings',
+  'setup',
+] as const;
 
-export const CommandReceiptSchema=z.object({schema_version:z.literal(1),command_id:z.string().uuid(),idempotency_key:Identifier,status:z.enum(['PENDING','APPLIED','DENIED']),result_ref:z.string().uuid(),result:z.unknown(),error_code:z.string().nullable(),reused:z.boolean(),external_effect:z.literal(false)}).strict();
-export type CommandReceipt=z.infer<typeof CommandReceiptSchema>;
+export const CommandReceiptSchema = z
+  .object({
+    schema_version: z.literal(1),
+    command_id: z.string().uuid(),
+    idempotency_key: Identifier,
+    status: z.enum(['PENDING', 'APPLIED', 'DENIED']),
+    result_ref: z.string().uuid(),
+    result: z.unknown(),
+    error_code: z.string().nullable(),
+    reused: z.boolean(),
+    external_effect: z.literal(false),
+  })
+  .strict();
+export type CommandReceipt = z.infer<typeof CommandReceiptSchema>;
