@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: Legacy PostgreSQL dispatch guard refuses before SQL and never mints a token
+ok 1 - Legacy PostgreSQL dispatch guard refuses before SQL and never mints a token
+  ---
+  duration_ms: 36.792686
+  type: 'test'
+  ...
+# Subtest: Legacy MCP no longer reports simulated dispatch success
+ok 2 - Legacy MCP no longer reports simulated dispatch success
+  ---
+  duration_ms: 5.764971
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 324.615859

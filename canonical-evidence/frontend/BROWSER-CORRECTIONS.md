@@ -1,0 +1,8 @@
+
+Second run: 16/18 passed. The two failures were test synchronization defects: reconnect automatically revalidated and removed the stale-only refresh button; mobile assertions ran before Next navigation settled. Tests now await the actual online snapshot and list/detail route transitions without disabling any check. Added independent assignment and lost-command-response coverage. Inspection also hardened unknown-schema command receipts, stale read errors, and session-expiry cache clearing. No live gate changed.
+
+Third attempt completed typecheck, 12 unit/component tests and optimized production build. Browser setup was NOT RUN: the wrapper used the legacy reset variable instead of CT_RESET_CONSOLE_FIXTURE. The guarded setup correctly refused. The canonical runner now supplies both explicit, distinct fixture-reset flags. This is a harness/configuration failure, not a passed browser run.
+
+Strict operation-schema hardening exposed a PostgreSQL Date object in the in-process read projection. The operation deadline now serializes explicitly as the existing ISO timestamp before shared schema validation. No deadline/authority content changed. The failed domain run is retained; final baseline/domain/frontend/browser suites must rerun from fresh fixtures.
+
+Final source review found a guessed GitHub provider alias/unpinned grant selector in the new projections. Corrected them to the actual imported adapter and pinned resource; added exact-scope truth tests, exhaustive 15-state Computer preservation, and the bounded-grant browser flow. The canonical runner now supports an explicitly enabled non-mutating public-read fixture. The overlapping intermediate run cannot certify the changed source fingerprint; final fresh verification remains required.

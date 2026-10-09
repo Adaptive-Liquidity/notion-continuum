@@ -1,0 +1,12 @@
+{
+  "repository": "Adaptive-Liquidity/notion-continuum",
+  "startingMain": "f22cf76b83195c84c51fd8cf5d071674a02adb96",
+  "directGit": "NOT AVAILABLE — no usable noninteractive authentication",
+  "connectedGitHubRead": "PASS — main commit verified",
+  "connectedGitHubCreateBranch": "FAIL — HTTP 403 Resource not accessible by personal access token",
+  "remoteBranchCreated": false,
+  "draftPullRequestCreated": false,
+  "mainChanged": false,
+  "credentialsRequestedOrRetrieved": false,
+  "delivery": "Local feature branch, commits, source/evidence handoff and Git bundle; owner may publish through their authorized Git connection"
+}

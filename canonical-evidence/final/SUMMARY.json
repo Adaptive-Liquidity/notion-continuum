@@ -1,0 +1,138 @@
+{
+  "scope": "LOCAL_FIXTURE only \u2014 not production-ready or a live gate pass",
+  "verifiedAt": "2026-10-09T04:38:38.688270+00:00",
+  "gitHeadAtVerification": "c00292830e83c933f2471e4d2c4cb6cb0c652784",
+  "testedSource": {
+    "files": 153,
+    "scope": "Implemented source and verification harness; generated evidence/docs excluded",
+    "sourceDigest": "371726e5c6c0f60c25202f13d8a2978e577dff4fdb6b5c1361c879c2692b5572"
+  },
+  "importedBaseline": {
+    "nodeGroups": 121,
+    "passed": 121,
+    "failed": 0,
+    "skipped": 0,
+    "nativeDrCases": [
+      {
+        "case": "native physical base backup",
+        "status": "PASS"
+      },
+      {
+        "case": "streaming standby observes committed effect and revocation",
+        "status": "PASS"
+      },
+      {
+        "case": "primary immediate crash and standby promotion preserve revocation/no duplicate",
+        "status": "PASS"
+      },
+      {
+        "case": "WAL PITR restores deliberately old authority, but independent fence rejects stale deployment",
+        "status": "PASS"
+      },
+      {
+        "case": "read-only gap reconciliation and independent revocation journal prevent resend/resurrection",
+        "status": "PASS"
+      }
+    ],
+    "legacyPythonEntries": 2
+  },
+  "newBackend": [
+    {
+      "path": "canonical-evidence/final/backend/CONSOLE-DOMAIN.tap",
+      "scope": "LOCAL_FIXTURE",
+      "tests": 23,
+      "pass": 23,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "path": "canonical-evidence/final/backend/CONSOLE-SEMANTICS.tap",
+      "scope": "LOCAL_FIXTURE",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    {
+      "path": "canonical-evidence/final/backend/REAL-PUBLIC-READ.tap",
+      "scope": "PUBLIC_IMMUTABLE_READ \u2014 no protected mutation or live identity",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    }
+  ],
+  "totalBackendGroups": 155,
+  "frontend": {
+    "unitComponentTests": 15,
+    "unitComponentPassed": 15,
+    "typecheck": "PASS",
+    "optimizedBuild": "PASS"
+  },
+  "browser": {
+    "path": "canonical-evidence/final/frontend/BROWSER.tap",
+    "scope": "LOCAL_FIXTURE",
+    "tests": 22,
+    "pass": 22,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "performance": [
+    {
+      "dataset": 10000,
+      "scope": "LOCAL_FIXTURE",
+      "metric": "authenticated BFF + domain page read",
+      "samplesMs": [
+        25.194688000003225,
+        16.65588000000571,
+        17.26886199999717,
+        13.899559999998019,
+        17.66701099999773,
+        23.092913000000408,
+        18.370382000000973,
+        22.148925000001327,
+        19.377228000004834,
+        15.100768999996944,
+        13.002872000004572,
+        12.557864000002155
+      ],
+      "p95Ms": 25.194688000003225,
+      "targetMs": 1500,
+      "domRows": 60,
+      "pollingMs": 10000
+    }
+  ],
+  "accessibility": {
+    "axeWorkViolations": 0,
+    "axeApprovalViolations": 0,
+    "nativeScreenReader": "NOT RUN",
+    "nativeBrowserZoom": "NOT RUN \u2014 200% text and 320-CSS-px equivalent reflow tested"
+  },
+  "productionDependencyAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "liveGates": {
+    "P1": "PARTIAL",
+    "P2": "PARTIAL",
+    "P3": "NOT RUN",
+    "P4": "NOT RUN",
+    "P5": "NOT RUN"
+  },
+  "scheduler": "HELD",
+  "production": "BLOCKED",
+  "canary": "NO-GO",
+  "independentSecurityReview": "NOT RUN",
+  "enforcementExit": {
+    "qualification": 1,
+    "release": 1
+  }
+}

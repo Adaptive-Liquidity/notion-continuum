@@ -1,0 +1,14 @@
+
+> @asentxia/continuum-console@0.4.0 typecheck
+> tsc --noEmit
+
+vitest.config.ts(1,218): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'jsx' does not exist in type 'ESBuildOptions'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /data/notion-continuum-build-ADL6E0/web
+npm error workspace @asentxia/continuum-console@0.4.0
+npm error location /data/notion-continuum-build-ADL6E0/web
+npm error command failed
+npm error command sh -c tsc --noEmit

@@ -1,0 +1,14 @@
+
+> asentxia-continuum@0.4.0 build
+> tsc
+
+tests/console-browser.test.ts(29,403): error TS2783: 'width' is specified more than once, so this usage will be overwritten.
+tests/console-browser.test.ts(31,127): error TS2351: This expression is not constructable.
+  Type 'typeof import("/data/notion-continuum-build-ADL6E0/node_modules/@axe-core/playwright/dist/index")' has no construct signatures.
+tests/console-browser.test.ts(31,315): error TS7006: Parameter 'x' implicitly has an 'any' type.
+tests/console-browser.test.ts(31,392): error TS7006: Parameter 'x' implicitly has an 'any' type.
+tests/console-browser.test.ts(31,417): error TS7006: Parameter 'n' implicitly has an 'any' type.
+tests/console-browser.test.ts(31,524): error TS2351: This expression is not constructable.
+  Type 'typeof import("/data/notion-continuum-build-ADL6E0/node_modules/@axe-core/playwright/dist/index")' has no construct signatures.
+tests/console-browser.test.ts(31,720): error TS7006: Parameter 'x' implicitly has an 'any' type.
+tests/console-browser.test.ts(31,801): error TS7006: Parameter 'x' implicitly has an 'any' type.

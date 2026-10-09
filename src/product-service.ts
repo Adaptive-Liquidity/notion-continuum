@@ -7,7 +7,8 @@ export interface TaskInput {id:string;principal:string;objective:string;deadline
 export interface OperationInput {id:string;task:string;grant:string;provider:string;action:string;resource:string;params:unknown;cost:number;deadline:string;}
 export class ProductService {
  constructor(private db:pg.Pool,private fence:string){}
- async createTask(actor:VerifiedIdentity,x:TaskInput){return tx(this.db,async c=>{
+ private unit<T>(c:pg.PoolClient|undefined,fn:(c:pg.PoolClient)=>Promise<T>){return c?fn(c):tx(this.db,fn);}
+ async createTask(actor:VerifiedIdentity,x:TaskInput,client?:pg.PoolClient){return this.unit(client,async c=>{
   await activeControl(c,this.fence);const i=await enrolled(c,actor);samePrincipal(i,x.principal);identifier(x.id);identifier(x.principal);
   const p=(await c.query('SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',[i.tenant,x.principal])).rows[0];
   const now=+(await c.query('SELECT clock_timestamp() t')).rows[0].t;const deadline=new Date(x.deadline);

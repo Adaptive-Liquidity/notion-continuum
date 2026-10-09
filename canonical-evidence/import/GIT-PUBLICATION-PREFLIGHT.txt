@@ -1,0 +1,1 @@
+Direct HTTPS Git has no usable noninteractive authentication. No credentials requested or retrieved. Use the connected GitHub API for feature-branch publication.

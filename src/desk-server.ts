@@ -4,6 +4,7 @@ export interface DeskAuthentication {actor:VerifiedIdentity;csrf:string;}
 export interface DeskConfig {mode:'fixture'|'approved-staging';origin:()=>string;approvalReference?:string;authenticate?:(req:http.IncomingMessage)=>Promise<DeskAuthentication>;fixtureActor?:()=>Promise<VerifiedIdentity>;assets:string;}
 export function deskServer(config:DeskConfig,product:ProductService,authority:AuthorityService,context?:ContextService){
  if(config.mode==='approved-staging'&&(!config.approvalReference||!config.authenticate||config.fixtureActor))throw Error('approved staging authentication bridge required');
+ if(config.mode!=='fixture')throw Error('Legacy operator UI is internal/test-only; use canonical Focus Desk.');
  const sessions=new Map<string,{expires:number;csrf:string}>();const headers={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer','x-frame-options':'DENY','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"};
  const server=http.createServer(async(req,res)=>{Object.entries(headers).forEach(([k,v])=>res.setHeader(k,v));try{
   const origin=config.origin(),u=new URL(origin);if(req.headers.host!==u.host||(config.mode==='fixture'&&u.hostname!=='127.0.0.1')||(config.mode==='approved-staging'&&u.protocol!=='https:'))throw Error('origin policy');

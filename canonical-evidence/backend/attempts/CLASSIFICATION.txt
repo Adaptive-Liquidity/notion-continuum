@@ -1,0 +1,1 @@
+Fresh baseline import passed before refactoring. Initial new-module compile exposed missing optional unit-of-work parameters and one strict-null test assertion; fixed without weakening checks.

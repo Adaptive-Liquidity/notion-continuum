@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: Context quarantined until exact independent owner review
+ok 1 - Context quarantined until exact independent owner review
+  ---
+  duration_ms: 61.70983
+  type: 'test'
+  ...
+# Subtest: Context tenant crossing and stale versions refused
+ok 2 - Context tenant crossing and stale versions refused
+  ---
+  duration_ms: 29.711732
+  type: 'test'
+  ...
+# Subtest: Context competing CAS accepts one current writer
+ok 3 - Context competing CAS accepts one current writer
+  ---
+  duration_ms: 8.793159
+  type: 'test'
+  ...
+# Subtest: Context poisoned instructions remain data, never authority
+ok 4 - Context poisoned instructions remain data, never authority
+  ---
+  duration_ms: 11.600482
+  type: 'test'
+  ...
+# Subtest: Context privileged corruption detected; quarantine persists
+ok 5 - Context privileged corruption detected; quarantine persists
+  ---
+  duration_ms: 11.881475
+  type: 'test'
+  ...
+# Subtest: Context expiry/erasure removes payload and prevents resurrection
+ok 6 - Context expiry/erasure removes payload and prevents resurrection
+  ---
+  duration_ms: 1116.653577
+  type: 'test'
+  ...
+# Subtest: Context SQL cannot grant or assert effects; tenant SQL reads isolated
+ok 7 - Context SQL cannot grant or assert effects; tenant SQL reads isolated
+  ---
+  duration_ms: 7.435731
+  type: 'test'
+  ...
+# Subtest: Artifact immutable capture and verified private reconstruction
+ok 8 - Artifact immutable capture and verified private reconstruction
+  ---
+  duration_ms: 36.077698
+  type: 'test'
+  ...
+# Subtest: Artifact tenant crossing, path traversal and symlink roots refused
+ok 9 - Artifact tenant crossing, path traversal and symlink roots refused
+  ---
+  duration_ms: 3.669203
+  type: 'test'
+  ...
+# Subtest: Artifact corrupt bytes cannot reconstruct and are quarantined
+ok 10 - Artifact corrupt bytes cannot reconstruct and are quarantined
+  ---
+  duration_ms: 11.638858
+  type: 'test'
+  ...
+# Subtest: Artifact erasure respects shared references and deletes only unreferenced bytes
+ok 11 - Artifact erasure respects shared references and deletes only unreferenced bytes
+  ---
+  duration_ms: 27.913088
+  type: 'test'
+  ...
+# Subtest: Artifact local storage immutable with concurrent writes; alternate keys refused
+ok 12 - Artifact local storage immutable with concurrent writes; alternate keys refused
+  ---
+  duration_ms: 4.930364
+  type: 'test'
+  ...
+# Subtest: Artifact cloud disabled; mocked conditional KMS/checksum verified
+ok 13 - Artifact cloud disabled; mocked conditional KMS/checksum verified
+  ---
+  duration_ms: 0.949348
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1518.881366

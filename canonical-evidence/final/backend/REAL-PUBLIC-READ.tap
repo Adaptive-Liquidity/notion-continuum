@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: Real GitHub safe read completes through domain controller and matching second endpoint
+ok 1 - Real GitHub safe read completes through domain controller and matching second endpoint
+  ---
+  duration_ms: 417.14792
+  type: 'test'
+  ...
+# Subtest: Real GitHub acknowledgement discarded after response => UNKNOWN, no resend, authoritative reconciliation
+ok 2 - Real GitHub acknowledgement discarded after response => UNKNOWN, no resend, authoritative reconciliation
+  ---
+  duration_ms: 37.116922
+  type: 'test'
+  ...
+# Subtest: Real GitHub request with deliberately tiny timeout => UNKNOWN; independent read-back resolves
+ok 3 - Real GitHub request with deliberately tiny timeout => UNKNOWN; independent read-back resolves
+  ---
+  duration_ms: 43.524886
+  type: 'test'
+  ...
+# Subtest: UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends again
+ok 4 - UNKNOWN readback outage/mismatch remains UNKNOWN and dispatch never sends again
+  ---
+  duration_ms: 42.106773
+  type: 'test'
+  ...
+# Subtest: Safe adapter refuses URL/resource/repository mutation and stale capability before provider send
+ok 5 - Safe adapter refuses URL/resource/repository mutation and stale capability before provider send
+  ---
+  duration_ms: 4.559153
+  type: 'test'
+  ...
+# Subtest: Stale idempotency-key payload reuse denied by immutable domain; provider key expiration is not applicable to GET
+ok 6 - Stale idempotency-key payload reuse denied by immutable domain; provider key expiration is not applicable to GET
+  ---
+  duration_ms: 7.933272
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 674.266731

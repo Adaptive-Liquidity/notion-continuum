@@ -1,0 +1,11 @@
+{
+  "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
+  "phase": "restore-check",
+  "port": 55442,
+  "deliberatelyRestoredOldAuthority": true,
+  "oldDeploymentRejectedWithoutResend": true,
+  "suspects": 1,
+  "revocationReapplied": true,
+  "gapVerifiedWithoutResend": true,
+  "noDuplicate": true
+}

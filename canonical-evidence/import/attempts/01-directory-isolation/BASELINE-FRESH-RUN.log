@@ -1,0 +1,7 @@
+
+> continuum-safe-implementation@0.3.0 test
+> bash tools/run-safe-implementation.sh
+
+NOTICE:  database "ct_recovery_test" does not exist, skipping
+Running BASELINE-FOUNDATION
+Running BASELINE-CONTROLLER

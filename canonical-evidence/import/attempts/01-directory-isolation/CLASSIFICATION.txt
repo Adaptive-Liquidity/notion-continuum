@@ -1,0 +1,1 @@
+Fresh mktemp workspace mode 0700 prevented the isolated test UID from reading public test code. Private .local credentials stay restricted; code directory traversal corrected to 0755. No domain/controller semantics changed.

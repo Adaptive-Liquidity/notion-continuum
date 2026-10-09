@@ -118,6 +118,7 @@ export class EffectController {
       actor.generation !== p.generation
     )
       return "PRINCIPAL_FENCE";
+    if (p.execution_mode && p.execution_mode !== "AGENT") return "HUMAN_OR_PAUSED_EXECUTION_MODE";
     if (task && (task.status === "CANCELLED" || task.plan_version !== o.plan_version)) return "TASK_CANCELLED_OR_STALE";
     if (bindingDigest(o) !== o.digest) return "BINDING_CORRUPT";
     if (

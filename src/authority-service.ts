@@ -6,9 +6,10 @@ export class AuthorityService {
   constructor(
     private governor: pg.Pool,
     private issuerDb: pg.Pool,
-    private signer: CapabilitySigner,
+    private signer: CapabilitySigner | undefined,
     private fence: string,
   ) {}
+  private unit<T>(c:pg.PoolClient|undefined,fn:(c:pg.PoolClient)=>Promise<T>){return c?fn(c):tx(this.governor,fn);}
   private async enrolled(c: pg.PoolClient, actor: VerifiedIdentity) {
     if (actor.expires <= Date.now()) throw Error("identity expired");
     const i = (
@@ -43,8 +44,9 @@ export class AuthorityService {
       maxCost: number;
       budget: number;
     },
+    client?: pg.PoolClient,
   ) {
-    return tx(this.governor, async (c) => {
+    return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
       const expiration = new Date(input.expires);
@@ -89,9 +91,10 @@ export class AuthorityService {
   }
   async approve(
     actor: VerifiedIdentity,
-    input: { operation: string; digest: string; expires: string },
+    input: { operation: string; digest: string; expires: string; expectedOperationVersion?:number; expectedApprovalRevision?:number },
+    client?: pg.PoolClient,
   ) {
-    return tx(this.governor, async (c) => {
+    return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
       const ctrl = (
@@ -124,6 +127,9 @@ export class AuthorityService {
           [i.tenant, input.operation],
         )
       ).rows[0];
+      const currentApproval=(await c.query("SELECT * FROM ct.approvals WHERE tenant=$1 AND operation=$2 FOR UPDATE",[i.tenant,o.id])).rows[0];
+      if(input.expectedOperationVersion!==undefined && Number(o.version)!==input.expectedOperationVersion)throw Error('operation version conflict');
+      if(input.expectedApprovalRevision!==undefined && Number(currentApproval?.revision??0)!==input.expectedApprovalRevision)throw Error('approval decision version conflict');
       const now = new Date(
           (await c.query("SELECT clock_timestamp() t")).rows[0].t,
         ).getTime(),
@@ -168,8 +174,9 @@ export class AuthorityService {
   async assign(
     actor: VerifiedIdentity,
     input: { identity: string; operation: string; expires: string },
+    client?: pg.PoolClient,
   ) {
-    return tx(this.governor, async (c) => {
+    return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
       const target = (
@@ -211,8 +218,8 @@ export class AuthorityService {
       return { operation: o.id };
     });
   }
-  async revoke(actor: VerifiedIdentity, grant: string) {
-    return tx(this.governor, async (c) => {
+  async revoke(actor: VerifiedIdentity, grant: string, client?:pg.PoolClient) {
+    return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
       await c.query("SELECT * FROM ct.control FOR SHARE");
@@ -239,6 +246,8 @@ export class AuthorityService {
     });
   }
   async renew(actor: VerifiedIdentity, operation: string) {
+    if(!this.signer)throw Error("Machine issuance is absent from the human console service");
+    const signingAuthority=this.signer;
     return tx(this.issuerDb, async (c) => {
       const i = await this.enrolled(c, actor);
       if (actor.kind !== "machine" || i.domain_role !== "worker")
@@ -327,7 +336,7 @@ export class AuthorityService {
         operations: [o.id],
         expires,
       };
-      const token = await this.signer.sign(cap, i.id, Number(i.version));
+      const token = await signingAuthority.sign(cap, i.id, Number(i.version));
       await append(c, i.tenant, "CAPABILITY_ISSUED", {
         identity: i.id,
         operation: o.id,

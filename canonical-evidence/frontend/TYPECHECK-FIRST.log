@@ -1,0 +1,15 @@
+
+> @asentxia/continuum-console@0.4.0 typecheck
+> tsc --noEmit
+
+app/auth/sign-in/route.ts(2,268): error TS2353: Object literal may only specify known properties, and 'returnPathname' does not exist in type 'GetSignUrlOptions'.
+lib/server/session.ts(4,78): error TS2367: This comparison appears to be unintentional because the types '"development" | "production" | "test"' and '"test-production"' have no overlap.
+proxy.ts(7,306): error TS2322: Type 'NextMiddlewareResult' is not assignable to type 'NextResponse<unknown>'.
+  Type 'undefined' is not assignable to type 'NextResponse<unknown>'.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /data/notion-continuum-build-ADL6E0/web
+npm error workspace @asentxia/continuum-console@0.4.0
+npm error location /data/notion-continuum-build-ADL6E0/web
+npm error command failed
+npm error command sh -c tsc --noEmit

@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: A22/A24 COMMITTED without matching provider observation is never verified success
+ok 1 - A22/A24 COMMITTED without matching provider observation is never verified success
+  ---
+  duration_ms: 5.068387
+  type: 'test'
+  ...
+# Subtest: A26 unknown Computer raw state remains unknown and LOST never becomes stopped
+ok 2 - A26 unknown Computer raw state remains unknown and LOST never becomes stopped
+  ---
+  duration_ms: 0.167058
+  type: 'test'
+  ...
+# Subtest: A03 shared root counts distinct tasks and never merges unrelated provider symptoms
+ok 3 - A03 shared root counts distinct tasks and never merges unrelated provider symptoms
+  ---
+  duration_ms: 0.290509
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 94.892115

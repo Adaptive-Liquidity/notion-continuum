@@ -1,0 +1,22 @@
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@asentxia/continuum-console@0.4.0',
+npm warn EBADENGINE   required: { node: '>=22.12 <23' },
+npm warn EBADENGINE   current: { node: 'v24.14.1', npm: '11.11.0' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: '@asentxia/continuum-console@0.4.0',
+npm warn EBADENGINE   required: { node: '>=22.12 <23' },
+npm warn EBADENGINE   current: { node: 'v24.14.1', npm: '11.11.0' }
+npm warn EBADENGINE }
+
+up to date, audited 370 packages in 1s
+
+82 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.

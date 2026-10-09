@@ -24,10 +24,10 @@ export async function fixture(prefix:string){
  const authority=new AuthorityService(authDb,issuerDb,signer,fence),product=new ProductService(productDb,fence),provider=new LedgerFixture(),controller=new EffectController(controllerDb,provider,fence,100);
  async function token(kind:'user'|'machine',tenant='a',overrides:Record<string,unknown>={}){return new SignJWT({auth_time:Math.floor(Date.now()/1000),amr:['mfa'],...overrides}).setProtectedHeader({alg:'EdDSA',kid:'external'}).setIssuer(issuer).setAudience(audience).setSubject(`${prefix}-${kind==='user'?'owner':'worker'}-${tenant}`).setIssuedAt().setExpirationTime(typeof overrides.exp==='number'?overrides.exp:'10m').sign(ext.privateKey);}
  async function actor(kind:'user'|'machine',tenant='a'){return (kind==='user'?human:machine).verify(await token(kind,tenant));}
- async function intent(id:string,approved=false){const owner=await actor('user'),worker=await actor('machine'),deadline=new Date(Date.now()+3600000).toISOString();
+ async function intent(id:string,approved=false,objective?:string,parameters?:unknown){const owner=await actor('user'),worker=await actor('machine'),deadline=new Date(Date.now()+3600000).toISOString();
   await authority.createGrant(owner,{id:'g-'+id,principal,action:'write',resource:'fixture-object',expires:deadline,maxCost:5,budget:20});
-  await product.createTask(worker,{id:'t-'+id,principal,objective:'Fixture task '+id,deadline});
-  const x={id,task:'t-'+id,grant:'g-'+id,provider:'fixture',action:'write',resource:'fixture-object',params:{value:id},cost:1,deadline};const op=await product.propose(worker,x);
+  await product.createTask(worker,{id:'t-'+id,principal,objective:objective??'Fixture task '+id,deadline});
+  const x={id,task:'t-'+id,grant:'g-'+id,provider:'fixture',action:'write',resource:'fixture-object',params:parameters??{value:id},cost:1,deadline};const op=await product.propose(worker,x);
   await authority.assign(owner,{identity:`${prefix}-worker-a`,operation:id,expires:deadline});
   if(approved)await authority.approve(owner,{operation:id,digest:op.digest,expires:deadline});return {owner,worker,x,op};}
  async function capability(id:string){return caps.verify((await authority.renew(await actor('machine'),id)).token);}

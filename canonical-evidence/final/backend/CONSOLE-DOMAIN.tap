@@ -1,0 +1,148 @@
+TAP version 13
+# Subtest: A01/A11 real signature + independent enrollment enforce human/tenant reads
+ok 1 - A01/A11 real signature + independent enrollment enforce human/tenant reads
+  ---
+  duration_ms: 84.863091
+  type: 'test'
+  ...
+# Subtest: A02/A33/A37 readiness and availability never claim live P1/provider/HA qualification
+ok 2 - A02/A33/A37 readiness and availability never claim live P1/provider/HA qualification
+  ---
+  duration_ms: 6.778503
+  type: 'test'
+  ...
+# Subtest: A06 concurrent same-key task creation has one atomic result; changed body conflicts
+ok 3 - A06 concurrent same-key task creation has one atomic result; changed body conflicts
+  ---
+  duration_ms: 32.679234
+  type: 'test'
+  ...
+# Subtest: A05 authoritative task with approval is pending, never business completion
+ok 4 - A05 authoritative task with approval is pending, never business completion
+  ---
+  duration_ms: 47.595718
+  type: 'test'
+  ...
+# Subtest: A16/A17 exact immutable approval and ledger/history are one transaction
+ok 5 - A16/A17 exact immutable approval and ledger/history are one transaction
+  ---
+  duration_ms: 52.429569
+  type: 'test'
+  ...
+# Subtest: A17 stale preview digest/version/fresh MFA cannot apply approval
+ok 6 - A17 stale preview digest/version/fresh MFA cannot apply approval
+  ---
+  duration_ms: 22.837618
+  type: 'test'
+  ...
+# Subtest: A17 command rollback after contended lock expires identity: no approval/history
+ok 7 - A17 command rollback after contended lock expires identity: no approval/history
+  ---
+  duration_ms: 418.05152
+  type: 'test'
+  ...
+# Subtest: A18 append-only decision history survives approval expiration and refuses mutation
+ok 8 - A18 append-only decision history survives approval expiration and refuses mutation
+  ---
+  duration_ms: 267.000721
+  type: 'test'
+  ...
+# Subtest: A12 machine assignment rejects human identity and persists exact binding
+ok 9 - A12 machine assignment rejects human identity and persists exact binding
+  ---
+  duration_ms: 22.915631
+  type: 'test'
+  ...
+# Subtest: A20 strict bounded grants deny unsupported selector/unsafe scope
+ok 10 - A20 strict bounded grants deny unsupported selector/unsafe scope
+  ---
+  duration_ms: 14.957457
+  type: 'test'
+  ...
+# Subtest: A21 lost revoke reply is looked up, not repeated; future capability admission denied
+ok 11 - A21 lost revoke reply is looked up, not repeated; future capability admission denied
+  ---
+  duration_ms: 41.398248
+  type: 'test'
+  ...
+# Subtest: A22/A24 unsupported COMMITTED assertion with a valid chain cannot produce success
+ok 12 - A22/A24 unsupported COMMITTED assertion with a valid chain cannot produce success
+  ---
+  duration_ms: 28.01269
+  type: 'test'
+  ...
+# Subtest: A31 revoked UNKNOWN stays owned/uncertain, with no browser reconcile/retry route
+ok 13 - A31 revoked UNKNOWN stays owned/uncertain, with no browser reconcile/retry route
+  ---
+  duration_ms: 41.741924
+  type: 'test'
+  ...
+# Subtest: A07/A08 project reads reference the same scoped tasks; dependency cycles and crossing fail
+ok 14 - A07/A08 project reads reference the same scoped tasks; dependency cycles and crossing fail
+  ---
+  duration_ms: 36.528359
+  type: 'test'
+  ...
+# Subtest: A09 competing handoffs keep one owner and do not transfer existing operation authority
+ok 15 - A09 competing handoffs keep one owner and do not transfer existing operation authority
+  ---
+  duration_ms: 25.9549
+  type: 'test'
+  ...
+# Subtest: A10/A14 model replacement changes binding only, never VERA or operation identity
+ok 16 - A10/A14 model replacement changes binding only, never VERA or operation identity
+  ---
+  duration_ms: 3.790573
+  type: 'test'
+  ...
+# Subtest: A24/A25 evidence pagination binds tenant/filter/snapshot and export redacts selected page
+ok 17 - A24/A25 evidence pagination binds tenant/filter/snapshot and export redacts selected page
+  ---
+  duration_ms: 17.993643
+  type: 'test'
+  ...
+# Subtest: A32/A34 durable ack and notice-read never resolve cause or UNKNOWN
+ok 18 - A32/A34 durable ack and notice-read never resolve cause or UNKNOWN
+  ---
+  duration_ms: 20.331318
+  type: 'test'
+  ...
+# Subtest: A19/A35 resource read shows actual reservations, no invented currency/spend
+ok 19 - A19/A35 resource read shows actual reservations, no invented currency/spend
+  ---
+  duration_ms: 2.510193
+  type: 'test'
+  ...
+# Subtest: A26/A28 separate raw Computer failures and generation never become stopped or workspaceRevision
+ok 20 - A26/A28 separate raw Computer failures and generation never become stopped or workspaceRevision
+  ---
+  duration_ms: 8.3422
+  type: 'test'
+  ...
+# Subtest: A29/A30 durable lease denies missing/multitab/stale generation, fences effects and hand-back never resumes
+ok 21 - A29/A30 durable lease denies missing/multitab/stale generation, fences effects and hand-back never resumes
+  ---
+  duration_ms: 28.033563
+  type: 'test'
+  ...
+# Subtest: A39 runtime envelopes and strict schemas fail closed; crossing objects is generic empty
+ok 22 - A39 runtime envelopes and strict schemas fail closed; crossing objects is generic empty
+  ---
+  duration_ms: 8.333344
+  type: 'test'
+  ...
+# Subtest: Stage commands remain qualification-pending, even with a signed fresh owner
+ok 23 - Stage commands remain qualification-pending, even with a signed fresh owner
+  ---
+  duration_ms: 2.020574
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1405.974012

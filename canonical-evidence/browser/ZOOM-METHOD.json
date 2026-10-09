@@ -1,0 +1,5 @@
+{
+  "text200": "Actual browser root text enlarged to 200%",
+  "zoom400": "320 CSS px reflow equivalent to 1280px desktop at 400%; not manual browser-chrome/assistive-tech certification",
+  "nativeScreenReader": "NOT RUN"
+}

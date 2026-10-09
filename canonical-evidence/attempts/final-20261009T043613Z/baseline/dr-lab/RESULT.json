@@ -1,0 +1,38 @@
+{
+  "scope": "actual local native PostgreSQL; not cloud HA, regional DR or live identity/provider",
+  "cases": [
+    {
+      "case": "native physical base backup",
+      "status": "PASS"
+    },
+    {
+      "case": "streaming standby observes committed effect and revocation",
+      "status": "PASS"
+    },
+    {
+      "case": "primary immediate crash and standby promotion preserve revocation/no duplicate",
+      "status": "PASS"
+    },
+    {
+      "case": "WAL PITR restores deliberately old authority, but independent fence rejects stale deployment",
+      "status": "PASS"
+    },
+    {
+      "case": "read-only gap reconciliation and independent revocation journal prevent resend/resurrection",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "restoreChecks": {
+    "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
+    "phase": "restore-check",
+    "port": 55442,
+    "deliberatelyRestoredOldAuthority": true,
+    "oldDeploymentRejectedWithoutResend": true,
+    "suspects": 1,
+    "revocationReapplied": true,
+    "gapVerifiedWithoutResend": true,
+    "noDuplicate": true
+  },
+  "stoppedAllLabClusters": true
+}

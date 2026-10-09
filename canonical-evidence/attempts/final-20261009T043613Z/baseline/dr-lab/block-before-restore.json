@@ -1,0 +1,6 @@
+{
+  "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
+  "phase": "block-before-restore",
+  "port": 55441,
+  "independentFenceAdvanced": true
+}

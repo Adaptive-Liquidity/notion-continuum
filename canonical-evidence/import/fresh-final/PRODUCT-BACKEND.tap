@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: Backend intent -> independent approval -> capability -> verified status
+ok 1 - Backend intent -> independent approval -> capability -> verified status
+  ---
+  duration_ms: 120.826995
+  type: 'test'
+  ...
+# Subtest: Backend tenant and machine-principal boundaries
+ok 2 - Backend tenant and machine-principal boundaries
+  ---
+  duration_ms: 22.771555
+  type: 'test'
+  ...
+# Subtest: Backend machines cannot grant, approve, assign, cancel or disable
+ok 3 - Backend machines cannot grant, approve, assign, cancel or disable
+  ---
+  duration_ms: 20.992622
+  type: 'test'
+  ...
+# Subtest: Backend HTTP rejects tenant, approval, credential and arbitrary action flags
+ok 4 - Backend HTTP rejects tenant, approval, credential and arbitrary action flags
+  ---
+  duration_ms: 109.16424
+  type: 'test'
+  ...
+# Subtest: Backend stable operation identity tolerates exact replay but rejects altered intent
+ok 5 - Backend stable operation identity tolerates exact replay but rejects altered intent
+  ---
+  duration_ms: 26.128836
+  type: 'test'
+  ...
+# Subtest: Backend checks grant scope, cost, deadline and input bounds
+ok 6 - Backend checks grant scope, cost, deadline and input bounds
+  ---
+  duration_ms: 26.045167
+  type: 'test'
+  ...
+# Subtest: Backend cancellation races final send; no later admission, in-flight promise honest
+ok 7 - Backend cancellation races final send; no later admission, in-flight promise honest
+  ---
+  duration_ms: 31.519466
+  type: 'test'
+  ...
+# Subtest: Backend cancellation CAS accepts one owner action and never uncancels
+ok 8 - Backend cancellation CAS accepts one owner action and never uncancels
+  ---
+  duration_ms: 21.258805
+  type: 'test'
+  ...
+# Subtest: Backend UNKNOWN and empty tasks are never displayed as completed
+ok 9 - Backend UNKNOWN and empty tasks are never displayed as completed
+  ---
+  duration_ms: 38.100088
+  type: 'test'
+  ...
+# Subtest: Backend database role cannot grant authority, approve or claim effect success
+ok 10 - Backend database role cannot grant authority, approve or claim effect success
+  ---
+  duration_ms: 9.398825
+  type: 'test'
+  ...
+# Subtest: Backend rejected issuer subject and stale identities cannot access tasks
+ok 11 - Backend rejected issuer subject and stale identities cannot access tasks
+  ---
+  duration_ms: 5.852995
+  type: 'test'
+  ...
+# Subtest: Backend owner disable invalidates a previously minted capability
+ok 12 - Backend owner disable invalidates a previously minted capability
+  ---
+  duration_ms: 29.121895
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 629.687809

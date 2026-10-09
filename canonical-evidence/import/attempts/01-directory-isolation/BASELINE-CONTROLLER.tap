@@ -1,0 +1,135 @@
+TAP version 13
+# Subtest: M3 exact approved action commits once across concurrent duplicates
+ok 1 - M3 exact approved action commits once across concurrent duplicates
+  ---
+  duration_ms: 359.545778
+  type: 'test'
+  ...
+# Subtest: M3 missing/mismatched approval is denied with zero effects
+ok 2 - M3 missing/mismatched approval is denied with zero effects
+  ---
+  duration_ms: 31.491579
+  type: 'test'
+  ...
+# Subtest: M3 stale grant, epoch, generation, deadline, scope and cost deny
+ok 3 - M3 stale grant, epoch, generation, deadline, scope and cost deny
+  ---
+  duration_ms: 88.230877
+  type: 'test'
+  ...
+# Subtest: M3 revocation between reservation and final send denies
+ok 4 - M3 revocation between reservation and final send denies
+  ---
+  duration_ms: 33.919105
+  type: 'test'
+  ...
+# Subtest: M3 expiry during final-send lock wait denies (regression)
+ok 5 - M3 expiry during final-send lock wait denies (regression)
+  ---
+  duration_ms: 255.303732
+  type: 'test'
+  ...
+# Subtest: M3 budget reservations serialize concurrent independent operations
+ok 6 - M3 budget reservations serialize concurrent independent operations
+  ---
+  duration_ms: 27.099358
+  type: 'test'
+  ...
+# Subtest: M3 lost acknowledgement becomes UNKNOWN, never auto-resends, readback recovers
+ok 7 - M3 lost acknowledgement becomes UNKNOWN, never auto-resends, readback recovers
+  ---
+  duration_ms: 29.67599
+  type: 'test'
+  ...
+# Subtest: M3 kill whole controller at three boundaries; durable state prevents second sends
+ok 8 - M3 kill whole controller at three boundaries; durable state prevents second sends
+  ---
+  duration_ms: 924.605209
+  type: 'test'
+  ...
+# Subtest: M3 duplicate idempotency key/immutable payload conflict never sends
+ok 9 - M3 duplicate idempotency key/immutable payload conflict never sends
+  ---
+  duration_ms: 6.332306
+  type: 'test'
+  ...
+# Subtest: M3 unknown with missing or mismatched provider evidence stays unknown
+ok 10 - M3 unknown with missing or mismatched provider evidence stays unknown
+  ---
+  duration_ms: 9.391335
+  type: 'test'
+  ...
+# Subtest: M3 restored/no-fence and wrong deployment fence fail closed
+ok 11 - M3 restored/no-fence and wrong deployment fence fail closed
+  ---
+  duration_ms: 17.346462
+  type: 'test'
+  ...
+# Subtest: M3 isolated compromised agent cannot reach provider/DB/secrets or forge completion
+not ok 12 - M3 isolated compromised agent cannot reach provider/DB/secrets or forge completion
+  ---
+  duration_ms: 51.359869
+  type: 'test'
+  location: '/data/notion-continuum-build-ADL6E0/dist/tests/controller.test.js:160:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    node:internal/modules/cjs/loader:1459
+      throw err;
+      ^
+    
+    Error: Cannot find module '/data/notion-continuum-build-ADL6E0/tests/isolation-probe.mjs'
+        at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+        at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+        at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+        at Module._load (node:internal/modules/cjs/loader:1242:25)
+        at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+        at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+        at node:internal/main/run_main_module:33:47 {
+      code: 'MODULE_NOT_FOUND',
+      requireStack: []
+    }
+    
+    Node.js v24.14.1
+     
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    Module._load (node:internal/modules/cjs/loader:1242:25)
+    wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    node:internal/main/run_main_module:33:47 {
+    TestContext.<anonymous> (file:///data/notion-continuum-build-ADL6E0/dist/tests/controller.test.js:187:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1125:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: M3 tenant memory stale/digest corruption never becomes accepted context
+ok 13 - M3 tenant memory stale/digest corruption never becomes accepted context
+  ---
+  duration_ms: 10.026494
+  type: 'test'
+  ...
+# Subtest: M3 evidence detects privileged tampering; valid chain not provider truth
+ok 14 - M3 evidence detects privileged tampering; valid chain not provider truth
+  ---
+  duration_ms: 2.95809
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1965.348905

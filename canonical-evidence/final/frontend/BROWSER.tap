@@ -1,0 +1,142 @@
+TAP version 13
+# Subtest: A01/A11 authenticated fixture entry; no JWT/key/role claims in public UI responses
+ok 1 - A01/A11 authenticated fixture entry; no JWT/key/role claims in public UI responses
+  ---
+  duration_ms: 2334.847867
+  type: 'test'
+  ...
+# Subtest: A02/A03/A04 Focus is backend-derived, no false all-clear and review order stays explicit
+ok 2 - A02/A03/A04 Focus is backend-derived, no false all-clear and review order stays explicit
+  ---
+  duration_ms: 482.140056
+  type: 'test'
+  ...
+# Subtest: A04 a new critical cause is announced without stealing focus or changing review order
+ok 3 - A04 a new critical cause is announced without stealing focus or changing review order
+  ---
+  duration_ms: 10259.593723
+  type: 'test'
+  ...
+# Subtest: A16 exact preview preserves Unicode/markup as inert read-only data
+ok 4 - A16 exact preview preserves Unicode/markup as inert read-only data
+  ---
+  duration_ms: 454.921053
+  type: 'test'
+  ...
+# Subtest: A17 approval is a durable human command, not execution; independent worker later verifies
+ok 5 - A17 approval is a durable human command, not execution; independent worker later verifies
+  ---
+  duration_ms: 423.151155
+  type: 'test'
+  ...
+# Subtest: A12 recorded machine assignment is independent of approval and capability issuance
+ok 6 - A12 recorded machine assignment is independent of approval and capability issuance
+  ---
+  duration_ms: 421.557376
+  type: 'test'
+  ...
+# Subtest: A06/A39 lost human-command acknowledgement uses one lookup and never resubmits
+ok 7 - A06/A39 lost human-command acknowledgement uses one lookup and never resubmits
+  ---
+  duration_ms: 476.395503
+  type: 'test'
+  ...
+# Subtest: A05/A06 new task form records work without starting a workflow/effect
+ok 8 - A05/A06 new task form records work without starting a workflow/effect
+  ---
+  duration_ms: 418.287873
+  type: 'test'
+  ...
+# Subtest: A20 bounded grant form persists exact scope and does not assign, approve or execute
+ok 9 - A20 bounded grant form persists exact scope and does not assign, approve or execute
+  ---
+  duration_ms: 410.732868
+  type: 'test'
+  ...
+# Subtest: A07/A08/A10/A14/A15/A19/A26/A33/A35/A37 every major read surface uses authenticated backend facts
+ok 10 - A07/A08/A10/A14/A15/A19/A26/A33/A35/A37 every major read surface uses authenticated backend facts
+  ---
+  duration_ms: 2723.396031
+  type: 'test'
+  ...
+# Subtest: A22/A31 UNKNOWN detail has no resend/retry/regrant or browser controller action
+ok 11 - A22/A31 UNKNOWN detail has no resend/retry/regrant or browser controller action
+  ---
+  duration_ms: 399.64686
+  type: 'test'
+  ...
+# Subtest: A21/A30/A40 revocation confirmation traps/returns focus and never says all effects stopped
+ok 12 - A21/A30/A40 revocation confirmation traps/returns focus and never says all effects stopped
+  ---
+  duration_ms: 685.384401
+  type: 'test'
+  ...
+# Subtest: A32/A34 incident acknowledgement and notification read do not resolve UNKNOWN
+ok 13 - A32/A34 incident acknowledgement and notification read do not resolve UNKNOWN
+  ---
+  duration_ms: 721.479129
+  type: 'test'
+  ...
+# Subtest: A25 authorized selected-page export preserves partial/provenance markers
+ok 14 - A25 authorized selected-page export preserves partial/provenance markers
+  ---
+  duration_ms: 276.488643
+  type: 'test'
+  ...
+# Subtest: A01/A39 wrong origin, missing CSRF and caller-supplied tenant never authorize a command
+ok 15 - A01/A39 wrong origin, missing CSRF and caller-supplied tenant never authorize a command
+  ---
+  duration_ms: 13.959715
+  type: 'test'
+  ...
+# Subtest: A39 offline snapshot disables commands and never implies empty/all-clear
+ok 16 - A39 offline snapshot disables commands and never implies empty/all-clear
+  ---
+  duration_ms: 207.1095
+  type: 'test'
+  ...
+# Subtest: A39 unknown response schema fails closed rather than enabling stale controls
+ok 17 - A39 unknown response schema fails closed rather than enabling stale controls
+  ---
+  duration_ms: 830.700795
+  type: 'test'
+  ...
+# Subtest: A38/A40 keyboard landmarks, responsive list/detail and no horizontal approval overflow
+ok 18 - A38/A40 keyboard landmarks, responsive list/detail and no horizontal approval overflow
+  ---
+  duration_ms: 695.161392
+  type: 'test'
+  ...
+# Subtest: A40 200% text enlargement and 400%-equivalent 320-CSS-px reflow keep exact review usable
+ok 19 - A40 200% text enlargement and 400%-equivalent 320-CSS-px reflow keep exact review usable
+  ---
+  duration_ms: 522.618736
+  type: 'test'
+  ...
+# Subtest: A40 axe WCAG 2.2 AA automated checks and actual keyboard/ARIA snapshot
+ok 20 - A40 axe WCAG 2.2 AA automated checks and actual keyboard/ARIA snapshot
+  ---
+  duration_ms: 2238.398733
+  type: 'test'
+  ...
+# Subtest: A01 two tabs/account switch clear prior tenant data; second workspace cannot read first records
+ok 21 - A01 two tabs/account switch clear prior tenant data; second workspace cannot read first records
+  ---
+  duration_ms: 13274.275531
+  type: 'test'
+  ...
+# Subtest: Performance: 10,000 durable fixture tasks stay paginated and DOM-bounded; latency is measured
+ok 22 - Performance: 10,000 durable fixture tasks stay paginated and DOM-bounded; latency is measured
+  ---
+  duration_ms: 795.989039
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39670.823484

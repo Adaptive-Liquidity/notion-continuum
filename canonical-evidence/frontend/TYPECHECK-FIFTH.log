@@ -1,0 +1,4 @@
+
+> @asentxia/continuum-console@0.4.0 typecheck
+> tsc --noEmit
+

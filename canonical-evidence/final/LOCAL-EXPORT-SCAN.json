@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "scope": "Local source/export hygiene only \u2014 not independent security review",
+  "at": "2026-10-09T05:11:36.299488+00:00",
+  "filesScanned": 972,
+  "findings": [],
+  "forbiddenExportPaths": [],
+  "symlinks": [],
+  "limits": [
+    "Heuristic patterns can miss secrets; no secret validity or account access attempted.",
+    "Generated fixture/test constants and public JWKS are not production credentials.",
+    "Binary screenshot inspection was agent review of fixture-only rendered data, not OCR/secret-detection certification."
+  ],
+  "independentReview": "NOT RUN"
+}
