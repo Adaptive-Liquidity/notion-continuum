@@ -1,8 +1,8 @@
 {
   "status": "PASS",
   "scope": "Local source/export hygiene only \u2014 not independent security review",
-  "at": "2026-10-09T05:11:36.299488+00:00",
-  "filesScanned": 972,
+  "at": "2026-10-09T05:20:57.569252+00:00",
+  "filesScanned": 975,
   "findings": [],
   "forbiddenExportPaths": [],
   "symlinks": [],

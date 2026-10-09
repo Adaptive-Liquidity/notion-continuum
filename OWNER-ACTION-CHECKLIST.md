@@ -9,4 +9,4 @@ Offline engineering does not wait for these. They unlock live staging tests, not
 - [ ] Approve **one safe credentialled provider test with reliable result confirmation**, and a persistent staging host/budget for the real 24-hour scheduler comparison.
 - [ ] Arrange **independent security review** and native screen-reader/browser-zoom review. Only after all required live gates pass, approve M6 shadow and, separately, M7 single-principal canary. Until then: NO-GO.
 
-- [ ] Publish `build/canonical-continuum` and open a **draft PR** using your authorized Git connection, or authorize an approved repository-write connection. The current connected GitHub token can read but branch creation returns 403. No token should be pasted into chat/Notion.
+- [x] Feature branch published and [draft PR opened](https://github.com/Adaptive-Liquidity/notion-continuum/pull/1); no main merge or deployment. Repository credential cleanup is verified in the delivered metadata.

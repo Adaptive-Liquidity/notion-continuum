@@ -101,3 +101,7 @@ A = implemented/backend truth; B = final human contract; C = Focus Desk directio
 ## Owner review / later staging
 
 Review the draft/local branch and evidence. Then approved real staging sign-in/MFA → renewable workload/secure custody → safe protected provider → managed isolation → HA/PITR/DR → real paired 24-hour/version/fault/metrics trial → remaining release gates/independent review. Only afterward seek separate shadow/canary approval. No credentials in chat/repository/report.
+
+## Hosted delivery
+
+Feature branch pushed successfully; **DRAFT PR**: [https://github.com/Adaptive-Liquidity/notion-continuum/pull/1](https://github.com/Adaptive-Liquidity/notion-continuum/pull/1). Initial code/source publication commit: `cdeab6259d29e603bd7992dc2708129b19031913`. Follow-up delivery documentation does not change the fingerprint-verified implementation. Main is not merged; production/staging/canary remain untouched. Temporary repository authentication is separate from Continuum qualification.
