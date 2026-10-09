@@ -1,1 +1,0 @@
-restored activation rows = 0; dispatch remains blocked

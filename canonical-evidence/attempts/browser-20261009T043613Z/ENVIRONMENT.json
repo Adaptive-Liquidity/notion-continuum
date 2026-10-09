@@ -1,8 +1,0 @@
-{
-  "scope": "LOCAL_FIXTURE",
-  "frontendNode": "v22.23.3",
-  "backendNode": "v24.14.1",
-  "browser": "153.0.8010.12",
-  "production": "BLOCKED",
-  "tracePolicy": "No authentication headers/cookies/tokens recorded; HTTP metadata and fixture UI only."
-}

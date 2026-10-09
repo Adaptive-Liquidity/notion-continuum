@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+mkdir -p .artifacts/core .artifacts/implementation .artifacts/qualification .artifacts/canonical
 cd "$(dirname "$0")/.."
 export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest
 bash tools/local-db.sh
@@ -15,8 +16,8 @@ for m in 005-identity-authority.sql 006-product-computers.sql 007-context-artifa
  [ -f "migrations/$m" ] || continue
  case "$m" in 005*) table=identities;;006*) table=tasks;;007*) table=context_versions;;008*) table=recovery_runs;;010*) table=resource_limits;;esac
  if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.$table') IS NOT NULL")" != t ];then
-  psql -v ON_ERROR_STOP=1 -d ct_test -f "migrations/$m" > "implementation/evidence/MIGRATION-${m%.sql}.log" 2>&1
+  psql -v ON_ERROR_STOP=1 -d ct_test -f "migrations/$m" > ".artifacts/implementation/MIGRATION-${m%.sql}.log" 2>&1
  fi
 done
 
-psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/009-runtime-trigger-permissions.sql > implementation/evidence/MIGRATION-009-runtime-trigger-permissions.log 2>&1
+psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/009-runtime-trigger-permissions.sql > .artifacts/implementation/MIGRATION-009-runtime-trigger-permissions.log 2>&1

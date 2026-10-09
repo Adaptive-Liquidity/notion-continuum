@@ -264,7 +264,7 @@ test("M3 isolated compromised agent cannot reach provider/DB/secrets or forge co
       timeout: 15000,
     },
   );
-  fs.writeFileSync("evidence/M3-isolation-result.json", r.stdout);
+  fs.writeFileSync(".artifacts/core/M3-isolation-result.json", r.stdout);
   assert.equal(r.status, 0, r.stderr + " " + r.stdout);
   assert.equal(JSON.parse(r.stdout).uid, 65534);
   assert.equal(await count(id), 1);

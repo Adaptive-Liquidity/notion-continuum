@@ -1,7 +1,0 @@
-Error: boundary child exit=1,signal=null: Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-    from effect_reference import verify;import json;print(json.dumps(verify('pgboss')))
-                                      
-    at ChildProcess.<anonymous> (/data/continuum-synthesis/tests/node/pgboss-probe.cjs:3:356)
-    at ChildProcess.emit (node:events:508:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:294:12)

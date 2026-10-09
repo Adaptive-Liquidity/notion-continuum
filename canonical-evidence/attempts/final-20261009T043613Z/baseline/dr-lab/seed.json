@@ -1,6 +1,0 @@
-{
-  "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
-  "phase": "seed",
-  "port": 55440,
-  "seeded": true
-}

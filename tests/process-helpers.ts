@@ -33,7 +33,7 @@ export async function start(
   const p = spawn(process.execPath, [script, path], {
     stdio: ["ignore", "pipe", "pipe"],
   });
-  const log = fs.createWriteStream("evidence/" + label + ".log", {
+  const log = fs.createWriteStream(".artifacts/core/" + label + ".log", {
     flags: "a",
   });
   p.stdout!.pipe(log);

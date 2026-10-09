@@ -1,5 +1,0 @@
-
-> continuum-target-validation@0.1.0 build
-> tsc
-
-src/production-capability.ts(1,59): error TS2305: Module '"jose"' has no exported member 'KeyLike'.

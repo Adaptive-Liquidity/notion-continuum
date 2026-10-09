@@ -1,7 +1,0 @@
-{
-  "finding": "Product DB role had over-broad INSERT columns; could initialize an effect outcome",
-  "preFixAccepted": true,
-  "probeRolledBack": true,
-  "sourceHash": "7747832836e9994dcd49256035417abeda74a92f896343c76e3780b6a609e6dc",
-  "classification": "implementation permission defect; no provider call or deployed change"
-}

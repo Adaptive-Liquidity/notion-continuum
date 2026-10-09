@@ -1,1 +1,0 @@
-First browser run retained: controls failed closed because visibility boolean was inverted; initial selected snapshots stayed empty. Corrected caller semantics, not safety rules.

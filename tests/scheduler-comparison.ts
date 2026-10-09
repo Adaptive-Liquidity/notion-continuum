@@ -65,12 +65,12 @@ function restartDb() {
     ["-D", ".local/pgdata", "stop", "-m", "immediate"],
     { encoding: "utf8" },
   );
-  fs.appendFileSync("evidence/M4-database-restart.log", r.stdout + r.stderr);
+  fs.appendFileSync(".artifacts/core/M4-database-restart.log", r.stdout + r.stderr);
   assert.equal(r.status, 0);
 }
 function startDb() {
   const r = spawnSync("bash", ["tools/local-db.sh"], { encoding: "utf8" });
-  fs.appendFileSync("evidence/M4-database-restart.log", r.stdout + r.stderr);
+  fs.appendFileSync(".artifacts/core/M4-database-restart.log", r.stdout + r.stderr);
   assert.equal(r.status, 0);
 }
 try {
@@ -343,7 +343,7 @@ try {
     effects: await verify(p2),
   });
   fs.writeFileSync(
-    "evidence/M4-scheduler-results.json",
+    ".artifacts/core/M4-scheduler-results.json",
     JSON.stringify(
       {
         results,
@@ -365,7 +365,7 @@ try {
   console.log(JSON.stringify(results, null, 2));
 } catch (e) {
   fs.writeFileSync(
-    "evidence/M4-scheduler-failure.json",
+    ".artifacts/core/M4-scheduler-failure.json",
     JSON.stringify({ completed: results, error: String(e) }, null, 2),
   );
   throw e;

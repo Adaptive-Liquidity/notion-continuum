@@ -1,7 +1,0 @@
-
-> asentxia-continuum@0.4.0 build
-> tsc
-
-src/console/commands.ts(29,198): error TS2554: Expected 2 arguments, but got 3.
-src/console/commands.ts(32,161): error TS2554: Expected 2 arguments, but got 3.
-tests/console-semantics.test.ts(5,407): error TS2532: Object is possibly 'undefined'.

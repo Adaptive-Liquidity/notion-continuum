@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json,re,subprocess,datetime
-root=Path('canonical-evidence/final')
+root=Path('.artifacts/canonical/final')
 def tap(p):
  t=p.read_text();counts={k:int(re.search(r'^# '+k+r' (\d+)',t,re.M).group(1)) for k in ['tests','pass','fail','skipped','cancelled']}
  assert counts['fail']==counts['skipped']==counts['cancelled']==0,(p,counts)

@@ -3,7 +3,7 @@
 from pathlib import Path
 import os,sys,json,subprocess,time,shutil
 root=Path(__file__).resolve().parent.parent;os.chdir(root)
-base=root/'.local/dr-lab';out=root/'implementation/evidence/dr-lab';out.mkdir(parents=True,exist_ok=True)
+base=root/'.local/dr-lab';out=root/'.artifacts/implementation/dr-lab';out.mkdir(parents=True,exist_ok=True)
 if os.environ.get('CT_LOCAL_DR_LAB')!='yes':raise SystemExit('Explicit local DR lab flag required')
 if base.exists():raise SystemExit('Lab directory already exists. Inspect/stop it before explicitly removing the disposable lab.')
 base.mkdir(parents=True,mode=0o700);archive=base/'wal';archive.mkdir(mode=0o700)

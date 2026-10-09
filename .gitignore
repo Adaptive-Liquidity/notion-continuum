@@ -17,3 +17,8 @@ web/.next/
 web/test-results/
 web/playwright-report/
 *.tsbuildinfo
+
+# Reproducible CI/local outputs, never product source
+.artifacts/
+web/.next-local-test/
+dist-product/

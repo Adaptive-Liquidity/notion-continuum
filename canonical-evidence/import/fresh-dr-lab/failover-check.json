@@ -1,7 +1,0 @@
-{
-  "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
-  "phase": "failover-check",
-  "port": 55441,
-  "revocationRetained": true,
-  "noDuplicate": true
-}

@@ -10,4 +10,4 @@ for root in roots:
   files.append(p)
 files.extend(Path(p) for p in ['package.json','package-lock.json','tsconfig.json'] if Path(p).exists())
 entries=[{'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(set(files))]
-print(json.dumps({'sourceDigest':hashlib.sha256(json.dumps(entries,sort_keys=True,separators=(',',':')).encode()).hexdigest(),'files':len(entries),'scope':'Implemented source and verification harness; generated evidence/docs excluded'},sort_keys=True,indent=2))
+print(json.dumps({'sourceDigest':hashlib.sha256(json.dumps(entries,sort_keys=True,separators=(',',':')).encode()).hexdigest(),'files':len(entries),'scope':'Implemented source and verification harness; generated .artifacts/core/docs excluded'},sort_keys=True,indent=2))

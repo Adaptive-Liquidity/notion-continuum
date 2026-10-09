@@ -123,7 +123,7 @@ before(async () => {
 });
 after(async () => {
   fs.writeFileSync(
-    "qualification/evidence/REAL-PROVIDER-REQUESTS.json",
+    ".artifacts/qualification/REAL-PROVIDER-REQUESTS.json",
     JSON.stringify(
       {
         action:

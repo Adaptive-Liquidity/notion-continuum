@@ -3,7 +3,7 @@
   "sourceCommit": "3c197ddb57c13db397e30c48e4ceb6949d3a8ee9",
   "sourceFingerprint": {
     "files": 153,
-    "scope": "Implemented source and verification harness; generated evidence/docs excluded",
+    "scope": "Implemented source and verification harness; generated .artifacts/core/docs excluded",
     "sourceDigest": "371726e5c6c0f60c25202f13d8a2978e577dff4fdb6b5c1361c879c2692b5572"
   },
   "verifiedAt": "2026-10-09T06:31:34.934868+00:00",

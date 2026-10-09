@@ -1,7 +1,0 @@
-{
-  "scope": "local PostgreSQL physical backup/streaming/PITR, offline identity/provider/fence fixtures",
-  "phase": "send-revoke",
-  "port": 55440,
-  "committed": true,
-  "providerCount": 1
-}

@@ -4,7 +4,7 @@ class HTTPException(Exception):
  def __init__(self,status,detail):self.status_code=status
 async def main():
  results={}
- for file,name in [('legacy-hotfixes/Continuum/backend/server.py','dispatch_effect'),('legacy-hotfixes/Continuum/backend/adapters/nexus.py','_live_dispatch')]:
+ for file,name in [('tests/fixtures/legacy-fail-closed/dispatch.py','dispatch_effect'),('tests/fixtures/legacy-fail-closed/nexus.py','_live_dispatch')]:
   source=ast.parse(Path(file).read_text());fn=next(n for n in source.body if isinstance(n,(ast.AsyncFunctionDef,ast.FunctionDef)) and n.name==name);fn.decorator_list=[]
   namespace={'HTTPException':HTTPException};exec(compile(ast.Module(body=[fn],type_ignores=[]),file,'exec'),namespace)
   try:

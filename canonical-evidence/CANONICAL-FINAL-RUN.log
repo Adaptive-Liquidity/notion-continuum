@@ -1,6 +1,0 @@
-
-> asentxia-continuum@0.4.0 test:canonical
-> bash tools/run-canonical-tests.sh
-
-Re-running all 121 accepted backend groups, native local HA/PITR and legacy guards.
-Testing new canonical domain contracts from a fresh database.

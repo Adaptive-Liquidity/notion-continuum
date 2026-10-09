@@ -160,7 +160,7 @@ Enforce UNIQUE `(tenant_id, operation_id)` and `(tenant_id, provider, idempotenc
 3. **Planning.** The replaceable model proposes typed steps and exact effect intents. Persist the plan/version. Validate schemas and resource constraints. Planning may be rerun safely; it cannot execute consequences directly.
 4. **Operation identity.** Allocate a logical operation ID before dispatch. Bind principal, computer/generation, provider, action, exact resource, parameters digest, task/plan version, deadline and idempotency/natural key. A changed payload is a new/reapproved operation, never silent reuse of the same key.
 5. **Authorization and approval.** Read current principal status/epoch, grant/delegation freshness, policy version, expiry, action/resource/constraint match and resource/spend reservation. If approval is required, store an owner-approved decision bound to the exact operation digest. AWAITING_APPROVAL is not approval; changed parameters invalidate it.
-6. **Durable dispatch admission.** In one short PG transaction, lock relevant principal/grant/resource/operation records in a fixed order, recheck current policy and approval, CAS the expected state, write an effect-attempt/send reservation and append decision evidence/outbox. Commit before contacting the provider. The controller, not a model activity, owns this transition.
+6. **Durable dispatch admission.** In one short PG transaction, lock relevant principal/grant/resource/operation records in a fixed order, recheck current policy and approval, CAS the expected state, write an effect-attempt/send reservation and append decision .artifacts/core/outbox. Commit before contacting the provider. The controller, not a model activity, owns this transition.
 7. **Execution/computer/tool.** Computation runs in an isolated computer under a bounded placement lease. Consequential calls go to trusted adapters/credential broker. The agent never receives provider-wide tokens, database credentials or unrestricted network paths. A broker issues/consumes one tightly scoped permit or performs the request itself; random bytes are not a valid provider credential.
 8. **Consequential action.** Before an actual send, the trusted dispatcher performs the current permit/admission check described in §7. Persist SENDING before remote I/O. Send a stable provider idempotency key where supported. Do not hold a DB transaction open over a slow provider request and claim it creates cross-system atomicity.
 9. **Verification.** Classify acknowledgement correctly: HTTP accepted/queued is not necessarily completion. Store provider request/object IDs and observation. An independent read-back confirms the intended object/effect when the provider contract permits. A model statement, shell exit code, log or signature alone does not confirm remote truth.
@@ -375,7 +375,7 @@ Pick a real adapter with a safe test environment and authoritative read-back (fo
 | Trigger (proposed; not measured facts) | Evolution |
 | --- | --- |
 | Queue/start-to-run p95 misses agreed SLO, or controller admission p95 >250 ms under required workload | Profile DB/connection/lock/provider contention first; tune concurrency/indexes; add worker pools, not a new fabric automatically |
-| Audit retention or write volume materially affects operational queries | Partition evidence/observations by tenant/time, export archives; maintain transactional append contract |
+| Audit retention or write volume materially affects operational queries | Partition .artifacts/core/observations by tenant/time, export archives; maintain transactional append contract |
 | Multi-day workflows must survive deployments, human waits or parallel joins | Temporal qualification/adoption becomes required unless an alternative passes the same tests with less total burden |
 | Bounded PG implementation grows generic replay/timer/signal/version subsystems | Reject proprietary engine; replace orchestration with mature workflow runtime |
 | Per-tenant hot shard exhausts measured PG capacity | Assign tenant home/shard and split controller/storage along tenant boundaries; no cross-shard grant transaction by assumption |
@@ -449,7 +449,7 @@ Implement the same domain/controller interface once; swap only orchestration. Us
 5. Define revocation promise: block new admission vs stricter final-send guarantee for supported providers; acknowledge in-flight effects cannot universally be recalled.
 6. Choose real initial consequential action and verification oracle; define which irreversible/financial actions need explicit approval and what remains prohibited.
 7. Confirm sandbox/host threat model, allowed network destinations, privileged browser scope and provider credential model.
-8. Set evidence/memory retention, redaction/deletion obligations and approval/audit access.
+8. Set .artifacts/core/memory retention, redaction/deletion obligations and approval/audit access.
 9. Resolve canonical repository/version, licensing and vendored-code ownership; restore access to private security findings if those components are candidates.
 10. Decide commercial role/naming of Staxions, Regency and Continuum independently of this implementation topology. No canon is changed by the recommendation.
 
