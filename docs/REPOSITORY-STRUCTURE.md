@@ -1,28 +1,35 @@
 # Canonical repository structure
 
 ```text
-src/                    accepted domain/controller/identity/provider/computer/context/recovery services
-  console/              human read projections, validated contracts, atomic commands, coordination, fixture/staging seams
-migrations/             additive PostgreSQL migrations 001–011; scheduler-owned fixture separate
-scheduler/              real Temporal/pg-boss adapters; reference-only fresh-authority activities and qualification harness
-web/                    ONE primary Next.js / React / TypeScript Focus Desk console
-  app/                  guarded pages, AuthKit callback, same-origin BFF
-  components/           Work/inspector, exact approval, task/grant/assignment, accessible controls
-  lib/server/           private identity/session/domain bridge (never browser secrets)
-  public/fonts/         licensed self-hosted Geist and JetBrains Mono
-  tests/                shared runtime, client freshness, receipt and component tests
-internal/operator/      clearly labelled dev/test-only former operator UI; not a second production interface
-tests/                  accepted backend regressions, new domain and integrated Chromium tests
-tools/                  owned local fixtures, fresh verification, source fingerprint, disabled staging preparation
-qualification/          unchanged honest production ledger and original qualification material
-implementation/         accepted backend preparation/runbooks and historical evidence; no primary UI here
-.artifacts/canonical/     fresh import/final evidence and retained failed/intermediate attempts
-  final/                current complete verification; authoritative fresh source digest and SUMMARY.json
-docs/                   architecture, security self-review, delivery, staging sequence and source reconciliation
-  interface-source/     exact approved specification/40 contracts/gaps/plan
-  design-source/        approved Focus Desk direction/context
-  reconciliation/       one delta, old-UI mapping, updated 40-contract traceability and gap register
-OWNER-ACTION-CHECKLIST.md  ONE external-action checklist
+README.md
+OWNER-ACTION-CHECKLIST.md
+package.json / package-lock.json / tsconfig*.json
+src/                         product backend and validated shared console contracts
+migrations/                  authoritative PostgreSQL domain/roles/constraints
+scheduler/                   workflow progression; authority remains outside it
+web/                         sole primary Focus Desk product UI
+  app/                       authenticated routes and narrow same-origin BFF
+  lib/server/                session custody and pinned API transport
+  lib/deployment-profile.ts  product/local build trust separation
+  tests/                     units/components/profile regressions
+tests/                       domain/fault/isolation/browser regression suites
+  fixtures/legacy-fail-closed/ minimum historical refusal fixtures, not products
+tools/                       reproducible local validation/backup/DR/quality tools
+qualification/
+  config/                    disabled credential-free staging templates
+  runbooks/                  ordered identity/VM/DR/scheduler/migration preparation
+  PRODUCTION-GATES.json      honest live gate truth, not local test output
+internal/                    local test executables/operator regressions only
+docs/
+  interface/                 approved current product contract/plan/Focus Desk
+  reconciliation/            current delta, 40 interactions, gaps and capability map
+  security/                  principal self-review and controls; not independent clearance
+  audit/                     archival recovery and concise disposition record
+.github/workflows/           ordinary credential-free PR validation/artifact retention
+.artifacts/                  ignored fresh results (never committed)
+.local/                      ignored owned disposable DB/keys/runtime (never uploaded)
 ```
 
-No handoff ZIPs, node_modules, generated databases/WAL/dumps, private key directories or .env credentials are product source. Historical fail-closed legacy patches are preserved as inactive source/evidence, not deployed senders. Current code is not a multi-repository/dual-UI product.
+`dist/` is the engineering/test build, not a deployable product tree. `dist-product/` excludes all `tests/` and `internal/` executable fixtures. `web/.next/` is the ordinary PRODUCT build; `.next-local-test/` is an isolated test-only build. Product and local-test builds are deliberately not interchangeable.
+
+The approved detailed provisional target is retained as requirements context in `PROVISIONAL-TARGET.md`; the concise implemented topology is `ARCHITECTURE.md`. Neither substitutes for production evidence or promotes a scheduler/canon decision. Historical source packets/generated outputs are outside the active product tree, recoverable through the archived reviewed commit.

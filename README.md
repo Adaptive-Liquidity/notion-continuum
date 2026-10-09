@@ -1,46 +1,63 @@
-# Asentxia Continuum — canonical local product
+# Asentxia Continuum
 
-One coherent backend plus one authenticated Focus Desk console. **Locally implemented/tested; not production-ready.** PostgreSQL domain truth, VERA/identity/governance, independent Effect Controller, real scheduler adapters, computers/context/artifacts/evidence/recovery/resource controls and the new frontend are in this repository.
+Continuum is the governed operating environment for persistent autonomous intelligence. VERA is the durable accountable principal, not a model, session, credential or Computer. PostgreSQL owns domain truth; the scheduler owns workflow progression; the independent Effect Controller enforces consequential actions; authoritative provider observation establishes external truth.
 
-**P1 PARTIAL · P2 PARTIAL · P3/P4/P5 NOT RUN · scheduler HELD · production BLOCKED · canary NO-GO · independent review NOT RUN.**
+**Development baseline only. P1/P2 PARTIAL · P3/P4/P5 NOT RUN · scheduler HELD · production BLOCKED · canary NO-GO · independent security review NOT RUN.** A passing local build does not clear these gates.
 
-## Start here
-- `docs/DELIVERY.md` — exact current results, source pins, delivery limitations and disposition.
-- `docs/ARCHITECTURE.md` / `docs/REPOSITORY-STRUCTURE.md` — preserved boundaries and actual source layout.
-- `docs/reconciliation/CANONICAL-TRACEABILITY.md` / `CANONICAL-GAP-REGISTER.md` — all 40 approved interactions and honest remaining gaps.
-- `docs/reconciliation/OPERATOR-UI-CAPABILITY-MAPPING.md` — every useful old capability mapped before retirement.
-- `qualification/PRODUCTION-GATES.json` — unchanged live qualification ledger.
-- `OWNER-ACTION-CHECKLIST.md` — the ONE short external checklist.
-- `docs/REMAINING-STAGING-SEQUENCE.md` — later ordered staging/integration, not deployment authorization.
+## Repository
 
-## Local prerequisites
-Linux; **Node 24 backend**, separately installed **Node 22 frontend**; PostgreSQL 17 tools/server; Python, OpenSSL, Chromium; disposable local UID/network-namespace privileges for the existing containment tests. Set `CT_PG_BIN` and `CT_NODE22_BIN` to approved installed toolchain bin directories; set `CT_CHROMIUM_PATH` if needed. The recorded environment used Node 24.14.1/22.23.3 and PostgreSQL 17.10. Frontend: Next.js 16.4.0, React 19.1.9, TypeScript 5.9.3; patched framework choice is explicitly recorded in the single delta. Fonts are licensed/self-hosted.
+- `src/`, `migrations/` — domain, identities/authority, effects, computers, context/artifacts, evidence/recovery and controls.
+- `scheduler/` — supported workflow progression/adapters, not authorization.
+- `web/` — the only product UI: authenticated Next.js/React/TypeScript Focus Desk.
+- `tests/`, `tools/` — regressions and reproducible local validation.
+- `qualification/` — unchanged live gate definitions, disabled staging configuration templates and runbooks.
+- `internal/` — disposable local fixtures and the isolated operator regression harness; never product routes.
+- `docs/` — current architecture, safety, interface, traceability/gap, audit and staging documentation.
+
+Historical handoff/source/evidence copies are archived, not active product code. [Archive manifest and recovery](docs/audit/ARCHIVE-RECOVERY.md).
+
+## Prerequisites
+
+Linux; Node **24** for backend, separately installed Node **22** for the frontend; PostgreSQL **17** tools; Python 3, OpenSSL, Chromium and local UID/network namespace privileges. Current pins are in the lockfile. The original baseline used Node 24.14.1/22.23.3 and PostgreSQL 17.10. No live account, cloud resource or production credential is needed for PR validation.
 
 ```bash
 export CT_PG_BIN=/path/to/postgresql17/bin
 export CT_NODE22_BIN=/path/to/node22/bin
-export PATH="$CT_PG_BIN:$PATH"  # current node stays Node 24
+export CT_CHROMIUM_PATH=/path/to/chromium
+export PATH="$CT_PG_BIN:$PATH"   # retain Node 24 as the backend runtime
 npm ci --ignore-scripts
 CT_RESET_LOCAL_FIXTURE=yes CT_RESET_CONSOLE_FIXTURE=yes npm run test:canonical
-# Optional fixed public GET tests — no provider credentials/mutations:
-CT_RESET_LOCAL_FIXTURE=yes CT_RESET_CONSOLE_FIXTURE=yes CT_RUN_PUBLIC_READ_FIXTURE=yes npm run test:canonical
-npm run qualification-check  # expected exit 1, release blocked
-npm run release-check        # expected exit 1, release blocked
 ```
 
-Reset flags affect only named owned disposable databases after a data-directory check. Never point test harnesses at staging/production or copy local trust authentication into staging. Native local HA/PITR is not cloud/region qualification. The reference scheduler smoke is not 24 hours.
+The reset flags authorize only named disposable databases within the verified local workspace cluster. Test tools reject production/staging profiles, linked data directories and live identity/database configuration. Do not run them in a live environment. See [testing and evidence](docs/TESTING.md).
 
 ## Run the local console
+
 ```bash
 npm run dev:console
 ```
-The wrapper prepares the named disposable local console DB, builds and launches the Next console/API. Only explicit **LOCAL TEST** sign-in appears. The generated short-lived test key/token stays server-side; no .env secrets needed. Ctrl-C stops owned app fixtures. Real AuthKit and renewable machine identity remain separately configured/qualified. Do not transplant fixture mode into staging.
 
-Work is the everyday landing page: deterministic Needs attention, scoped records and contextual inspectors. Fixture owners can record tasks, approve exact actions, assign enrolled workers, create/revoke bounded grants, acknowledge incidents, mark notices read and export a partial authorized evidence page. These human commands never dispatch an effect. An independently scoped worker uses the controller; UNKNOWN has no Retry button. Read-only/unavailable profiles are explicit.
+This intentionally builds/runs a **LOCAL TEST** console/API on loopback. Short-lived fixture identities are not real AuthKit or workload identity. Human commands record tasks, exact approvals/assignments/grants and acknowledgements; approval is never execution. UNKNOWN has no generic Retry action. Unsupported capabilities remain explicitly unavailable.
 
-The former operator layout is only `internal/operator/ui` with a fixture-only server. It is not mounted/linked as a production console. Internal cancellation/context-release capabilities stay there deliberately; they were not silently removed or copied into the final UI.
+## Product builds — not deployment
 
-## Evidence and boundaries
-`canonical-evidence/final/SUMMARY.json` and raw logs are current. Import/intermediate/failed attempts and baseline manifests are historical, not substitute current verification. `docs/M1-SAFETY-CONTRACTS.md` bytes remain frozen. A clean dependency audit or axe result is not security/accessibility certification. Unavailable features are not fake implementations.
+```bash
+npm run build:product          # backend excludes tests and internal executables
+npm run typecheck:console
+npm run test:console
+npm run build:console          # ordinary PRODUCT frontend build, .next/
+```
 
-Stop owned fixtures after use: `pg_ctl -D .local/pgdata -m fast stop` (only after verifying ownership). Dependencies, .next/dist/cache, databases/WAL/dumps, fixture credentials/private keys and machine-specific paths are excluded from the source handoff. Repository licence/commercial terms remain owner decisions; font licences are included. No merge, production deployment or shadow/canary is authorized by this build.
+The dedicated E2E/local frontend build is separate (`.next-local-test/`), labelled test-only and must never be deployed. Runtime fixture switches cannot turn the ordinary PRODUCT build into test authentication. Staging authentication, workload identity, keys, networking, provider contracts and DR still require real qualification; empty secure configuration fails closed. Configuration templates contain no credentials.
+
+## Current documentation
+
+- [Implemented architecture](docs/ARCHITECTURE.md), [repository structure](docs/REPOSITORY-STRUCTURE.md).
+- [Frozen safety contracts](docs/M1-SAFETY-CONTRACTS.md), [recovery extension](docs/RECOVERY-CONTRACT-v0.2.md).
+- [Approved product interface](docs/interface/PRODUCT-CONTRACT.md), [Focus Desk direction](docs/interface/FOCUS-DESK-DESIGN.md).
+- [40-contract traceability](docs/reconciliation/CANONICAL-TRACEABILITY.md), [current gaps](docs/reconciliation/CANONICAL-GAP-REGISTER.md).
+- [Operator capability mapping](docs/reconciliation/OPERATOR-UI-CAPABILITY-MAPPING.md).
+- [Production gate truth](qualification/PRODUCTION-GATES.json), [staging sequence](docs/REMAINING-STAGING-SEQUENCE.md).
+- [One owner checklist](OWNER-ACTION-CHECKLIST.md).
+
+Generated logs, screenshots and results live in ignored `.artifacts/` and CI/release artifacts. They are evidence, not source files or automatic production certification. No merge, production deployment, paid resource, shadow or canary is authorized here. Public/open-source policy and the project license remain owner decisions; public visibility alone is not an open-source license.

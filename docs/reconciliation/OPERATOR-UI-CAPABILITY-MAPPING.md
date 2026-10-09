@@ -15,4 +15,8 @@ Recorded BEFORE retirement/move of any operator asset. Final production frontend
 | Gate status banners | Canonical qualification ledger | Persistent banner + readiness/settings | Migrated; no local PASS → live promotion | A02/A33/A37 |
 | Fixture scenario IDs/process probes | Test harness and raw evidence | Internal/debug tests, not main product | INTERNAL-ONLY | Baseline/namespace/fixture suites |
 
-The legacy assets are retained under `internal/operator/ui` and their server is test-only. The canonical product starts only the new Next.js console. There is no competing primary UI or live legacy command path.
+The legacy assets are retained under `internal/operator/ui` and their server (`internal/operator/server.ts`) is test-only and excluded from the product backend build. The canonical product starts only the new Next.js console. There is no competing primary UI or live legacy command path.
+
+## Cleanup audit disposition
+
+Cancellation and exact quarantined-context release remain **INTERNAL TEST TOOL** behavior, not public administrative capabilities. Existing ProductService/ContextService CAS/tenant/authority tests and the six operator integration regressions are retained. The old UI is not bundled into Next or exposed by public routes. A production administrative tool requires its own authenticated contract and qualification; it is DEFERRED, not silently simulated. Current task/approval/UNKNOWN/evidence/context-read/gate functions are reimplemented in Focus Desk; fixture scenario probes stay engineering-only.
