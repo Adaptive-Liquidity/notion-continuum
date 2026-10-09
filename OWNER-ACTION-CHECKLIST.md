@@ -12,5 +12,7 @@ Offline engineering does not wait for these. They unlock live staging tests, not
 - [x] Feature branch published and [draft PR opened](https://github.com/Adaptive-Liquidity/notion-continuum/pull/1); no main merge or deployment. Repository credential cleanup is verified in the delivered metadata.
 
 ## Repository owner decisions
-- [ ] Revoke/rotate the GitHub token previously exposed in chat; do not reuse it. Supply a fresh approved write connection to publish the local cleanup commits/PR update.
+- [ ] Revoke/rotate the GitHub token exposed in chat immediately after this audit's final push. Temporary reuse was explicitly authorized for this work; that does not make it safe. Use a fresh secure write connection for future work.
 - [ ] Decide whether the canonical commercial repository should remain public; select a project license and review third-party obligations. Visibility changes cannot erase previously published history. No visibility or licensing change is performed by this audit.
+
+- [ ] Approve/apply the credential-free PR CI design and run it on the final commit. CI/scanner setup was blocked and not applied here; the full local verification is preserved separately.

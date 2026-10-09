@@ -25,7 +25,6 @@ docs/
   reconciliation/            current delta, 40 interactions, gaps and capability map
   security/                  principal self-review and controls; not independent clearance
   audit/                     archival recovery and concise disposition record
-.github/workflows/           ordinary credential-free PR validation/artifact retention
 .artifacts/                  ignored fresh results (never committed)
 .local/                      ignored owned disposable DB/keys/runtime (never uploaded)
 ```
@@ -33,3 +32,5 @@ docs/
 `dist/` is the engineering/test build, not a deployable product tree. `dist-product/` excludes all `tests/` and `internal/` executable fixtures. `web/.next/` is the ordinary PRODUCT build; `.next-local-test/` is an isolated test-only build. Product and local-test builds are deliberately not interchangeable.
 
 The approved detailed provisional target is retained as requirements context in `PROVISIONAL-TARGET.md`; the concise implemented topology is `ARCHITECTURE.md`. Neither substitutes for production evidence or promotes a scheduler/canon decision. Historical source packets/generated outputs are outside the active product tree, recoverable through the archived reviewed commit.
+
+Hosted PR CI is not installed or qualified in this audit. The minimal credential-free CI design and the blocked setup are recorded in [principal review](security/PRINCIPAL-REVIEW.md#ci-design-and-unapplied-setup).

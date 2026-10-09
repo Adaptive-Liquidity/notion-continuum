@@ -58,6 +58,7 @@ The dedicated E2E/local frontend build is separate (`.next-local-test/`), labell
 - [40-contract traceability](docs/reconciliation/CANONICAL-TRACEABILITY.md), [current gaps](docs/reconciliation/CANONICAL-GAP-REGISTER.md).
 - [Operator capability mapping](docs/reconciliation/OPERATOR-UI-CAPABILITY-MAPPING.md).
 - [Production gate truth](qualification/PRODUCTION-GATES.json), [staging sequence](docs/REMAINING-STAGING-SEQUENCE.md).
+- [Principal engineering/security review](docs/security/PRINCIPAL-REVIEW.md), [cleanup dispositions](docs/audit/DISPOSITION.md).
 - [One owner checklist](OWNER-ACTION-CHECKLIST.md).
 
-Generated logs, screenshots and results live in ignored `.artifacts/` and CI/release artifacts. They are evidence, not source files or automatic production certification. No merge, production deployment, paid resource, shadow or canary is authorized here. Public/open-source policy and the project license remain owner decisions; public visibility alone is not an open-source license.
+Generated logs, screenshots and results live in ignored `.artifacts/`; CI/release artifact retention is the intended model, not a claim that hosted CI has run. They are evidence, not source files or automatic production certification. No merge, production deployment, paid resource, shadow or canary is authorized here. Public/open-source policy and the project license remain owner decisions; public visibility alone is not an open-source license.
