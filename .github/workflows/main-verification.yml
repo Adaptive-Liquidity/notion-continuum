@@ -112,7 +112,7 @@ jobs:
   full:
     name: Run missing verification
     needs: evidence
-    if: needs.evidence.result != 'success' || needs.evidence.outputs.mode != 'reuse'
+    if: ${{ !cancelled() && (needs.evidence.result != 'success' || needs.evidence.outputs.mode != 'reuse') }}
     permissions:
       contents: read
     uses: ./.github/workflows/ci.yml

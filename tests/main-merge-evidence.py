@@ -70,6 +70,8 @@ def success(name, url):
         "conclusion": "success",
         "completed_at": "2026-10-10T00:00:00Z",
         "details_url": url,
+        "app": {"slug": "github-actions"},
+        "pull_requests": [{"number": 1}],
     }
 
 
@@ -87,6 +89,17 @@ def test_identical_merge_reuses_successful_checks():
     assert decision["tested"] == change
     assert decision["canonical"] == "https://example.invalid/canonical"
     assert decision["secret"] == "https://example.invalid/secret"
+
+
+def test_checks_outside_the_pull_request_are_not_reused():
+    directory, _base, _change, merged = repository()
+    unrelated = success("Canonical local verification", "https://example.invalid/canonical")
+    unrelated["pull_requests"] = []
+    other_app = success("Secret scan", "https://example.invalid/secret")
+    other_app["app"] = {"slug": "someone-else"}
+    decision = module.decide(directory, merged, [unrelated, other_app])
+    assert decision["mode"] == "full"
+    assert decision["reason"] == "required pull request evidence is missing"
 
 
 def test_missing_or_failed_evidence_requires_full_verification():
@@ -137,7 +150,12 @@ def test_a_merge_that_changes_the_tested_tree_is_not_reused():
 
 
 def test_this_repository_recognizes_identical_and_divergent_merges():
-    if not (root / ".git").exists() and not (root / ".git").is_file():
+    commits = (
+        "a711861fb1240e4269628853e33a84439530f693",
+        "ffef6105cd309b2a15f217fe97e094654180861f",
+        "dc5f5b34cdacb34b66ff9e784d3d55b43f149189",
+    )
+    if any(module.git(root, "cat-file", "-e", sha).returncode != 0 for sha in commits):
         return
     identical = module.decide(
         root,

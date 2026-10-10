@@ -31,8 +31,19 @@ def same_tree(cwd, left, right):
     return git(cwd, "diff", "--quiet", left, right).returncode == 0
 
 
+def from_pull_request(item, name):
+    app = item.get("app") or {}
+    return (
+        item.get("name") == name
+        and item.get("conclusion") == "success"
+        and item.get("completed_at")
+        and app.get("slug") == "github-actions"
+        and bool(item.get("pull_requests"))
+    )
+
+
 def latest(checks, name):
-    found = [item for item in checks if item.get("name") == name and item.get("completed_at")]
+    found = [item for item in checks if from_pull_request(item, name)]
     if not found:
         return None
     return max(found, key=lambda item: item["completed_at"])
