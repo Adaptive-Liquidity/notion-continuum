@@ -17,7 +17,7 @@ if [ -d .local/dr-lab ];then
 fi
 npm ci --ignore-scripts > .artifacts/implementation/final/DEPENDENCIES.log 2>&1
 npm run build > .artifacts/implementation/final/BUILD.log 2>&1
-run(){ local name=$1;shift;printf 'Running %s\n' "$name";node --test --test-reporter=tap --test-concurrency=1 "$@" > ".artifacts/implementation/final/$name.tap" 2>&1; }
+run(){ local name=$1;shift;printf 'Running %s\n' "$name"; if ! node --test --test-reporter=tap --test-concurrency=1 "$@" > ".artifacts/implementation/final/$name.tap" 2>&1; then echo "Suite $name failed"; tail -n 60 ".artifacts/implementation/final/$name.tap"; return 1; fi; }
 run BASELINE-FOUNDATION dist/tests/foundation.test.js
 bash tools/backup-domain.sh > .artifacts/implementation/final/LOGICAL-BACKUP.log 2>&1
 python3 tests/backup-target-guards.py > .artifacts/implementation/final/BACKUP-TARGET-GUARDS.json

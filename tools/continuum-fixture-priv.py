@@ -48,6 +48,7 @@ def load() -> tuple[str, str]:
     node, root = data["node"], data["fixtures"]
     if not os.path.isabs(node) or not os.path.isabs(root):
         deny("configured paths must be absolute")
+    node = os.path.realpath(node)
     if not os.path.isfile(node) or os.path.islink(node):
         deny("configured node is not a regular file")
     real_root = os.path.realpath(root)
@@ -92,7 +93,7 @@ def privilege_flags(flags: list[str]) -> int:
 def command_ok(argv: list[str], node: str) -> None:
     if (
         len(argv) == 3
-        and argv[0] == node
+        and os.path.realpath(argv[0]) == node
         and argv[1] == "-e"
         and argv[2]
         and len(argv[2]) <= 65536
@@ -106,7 +107,7 @@ def command_ok(argv: list[str], node: str) -> None:
         and "\n" not in argv[1]
         and "\x00" not in argv[1]
         and len(argv[1]) <= 8192
-        and argv[2] == node
+        and os.path.realpath(argv[2]) == node
         and argv[3] == "tests/isolation-probe.mjs"
     ):
         json.loads(argv[1].split("=", 1)[1])
