@@ -157,6 +157,13 @@ jobs:
           set -euo pipefail
           sudo CT_FIXTURE_NODE="$(command -v node)" bash tools/install-fixture-priv.sh
 
+      - name: Let the unprivileged fixture uid read the workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod o+x "$HOME" "$HOME/work" "$(dirname "$GITHUB_WORKSPACE")" "$GITHUB_WORKSPACE"
+          chmod -R a+rX "$GITHUB_WORKSPACE"
+
       - name: Run guarded canonical verification
         shell: bash
         env:
