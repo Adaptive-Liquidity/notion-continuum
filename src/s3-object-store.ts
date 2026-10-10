@@ -4,7 +4,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
-import { readBoundedBytes } from './bounded-body.js';
+import { readLimitedBody } from './bounded-body.js';
 import {
   bytesHash,
   safeObjectKey,
@@ -89,7 +89,7 @@ export class S3ObjectStore implements ImmutableObjectStore {
       (typeof r.ContentLength === 'number' && r.ContentLength > 16777216)
     )
       throw Error('cloud object missing/too large');
-    const b = await readBoundedBytes(
+    const b = await readLimitedBody(
       r.Body as AsyncIterable<Uint8Array>,
       16777216,
     );

@@ -50,6 +50,12 @@ def load() -> tuple[str, str]:
         deny("configured paths must be absolute")
     if not os.path.isfile(node) or os.path.islink(node):
         deny("configured node is not a regular file")
+    real_root = os.path.realpath(root)
+    if (
+        os.path.basename(real_root) != "computer-fixtures"
+        or os.path.basename(os.path.dirname(real_root)) != ".local"
+    ):
+        deny("fixture root must be the computer-fixtures directory")
     return node, root
 
 

@@ -345,6 +345,29 @@ test('A17 approval is a durable human command, not execution; independent worker
     0,
   );
 });
+test('A12 failed machine refresh cannot submit a stale selection', async () => {
+  await go('approvals', 'draft-summary');
+  await context.route('**/api/continuum/v1/security*', (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: '{}',
+    }),
+  );
+  try {
+    await page
+      .getByRole('button', { name: 'Review machine assignment', exact: true })
+      .click();
+    const submit = page.getByRole('button', {
+      name: 'Record exact assignment',
+      exact: true,
+    });
+    await submit.waitFor();
+    assert.equal(await submit.isDisabled(), true);
+  } finally {
+    await context.unroute('**/api/continuum/v1/security*');
+  }
+});
 test('A12 recorded machine assignment is independent of approval and capability issuance', async () => {
   await go('approvals', 'draft-summary');
   await page

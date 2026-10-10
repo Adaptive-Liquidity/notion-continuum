@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
-import { readBoundedBytes } from './bounded-body.js';
+import { readLimitedBody } from './bounded-body.js';
 import { canonical } from './db.js';
 import type { FenceStore, IndependentFence } from './fence-store.js';
 import type { S3StageConfig, StagingAwsCredential } from './s3-object-store.js';
@@ -51,7 +51,7 @@ export class S3FenceStore implements FenceStore {
       (typeof r.ContentLength === 'number' && r.ContentLength > 4096)
     )
       throw Error('independent fence record missing/oversized');
-    const bytes = await readBoundedBytes(
+    const bytes = await readLimitedBody(
       r.Body as AsyncIterable<Uint8Array>,
       4096,
     );

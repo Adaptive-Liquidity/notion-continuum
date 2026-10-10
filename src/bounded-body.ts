@@ -15,6 +15,25 @@ export async function readBoundedChunks(
   return Buffer.concat(parts);
 }
 export const readBoundedBytes = readBoundedChunks;
+export async function readLimitedBody(
+  body:
+    | AsyncIterable<Uint8Array | Buffer>
+    | { transformToByteArray(): Promise<Uint8Array> },
+  limit: number,
+) {
+  if (
+    body &&
+    typeof (body as AsyncIterable<Uint8Array>)[Symbol.asyncIterator] ===
+      'function'
+  )
+    return readBoundedChunks(body as AsyncIterable<Uint8Array | Buffer>, limit);
+  const legacy = body as { transformToByteArray?: () => Promise<Uint8Array> };
+  if (typeof legacy.transformToByteArray !== 'function')
+    throw Error('body bound');
+  const bytes = Buffer.from(await legacy.transformToByteArray());
+  if (bytes.length > limit) throw Error('body bound');
+  return bytes;
+}
 export function decodeBoundedUtf8(chunks: Buffer[], limit: number) {
   const bytes = Buffer.concat(chunks);
   if (bytes.length > limit) throw Error('body bound');
