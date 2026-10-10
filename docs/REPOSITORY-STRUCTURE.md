@@ -33,4 +33,4 @@ docs/
 
 The approved detailed provisional target is retained as requirements context in `PROVISIONAL-TARGET.md`; the concise implemented topology is `ARCHITECTURE.md`. Neither substitutes for production evidence or promotes a scheduler/canon decision. Historical source packets/generated outputs are outside the active product tree, recoverable through the archived reviewed commit.
 
-Hosted PR CI is not installed or qualified in this audit. The minimal credential-free CI design and the blocked setup are recorded in [principal review](security/PRINCIPAL-REVIEW.md#ci-design-and-unapplied-setup).
+A credential-free PR workflow is in `.github/workflows/ci.yml`. Hosted execution of that workflow is not qualified: the latest observed run on the prior head did not start a runner. Bot review is not a substitute. The design notes remain in [principal review](security/PRINCIPAL-REVIEW.md#ci-design-and-unapplied-setup).
