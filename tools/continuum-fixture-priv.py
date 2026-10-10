@@ -48,9 +48,9 @@ def load() -> tuple[str, str]:
     node, root = data["node"], data["fixtures"]
     if not os.path.isabs(node) or not os.path.isabs(root):
         deny("configured paths must be absolute")
-    node = os.path.realpath(node)
-    if not os.path.isfile(node) or os.path.islink(node):
+    if os.path.islink(node) or not os.path.isfile(node):
         deny("configured node is not a regular file")
+    node = os.path.realpath(node)
     real_root = os.path.realpath(root)
     if (
         os.path.basename(real_root) != "computer-fixtures"
@@ -93,6 +93,8 @@ def privilege_flags(flags: list[str]) -> int:
 def probe_path_ok(path: str) -> bool:
     if path == "tests/isolation-probe.mjs":
         return True
+    if not os.path.isabs(path) or ".." in path.split("/"):
+        return False
     real = os.path.realpath(path)
     return os.path.isfile(real) and real.endswith("/tests/isolation-probe.mjs")
 
