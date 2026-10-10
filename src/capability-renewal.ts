@@ -3,16 +3,26 @@ export interface IdentityTokenSource {
   current(): Promise<string>;
 }
 export class RenewingCapabilityClient {
+  private origin: string;
   constructor(
-    private endpoint: string,
+    endpoint: string,
     private identity: IdentityTokenSource,
   ) {
-    if (new URL(endpoint).protocol !== 'https:')
+    const u = new URL(endpoint);
+    if (
+      u.protocol !== 'https:' ||
+      u.username ||
+      u.password ||
+      u.search ||
+      u.hash ||
+      u.pathname !== '/'
+    )
       throw Error('HTTPS identity endpoint required');
+    this.origin = u.origin;
   }
   async forOperation(operation: string) {
     const identityToken = await this.identity.current();
-    const r = await fetch(this.endpoint + '/renew', {
+    const r = await fetch(this.origin + '/renew', {
       method: 'POST',
       headers: {
         authorization: 'Bearer ' + identityToken,

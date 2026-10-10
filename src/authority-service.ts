@@ -2,6 +2,7 @@ import type pg from 'pg';
 import { tx, append, eventOutbox, bindingDigest } from './db.js';
 import type { VerifiedIdentity } from './identity-provider.js';
 import type { CapabilitySigner } from './production-capability.js';
+import { activeControl } from './service-auth.js';
 export class AuthorityService {
   constructor(
     private governor: pg.Pool,
@@ -58,6 +59,7 @@ export class AuthorityService {
     return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
+      await activeControl(c, this.fence);
       const expiration = new Date(input.expires);
       if (
         !input.id ||
@@ -216,6 +218,7 @@ export class AuthorityService {
     return this.unit(client, async (c) => {
       const i = await this.enrolled(c, actor);
       this.owner(actor, i);
+      await activeControl(c, this.fence);
       const target = (
         await c.query(
           'SELECT * FROM ct.identities WHERE id=$1 AND tenant=$2 AND active',

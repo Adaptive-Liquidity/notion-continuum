@@ -11,6 +11,7 @@ import { LocalIndependentFenceStore } from '../src/fence-store.js';
 import { callController } from '../src/controller-client.js';
 import { mapRunloopStatus } from '../src/runloop-driver.js';
 import { pool } from '../src/db.js';
+import { RenewingCapabilityClient } from '../src/capability-renewal.js';
 import { bootstrap, makeOp } from './helpers.js';
 
 const root = process.cwd();
@@ -218,6 +219,43 @@ test('stalled controller response fails closed without another send', async () =
   server.close();
 });
 
+test('identity renewal endpoint must be the configured HTTPS origin', async () => {
+  const source = {
+    async current() {
+      return 'workload-token';
+    },
+  };
+  for (const endpoint of [
+    'http://approved.example',
+    'https://approved.example@other.example',
+    'https://user:secret@approved.example',
+    'https://approved.example/renew',
+    'https://approved.example/?q=1',
+    'https://approved.example/#fragment',
+  ])
+    assert.throws(
+      () => new RenewingCapabilityClient(endpoint, source),
+      /HTTPS identity endpoint required/,
+    );
+  const calls: string[] = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL) => {
+    calls.push(String(input));
+    return new Response(null, { status: 403 });
+  }) as typeof fetch;
+  try {
+    await assert.rejects(
+      new RenewingCapabilityClient(
+        'https://approved.example/',
+        source,
+      ).forOperation('op-1'),
+      /renewal denied/,
+    );
+  } finally {
+    globalThis.fetch = original;
+  }
+  assert.deepEqual(calls, ['https://approved.example/renew']);
+});
 test('recovery role cannot insert a sendable REQUESTED operation', async () => {
   await bootstrap();
   const id = 'recovery-import-' + Date.now();

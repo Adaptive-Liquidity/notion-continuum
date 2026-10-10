@@ -31,7 +31,8 @@ def until(fn,timeout=30):
  raise RuntimeError('lab condition timeout')
 try:
  primary=base/'primary';cmd(['initdb','-D',primary,'-U','localtest','-A','trust','--encoding=UTF8','--locale=C'])
- with (primary/'postgresql.conf').open('a') as f:f.write(f"\nwal_level=replica\nmax_wal_senders=6\narchive_mode=on\narchive_timeout=1\narchive_command='test -f {archive}/%f || cp %p {archive}/%f'\nfsync=on\nsynchronous_commit=on\n")
+ archive_command=f"{sys.executable} {root/'tools'/'wal-archive.py'} %p {archive}/%f"
+ with (primary/'postgresql.conf').open('a') as f:f.write(f"\nwal_level=replica\nmax_wal_senders=6\narchive_mode=on\narchive_timeout=1\narchive_command='{archive_command}'\nfsync=on\nsynchronous_commit=on\n")
  with (primary/'pg_hba.conf').open('a') as f:f.write('\nhost replication localtest 127.0.0.1/32 trust\n')
  start(primary,55440);cmd(['createdb','-h','127.0.0.1','-p',55440,'-U','localtest','ct_dr'])
  for filename in ['001-foundation.sql','002-lock-privileges.sql','004-monotonic-fences.sql','005-identity-authority.sql','006-product-computers.sql','008-recovery-controls.sql']:

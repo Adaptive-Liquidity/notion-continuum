@@ -470,6 +470,110 @@ test('Client can obtain fresh bounded capability without reusing expired token (
   assert.ok(second.expires <= Date.now() + 90000);
 });
 
+test('blocked recovery cannot mint a grant through the identity API', async () => {
+  await gov.query('UPDATE ct.control SET blocked=true');
+  try {
+    const body = {
+      id: 'pq-blocked-grant',
+      principal: 'agent',
+      action: 'write',
+      resource: 'fixture-object',
+      expires: new Date(Date.now() + 60000).toISOString(),
+      maxCost: 1,
+      budget: 1,
+    };
+    await assert.rejects(
+      service.createGrant(await actor('owner-a', 'user'), body),
+      /recovery fence/,
+    );
+    const http = await fetch(ownerEndpoint + '/grants', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + (await jwt('owner-a')),
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    assert.equal(http.status, 403);
+    assert.equal(
+      Number(
+        (
+          await gov.query(
+            "SELECT count(*) FROM ct.grants WHERE tenant='a' AND id='pq-blocked-grant'",
+          )
+        ).rows[0].count,
+      ),
+      0,
+    );
+  } finally {
+    await gov.query('UPDATE ct.control SET blocked=false');
+  }
+});
+test('blocked recovery cannot record an assignment through the identity API', async () => {
+  const o = await makeOp('pq-blocked-assign', { approve: false });
+  await gov.query('UPDATE ct.control SET blocked=true');
+  try {
+    const body = {
+      identity: 'worker-a',
+      operation: o.id,
+      expires: new Date(Date.now() + 50000).toISOString(),
+    };
+    await assert.rejects(
+      service.assign(await actor('owner-a', 'user'), body),
+      /recovery fence/,
+    );
+    const http = await fetch(ownerEndpoint + '/assignments', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + (await jwt('owner-a')),
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    assert.equal(http.status, 403);
+    assert.equal(
+      Number(
+        (
+          await gov.query(
+            "SELECT count(*) FROM ct.assignments WHERE tenant='a' AND operation='pq-blocked-assign'",
+          )
+        ).rows[0].count,
+      ),
+      0,
+    );
+  } finally {
+    await gov.query('UPDATE ct.control SET blocked=false');
+  }
+});
+test('enrolled owner revoke still narrows a grant while recovery is blocked', async () => {
+  const owner = await actor('owner-a', 'user');
+  await service.createGrant(owner, {
+    id: 'pq-revoke-while-blocked',
+    principal: 'agent',
+    action: 'write',
+    resource: 'fixture-object',
+    expires: new Date(Date.now() + 60000).toISOString(),
+    maxCost: 1,
+    budget: 1,
+  });
+  await gov.query('UPDATE ct.control SET blocked=true');
+  try {
+    assert.deepEqual(await service.revoke(owner, 'pq-revoke-while-blocked'), {
+      grant: 'pq-revoke-while-blocked',
+      revoked: true,
+    });
+    assert.equal(
+      (
+        await gov.query(
+          "SELECT revoked FROM ct.grants WHERE tenant='a' AND id='pq-revoke-while-blocked'",
+        )
+      ).rows[0].revoked,
+      true,
+    );
+  } finally {
+    await gov.query('UPDATE ct.control SET blocked=false');
+  }
+});
 test('Governance HTTP endpoint verifies human identity; worker cannot use it', async () => {
   const o = await makeOp('pq-http-approve', { approve: false });
   const body = {

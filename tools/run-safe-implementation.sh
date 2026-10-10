@@ -42,6 +42,7 @@ run DEPENDENCY-OVERRIDES dist/tests/dependency-overrides.test.js
 run OBJECT-CONTAINMENT dist/tests/object-store-containment.test.js
 CT_FIXTURE_NODE="$(command -v node)" python3 tests/fixture-priv-bounds.py > .artifacts/implementation/final/FIXTURE-PRIV.json
 run COMPUTER-ISOLATION dist/tests/computer-isolation.test.js
+python3 tests/wal-archive-publish.py > .artifacts/implementation/final/WAL-ARCHIVE.json
 CT_LOCAL_DR_LAB=yes python3 tools/local-ha-pitr-lab.py > .artifacts/implementation/final/HA-PITR-LAB.log 2>&1
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/003-scheduler-fixture.sql > .artifacts/implementation/final/SCHEDULER-SCHEMA.log
 export CT_REFERENCE_DB_FILE="$PWD/.local/reference-temporal-final-$(date +%s).sqlite"
