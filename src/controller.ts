@@ -198,9 +198,6 @@ export class EffectController {
     return r.rows[0];
   }
   async dispatch(actor: Capability, id: string) {
-    // A restored REQUESTED row may describe an already performed effect. Reject stale deployments
-    // BEFORE mutating it to DENIED; recovery must first classify the backup gap as UNKNOWN.
-    await this.externalFenceGuard?.(this.deploymentFence);
     if (actor.expires <= Date.now() || !actor.operations.includes(id))
       throw Error('capability scope');
     const admitted = await tx(this.db, async (c) => {
@@ -220,6 +217,7 @@ export class EffectController {
           };
         return { o, sender: false };
       }
+      await this.externalFenceGuard?.(this.deploymentFence);
       const reason = await this.authority(c, l, actor, true);
       if (reason)
         return {

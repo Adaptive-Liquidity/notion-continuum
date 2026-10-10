@@ -217,6 +217,37 @@ test('M3 unknown with missing or mismatched provider evidence stays unknown', as
     'UNKNOWN',
   );
 });
+test('M3 expired uncertain operation resolves UNKNOWN before deployment fence', async () => {
+  const id = 'm3-expired-fenced';
+  await makeOp(id);
+  await admin.query(
+    "UPDATE ct.operations SET state='RESERVED',version=version+1,lease_until=now()-interval '1 second' WHERE id=$1",
+    [id],
+  );
+  let guardCalls = 0;
+  const ctl = new EffectController(
+    ctlDb,
+    adapter,
+    fence,
+    30000,
+    {},
+    async () => {
+      guardCalls++;
+      throw Error('stale deployment');
+    },
+  );
+  assert.equal((await ctl.dispatch(actor(id), id)).state, 'UNKNOWN');
+  assert.equal(guardCalls, 0);
+
+  const requestedId = 'm3-requested-fenced';
+  await makeOp(requestedId);
+  await assert.rejects(ctl.dispatch(actor(requestedId), requestedId), {
+    message: 'stale deployment',
+  });
+  assert.equal(guardCalls, 1);
+  assert.equal((await state(requestedId)).state, 'REQUESTED');
+  assert.equal(await count(requestedId), 0);
+});
 test('M3 restored/no-fence and wrong deployment fence fail closed', async () => {
   const id = 'm3-fence';
   await makeOp(id);
