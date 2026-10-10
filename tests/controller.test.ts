@@ -15,6 +15,7 @@ import {
 import { pool, sha, canonical, tx } from '../src/db.js';
 import { EffectController } from '../src/controller.js';
 import { FixtureAdapter } from '../internal/fixtures/provider-adapter.js';
+import { unshareIsolated } from '../internal/fixtures/fixture-priv.js';
 import { callController } from '../src/controller-client.js';
 import { verifyCapability } from '../src/capability.js';
 import { readContext } from '../src/memory.js';
@@ -277,20 +278,12 @@ test('M3 isolated compromised agent cannot reach provider/DB/secrets or forge co
   };
   const r = spawnSync(
     'sudo',
-    [
-      '-n',
-      'unshare',
-      '--net',
-      '--',
-      'setpriv',
-      '--reuid=65534',
-      '--regid=65534',
-      '--clear-groups',
-      'env',
+    unshareIsolated(65534, [
+      '/usr/bin/env',
       'PROBE_CONFIG=' + JSON.stringify(cfg),
       process.execPath,
       'tests/isolation-probe.mjs',
-    ],
+    ]),
     {
       env: { PATH: process.env.PATH },
       encoding: 'utf8',

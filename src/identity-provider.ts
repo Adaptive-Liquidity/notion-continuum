@@ -21,6 +21,9 @@ export interface VerifiedIdentity {
   expires: number;
   authTime?: number;
   methods: string[];
+  // Issuer-signed workload fence. A caller body cannot supply these.
+  credentialGeneration?: number;
+  credentialEpoch?: number;
 }
 export class IdentityVerifier {
   private keys: JWTVerifyGetKey;
@@ -93,6 +96,9 @@ export class IdentityVerifier {
         Number(payload.auth_time) > Math.floor(Date.now() / 1000))
     )
       throw Error('invalid authentication time');
+    for (const claim of ['ct_gen', 'ct_epoch'] as const)
+      if (payload[claim] !== undefined && !Number.isSafeInteger(payload[claim]))
+        throw Error('invalid workload binding');
     for (const [k, v] of Object.entries(this.config.requiredClaims ?? {}))
       if (payload[k] !== v) throw Error('workload claim binding');
     // Token kind is selected by the registered issuer/audience verifier, never caller body or token role fields.
@@ -109,6 +115,10 @@ export class IdentityVerifier {
       methods: Array.isArray(payload.amr)
         ? payload.amr.filter((x) => typeof x === 'string')
         : [],
+      credentialGeneration:
+        typeof payload.ct_gen === 'number' ? payload.ct_gen : undefined,
+      credentialEpoch:
+        typeof payload.ct_epoch === 'number' ? payload.ct_epoch : undefined,
     });
   }
 }

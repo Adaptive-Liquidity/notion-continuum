@@ -386,10 +386,32 @@ export class RecoveryService {
     approvalReference: string,
   ) {
     await this.policy.authorizeOperator(actor);
+    const journal = await this.policy.readAuthorityJournal();
+    const inventory = await this.policy.readOperationInventory();
+    if (
+      sha(canonical(journal.records)) !== journal.digest ||
+      sha(canonical(inventory.operations)) !== inventory.digest ||
+      !inventory.complete
+    )
+      throw Error('independent journal/inventory corrupt');
     const m = await this.manifest(actor, run),
       digest = sha(canonical(m));
+    if (
+      journal.digest !== m.authorityDigest ||
+      inventory.digest !== m.inventoryDigest
+    )
+      throw Error('independent journal/inventory drift');
     await this.policy.verifyActivationApproval(approvalReference, digest);
-    const r = await tx(this.db, async (c) => {
+    const againJournal = await this.policy.readAuthorityJournal();
+    const againInventory = await this.policy.readOperationInventory();
+    if (
+      againJournal.digest !== journal.digest ||
+      againInventory.digest !== inventory.digest
+    )
+      throw Error('independent journal/inventory drift');
+    const opened = await tx(this.db, async (c) => {
+      const liveJournal = await this.policy.readAuthorityJournal();
+      const liveInventory = await this.policy.readOperationInventory();
       const { i, r, ext } = await this.locked(c, actor, run);
       const currentOps = (
         await c.query(
@@ -398,6 +420,10 @@ export class RecoveryService {
         )
       ).rows;
       if (
+        liveJournal.digest !== journal.digest ||
+        liveInventory.digest !== inventory.digest ||
+        liveJournal.digest !== r.authority_digest ||
+        liveInventory.digest !== r.inventory_digest ||
         !r.inventory_checked ||
         !r.inventory_digest ||
         (
@@ -428,8 +454,19 @@ export class RecoveryService {
       });
       return ext;
     });
-    // External store is the LAST activation step. Failure leaves it closed even if the DB committed.
-    await this.store.activate(r.revision, digest);
-    return { run, fence: r.fence, manifestDigest: digest };
+    try {
+      await this.store.activate(opened.revision, digest);
+    } catch (error) {
+      await tx(this.db, async (c) => {
+        await c.query('SELECT * FROM ct.control WHERE singleton FOR UPDATE');
+        await c.query('UPDATE ct.control SET blocked=true WHERE singleton');
+        await c.query(
+          "UPDATE ct.recovery_runs SET state='BLOCKED' WHERE id=$1 AND state='COMPLETE'",
+          [run],
+        );
+      });
+      throw error;
+    }
+    return { run, fence: opened.fence, manifestDigest: digest };
   }
 }

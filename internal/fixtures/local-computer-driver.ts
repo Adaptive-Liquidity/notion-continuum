@@ -9,6 +9,7 @@ import type {
   Placement,
   PlacementSpec,
 } from '../../src/computers.js';
+import { fixturePriv, unshareIsolated } from './fixture-priv.js';
 export class LocalComputerDriver implements ComputerDriver {
   private placements = new Map<
     string,
@@ -27,28 +28,27 @@ export class LocalComputerDriver implements ComputerDriver {
     const id = 'local-' + randomUUID(),
       directory = path.join(this.root, id),
       uid = 110000 + ++this.counter;
-    await fs.mkdir(directory, { recursive: true, mode: 0o700 });
-    const own = spawnSync('sudo', ['-n', 'chown', `${uid}:${uid}`, directory]);
+    await fs.mkdir(directory, { recursive: true });
+    await fs.chmod(directory, 0o770);
+    // Keep the operator group so the fixture can spawn and remove the directory.
+    // The placed process drops groups, so a peer uid still cannot read it.
+    const gid = process.getgid?.();
+    if (gid === undefined) throw Error('fixture group unavailable');
+    const own = spawnSync('sudo', [
+      '-n',
+      fixturePriv,
+      'chown',
+      `${uid}:${gid}`,
+      directory,
+    ]);
     if (own.status !== 0) throw Error('fixture chown failed');
     const child = spawn(
       'sudo',
-      [
-        '-n',
-        'unshare',
-        '--net',
-        '--',
-        'setpriv',
-        `--reuid=${uid}`,
-        `--regid=${uid}`,
-        '--clear-groups',
-        '--no-new-privs',
-        '--bounding-set=-all',
-        '--inh-caps=-all',
-        '--ambient-caps=-all',
+      unshareIsolated(uid, [
         process.execPath,
         '-e',
         "console.log('READY '+process.pid);setInterval(()=>{},1000)",
-      ],
+      ]),
       { cwd: directory, stdio: ['ignore', 'pipe', 'pipe'] },
     );
     const pid = await new Promise<number>((r, j) => {
@@ -106,7 +106,12 @@ export class LocalComputerDriver implements ComputerDriver {
     const v = this.details(id);
     if (v.child.exitCode === null && v.child.signalCode === null) {
       const exit = new Promise<void>((r) => v.child.once('exit', () => r()));
-      const kill = spawnSync('sudo', ['-n', 'kill', '-KILL', String(v.pid)]);
+      const kill = spawnSync('sudo', [
+        '-n',
+        fixturePriv,
+        'kill',
+        String(v.pid),
+      ]);
       if (kill.status !== 0) throw Error('fixture stop failed');
       await exit;
     }

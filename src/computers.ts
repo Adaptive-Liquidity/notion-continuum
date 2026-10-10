@@ -231,7 +231,7 @@ export class ComputerService {
       if (i.kind !== 'machine') throw Error('machine required');
       const r = (
         await c.query(
-          'SELECT c.*,p.active FROM ct.computers c JOIN ct.principals p ON p.tenant=c.tenant AND p.id=c.principal WHERE c.tenant=$1 AND c.id=$2 FOR SHARE OF c,p',
+          'SELECT c.*,p.active,p.epoch AS principal_epoch FROM ct.computers c JOIN ct.principals p ON p.tenant=c.tenant AND p.id=c.principal WHERE c.tenant=$1 AND c.id=$2 FOR SHARE OF c,p',
           [i.tenant, identifier(id)],
         )
       ).rows[0];
@@ -240,6 +240,8 @@ export class ComputerService {
         r.principal !== i.principal ||
         r.placement !== placement ||
         r.generation !== generation ||
+        actor.credentialGeneration !== Number(r.generation) ||
+        actor.credentialEpoch !== Number(r.principal_epoch) ||
         r.state !== 'RUNNING' ||
         actor.expires <=
           +(await c.query('SELECT clock_timestamp() t')).rows[0].t

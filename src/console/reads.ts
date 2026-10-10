@@ -250,7 +250,7 @@ export class ConsoleReads {
             },
           ),
           item(
-            'github-readonly',
+            PUBLIC_GITHUB_PROVIDER,
             'integration',
             'GitHub immutable public read',
             1,

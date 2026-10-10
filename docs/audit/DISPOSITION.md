@@ -15,7 +15,7 @@ All original 975 tracked files (9,440,766 bytes) at `3c197ddb57c13db397e30c48e4c
 | `legacy-hotfixes/` | ARCHIVE / EXTRACT MINIMUM REFUSAL FIXTURES | Original complete patches archived; two TS and two exact Python refusal fixtures retained under tests; fresh regression/probes pass |
 | `docs/archive`, source-packet wrappers and superseded reports | ARCHIVE OUTSIDE PRODUCT TREE | Sole current product contract/plan/Focus Desk direction moved into `docs/interface/`; current architecture and detailed provisional target preserved |
 | Handoff root manifests/start-here/delivery/import/publication reports | REMOVE FROM ACTIVE REPOSITORY after archival | README is the single developer entry point; verified recovery metadata lives under `docs/audit/` |
-| Generated `web/next-env.d.ts` | REMOVE FROM TRACKED SOURCE | Next type generation reproduces it; static `web/env.d.ts` remains; typecheck/build pass |
+| Generated `web/next-env.d.ts` | TRACKED GENERATED GLUE | Remains in the tracked tree as Next.js type glue and is excluded from the tested-source fingerprint. Static `web/env.d.ts` remains. |
 | Earlier security self-review | ARCHIVE / SUPERSEDE | Current principal review replaces obsolete test-count findings, not independent clearance |
 | Public/commercial licensing, temporary exposed GitHub credential, CI activation | REQUIRES OWNER DECISION | No visibility/licensing/history changes; rotate credential; approve/apply/run credential-free CI |
 

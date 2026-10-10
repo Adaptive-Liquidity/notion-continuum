@@ -3,13 +3,15 @@ import type {
   ProviderAdapter,
   ProviderObservation,
 } from '../provider-adapter.js';
+import { PUBLIC_GITHUB_PROVIDER } from '../console/contracts.js';
+export const GITHUB_PUBLIC_READONLY_PROVIDER = PUBLIC_GITHUB_PROVIDER;
 export const safeRepository = {
   owner: 'Adaptive-Liquidity',
   repo: 'Continuum',
   commit: '9ac4723b5390d22ed2d6aed9cf984cb0a32731ca',
 };
 export class GitHubReadOnlyAdapter implements ProviderAdapter {
-  readonly provider = 'github-public-readonly';
+  readonly provider = GITHUB_PUBLIC_READONLY_PROVIDER;
   readonly evidence: Array<Record<string, unknown>> = [];
   constructor(private deadlineMs = 5000) {}
   supports(o: Record<string, any>) {

@@ -56,8 +56,21 @@ async function actor(
   kind: 'user' | 'machine' = 'machine',
   overrides: Record<string, unknown> = {},
 ) {
+  const claims = { ...overrides };
+  if (kind === 'machine' && claims.ct_gen === undefined) {
+    const bound = (
+      await gov.query(
+        'SELECT p.generation,p.epoch FROM ct.identities i JOIN ct.principals p ON p.tenant=i.tenant AND p.id=i.principal WHERE i.subject=$1 AND i.kind=$2',
+        [sub, kind],
+      )
+    ).rows[0];
+    if (bound) {
+      claims.ct_gen = Number(bound.generation);
+      claims.ct_epoch = Number(bound.epoch);
+    }
+  }
   return (kind === 'user' ? userVerifier : machineVerifier).verify(
-    await jwt(sub, overrides),
+    await jwt(sub, claims),
   );
 }
 async function request(token: string, path: string, body: unknown) {

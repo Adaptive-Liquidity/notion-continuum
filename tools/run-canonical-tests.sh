@@ -15,7 +15,7 @@ mkdir -p "$OUT/backend" "$OUT/frontend" "$OUT/baseline" "$OUT/browser"
 trap 'printf "Verification stopped at line %s; exit %s. See retained raw evidence.\n" "$LINENO" "$?" > "$OUT/INCOMPLETE.txt"' ERR
 sha256sum qualification/PRODUCTION-GATES.json docs/M1-SAFETY-CONTRACTS.md > "$OUT/FROZEN-INPUTS.sha256"
 python3 tools/canonical-source-digest.py > "$OUT/TESTED-SOURCE.json"
-printf 'Re-running all 121 accepted backend groups, native local HA/PITR and legacy guards.\n'
+printf 'Re-running accepted backend groups, native local HA/PITR and legacy guards.\n'
 npm test > "$OUT/baseline/RUN.log" 2>&1
 cp -a .artifacts/implementation/final "$OUT/baseline/suites"
 cp -a .artifacts/implementation/dr-lab "$OUT/baseline/dr-lab"
@@ -51,12 +51,14 @@ node --test --test-concurrency=1 --test-reporter=tap dist/tests/console-browser.
 cp -a .artifacts/canonical/browser/. "$OUT/browser/"
 npm audit --omit=dev --json > "$OUT/DEPENDENCY-AUDIT.json"
 set +e
-npm run qualification-check > "$OUT/QUALIFICATION-CHECK.log" 2>&1; Q=$?
-npm run release-check > "$OUT/RELEASE-CHECK.log" 2>&1; R=$?
+if npm run qualification-check > "$OUT/QUALIFICATION-CHECK.log" 2>&1; then Q=0; else Q=$?; fi
+if npm run release-check > "$OUT/RELEASE-CHECK.log" 2>&1; then R=0; else R=$?; fi
 set -e
 [ "$Q" = 1 ] && [ "$R" = 1 ] || { echo 'Expected qualification/release enforcement to remain blocked.';exit 1; }
 sha256sum -c "$OUT/FROZEN-INPUTS.sha256" > "$OUT/FROZEN-INPUTS-UNCHANGED.log"
 python3 tools/canonical-source-digest.py > "$OUT/SOURCE-AFTER.json"
 cmp "$OUT/TESTED-SOURCE.json" "$OUT/SOURCE-AFTER.json"
 python3 tools/summarize-canonical-evidence.py
+rm -f "$OUT/INCOMPLETE.txt"
+printf 'Canonical local verification passed. Production BLOCKED; scheduler HELD; canary NO-GO.\n' > "$OUT/COMPLETE.txt"
 printf 'Canonical local verification passed. Production BLOCKED; scheduler HELD; canary NO-GO.\n'

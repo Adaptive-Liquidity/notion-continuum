@@ -6,6 +6,10 @@ import { admin, gov, makeOp, count, bootstrap, fence } from './helpers.js';
 import { append, pool, tx, sha } from '../src/db.js';
 import { secrets, config, start, stop, capability } from './process-helpers.js';
 import { callController } from '../src/controller-client.js';
+import {
+  fixturePriv,
+  unshareIsolated,
+} from '../internal/fixtures/fixture-priv.js';
 const socket = process.cwd() + '/.local/release-controller.sock';
 let provider: ChildProcess, controller: ChildProcess;
 before(async () => {
@@ -68,19 +72,11 @@ test('Local compute process and filesystem destruction reconstructs data; genera
   });
   const child = spawn(
     'sudo',
-    [
-      '-n',
-      'unshare',
-      '--net',
-      '--',
-      'setpriv',
-      '--reuid=65534',
-      '--regid=65534',
-      '--clear-groups',
+    unshareIsolated(65534, [
       process.execPath,
       '-e',
       "console.log('READY '+process.pid);setInterval(()=>{},1000)",
-    ],
+    ]),
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
   const pid = await new Promise<number>((resolve, reject) => {
@@ -88,7 +84,7 @@ test('Local compute process and filesystem destruction reconstructs data; genera
     child.once('error', reject);
   });
   const old = await makeOp('release-old-computer');
-  const kill = spawnSync('sudo', ['-n', 'kill', '-KILL', String(pid)]);
+  const kill = spawnSync('sudo', ['-n', fixturePriv, 'kill', String(pid)]);
   assert.equal(kill.status, 0);
   await new Promise<void>((r) => child.once('exit', () => r()));
   fs.rmSync(path, { recursive: true });

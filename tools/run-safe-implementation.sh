@@ -20,6 +20,7 @@ npm run build > .artifacts/implementation/final/BUILD.log 2>&1
 run(){ local name=$1;shift;printf 'Running %s\n' "$name";node --test --test-reporter=tap --test-concurrency=1 "$@" > ".artifacts/implementation/final/$name.tap" 2>&1; }
 run BASELINE-FOUNDATION dist/tests/foundation.test.js
 bash tools/backup-domain.sh > .artifacts/implementation/final/LOGICAL-BACKUP.log 2>&1
+python3 tests/backup-target-guards.py > .artifacts/implementation/final/BACKUP-TARGET-GUARDS.json
 createdb ct_restore;pg_restore --exit-on-error -d ct_restore .local/domain-backup.dump > .artifacts/implementation/final/LOGICAL-RESTORE.log 2>&1
 [ "$(psql -d ct_restore -Atc 'SELECT count(*) FROM ct.control')" = 0 ]
 printf 'restored activation rows = 0; dispatch remains blocked\n' > .artifacts/implementation/final/LOGICAL-RESTORE-STATUS.txt
@@ -34,6 +35,9 @@ run BASELINE-LEGACY dist/tests/legacy-hotfix.test.js
 python3 tests/legacy-hotfix-probe.py > .artifacts/implementation/final/LEGACY-PYTHON.json
 run BASELINE-RELEASE-LOCAL dist/tests/release-local.test.js
 run PRODUCT-BACKEND dist/tests/product-backend.test.js
+run AUDIT-REGRESSIONS dist/tests/audit-regressions.test.js
+run FONT-NOTICES dist/tests/font-notices.test.js
+CT_FIXTURE_NODE="$(command -v node)" python3 tests/fixture-priv-bounds.py > .artifacts/implementation/final/FIXTURE-PRIV.json
 run COMPUTER-ISOLATION dist/tests/computer-isolation.test.js
 CT_LOCAL_DR_LAB=yes python3 tools/local-ha-pitr-lab.py > .artifacts/implementation/final/HA-PITR-LAB.log 2>&1
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/003-scheduler-fixture.sql > .artifacts/implementation/final/SCHEDULER-SCHEMA.log
@@ -41,8 +45,13 @@ export CT_REFERENCE_DB_FILE="$PWD/.local/reference-temporal-final-$(date +%s).sq
 run REFERENCE-SCHEDULER dist/tests/reference-scheduler.test.js
 run CONTEXT-ARTIFACT dist/tests/context-artifact.test.js
 createdb ct_recovery_test
-for m in 001-foundation.sql 002-lock-privileges.sql 004-monotonic-fences.sql 005-identity-authority.sql 006-product-computers.sql 007-context-artifacts.sql 008-recovery-controls.sql 009-runtime-trigger-permissions.sql 010-resource-controls.sql;do psql -v ON_ERROR_STOP=1 -d ct_recovery_test -f "migrations/$m" >> .artifacts/implementation/final/RECOVERY-SCHEMA.log 2>&1;done
+for m in 001-foundation.sql 002-lock-privileges.sql 004-monotonic-fences.sql 005-identity-authority.sql 006-product-computers.sql 007-context-artifacts.sql 008-recovery-controls.sql 009-runtime-trigger-permissions.sql 010-resource-controls.sql 012-tenant-identity-fks.sql;do psql -v ON_ERROR_STOP=1 -d ct_recovery_test -f "migrations/$m" >> .artifacts/implementation/final/RECOVERY-SCHEMA.log 2>&1;done
 CT_DATABASE=ct_recovery_test run EVIDENCE-RECOVERY dist/tests/evidence-recovery.test.js
+psql -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_recovery_test' AND pid<>pg_backend_pid()" >/dev/null
+dropdb --if-exists ct_recovery_test
+createdb ct_recovery_test
+for m in 001-foundation.sql 002-lock-privileges.sql 004-monotonic-fences.sql 005-identity-authority.sql 006-product-computers.sql 007-context-artifacts.sql 008-recovery-controls.sql 009-runtime-trigger-permissions.sql 010-resource-controls.sql 012-tenant-identity-fks.sql;do psql -v ON_ERROR_STOP=1 -d ct_recovery_test -f "migrations/$m" >> .artifacts/implementation/final/AUDIT-RECOVERY-SCHEMA.log 2>&1;done
+CT_DATABASE=ct_recovery_test run AUDIT-RECOVERY dist/tests/audit-recovery.test.js
 run OPERATOR-DESK dist/tests/desk-frontend.test.js
 run SECURITY-RESOURCE dist/tests/security-resource.test.js
 run MIGRATION-PREPARATION dist/tests/migration-preparation.test.js

@@ -8,6 +8,7 @@ import {
   identifier,
   activeControl,
 } from './service-auth.js';
+import { GITHUB_PUBLIC_READONLY_PROVIDER } from './providers/github-readonly.js';
 export interface TaskInput {
   id: string;
   principal: string;
@@ -161,7 +162,7 @@ export class ProductService {
         +deadline <= now ||
         +deadline > Math.min(+g.expires, +t.deadline) ||
         actor.expires <= now ||
-        !['fixture', 'github-readonly'].includes(x.provider) ||
+        !['fixture', GITHUB_PUBLIC_READONLY_PROVIDER].includes(x.provider) ||
         Buffer.byteLength(canonical(x.params)) > 16384
       )
         throw Error('proposal outside current grant/task');
@@ -306,6 +307,23 @@ export class ProductService {
         'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
         [i.tenant, t.principal],
       );
+      const now = +(await c.query('SELECT clock_timestamp() t')).rows[0].t;
+      const still = (
+        await c.query(
+          'SELECT active,domain_role FROM ct.identities WHERE id=$1 AND tenant=$2 AND active',
+          [i.id, i.tenant],
+        )
+      ).rows[0];
+      if (
+        !still ||
+        still.domain_role !== 'owner' ||
+        actor.authTime === undefined ||
+        actor.expires <= now ||
+        actor.authTime > now + 5000 ||
+        now - actor.authTime > 300000 ||
+        !actor.methods.includes('mfa')
+      )
+        throw Error('fresh owner MFA required');
       const changed = await c.query(
         "UPDATE ct.tasks SET status='CANCELLED',revision=revision+1 WHERE tenant=$1 AND id=$2 AND revision=$3 AND status='PLANNED' RETURNING revision",
         [i.tenant, t.id, revision],
@@ -327,9 +345,29 @@ export class ProductService {
     return tx(this.db, async (c) => {
       await c.query('SELECT * FROM ct.control WHERE singleton FOR SHARE');
       const i = await enrolled(c, actor, true);
+      const machine = (
+        await c.query(
+          'SELECT * FROM ct.identities WHERE tenant=$1 AND id=$2 AND kind=$3 FOR UPDATE',
+          [i.tenant, identifier(id), 'machine'],
+        )
+      ).rows[0];
+      if (!machine?.active || !machine.principal) throw Error('machine scope');
+      await c.query(
+        'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
+        [i.tenant, machine.principal],
+      );
+      const now = +(await c.query('SELECT clock_timestamp() t')).rows[0].t;
+      if (
+        actor.authTime === undefined ||
+        actor.expires <= now ||
+        actor.authTime > now + 5000 ||
+        now - actor.authTime > 300000 ||
+        !actor.methods.includes('mfa')
+      )
+        throw Error('fresh owner MFA required');
       const r = await c.query(
         "UPDATE ct.identities SET active=false,version=version+1 WHERE tenant=$1 AND id=$2 AND kind='machine' AND active RETURNING id,version",
-        [i.tenant, identifier(id)],
+        [i.tenant, machine.id],
       );
       if (!r.rowCount) throw Error('machine scope');
       await append(c, i.tenant, 'MACHINE_DISABLED', {

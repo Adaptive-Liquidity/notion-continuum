@@ -26,14 +26,18 @@ export class AuthorityService {
     if (!i) throw Error('identity not enrolled');
     return i;
   }
-  private owner(actor: VerifiedIdentity, i: Record<string, any>) {
+  private owner(
+    actor: VerifiedIdentity,
+    i: Record<string, any>,
+    now = Date.now(),
+  ) {
     if (
-      actor.expires <= Date.now() ||
+      actor.expires <= now ||
       actor.kind !== 'user' ||
       i.domain_role !== 'owner' ||
       actor.authTime === undefined ||
-      actor.authTime > Date.now() + 5000 ||
-      Date.now() - actor.authTime > 300000 ||
+      actor.authTime > now + 5000 ||
+      now - actor.authTime > 300000 ||
       !actor.methods.includes('mfa')
     )
       throw Error('fresh independently enrolled owner MFA required');
@@ -159,6 +163,14 @@ export class AuthorityService {
           (await c.query('SELECT clock_timestamp() t')).rows[0].t,
         ).getTime(),
         expiration = new Date(input.expires);
+      const stillEnrolled = (
+        await c.query(
+          'SELECT * FROM ct.identities WHERE id=$1 AND tenant=$2 AND active FOR SHARE',
+          [i.id, i.tenant],
+        )
+      ).rows[0];
+      if (!stillEnrolled) throw Error('identity not enrolled');
+      this.owner(actor, stillEnrolled, now);
       if (
         o.state !== 'REQUESTED' ||
         o.digest !== input.digest ||
@@ -347,7 +359,9 @@ export class AuthorityService {
         !assignment ||
         assignment.digest !== o.digest ||
         (g.approval_required &&
-          (!a || a.digest !== o.digest || a.grant_version !== g.version))
+          (!a || a.digest !== o.digest || a.grant_version !== g.version)) ||
+        actor.credentialGeneration !== Number(p.generation) ||
+        actor.credentialEpoch !== Number(p.epoch)
       )
         throw Error('current authority/assignment denied');
       const expires = Math.min(

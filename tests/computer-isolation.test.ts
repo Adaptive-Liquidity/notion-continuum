@@ -8,6 +8,7 @@ import { fixture } from './implementation-helpers.js';
 import { admin, gov } from './helpers.js';
 import { ComputerService } from '../src/computers.js';
 import { LocalComputerDriver } from '../internal/fixtures/local-computer-driver.js';
+import { nsenterIsolated } from '../internal/fixtures/fixture-priv.js';
 import { RunloopDriver } from '../src/runloop-driver.js';
 import { pinPublicTarget, publicAddress } from '../src/network-policy.js';
 let f: Awaited<ReturnType<typeof fixture>>,
@@ -242,23 +243,7 @@ test('Computer actual separate UID/network process cannot read credentials or te
   const probe = `const fs=require('node:fs'),net=require('node:net'),cp=require('node:child_process');(async()=>{const checks={uid:process.getuid()===${d.uid},noCapabilities:/CapEff:\\s+0+/.test(fs.readFileSync('/proc/self/status','utf8')),credentialBlocked:false,peerBlocked:false,dbBlocked:false,networkEscapeBlocked:cp.spawnSync('unshare',['--net']).status!==0};try{fs.readFileSync(${JSON.stringify(secret)})}catch{checks.credentialBlocked=true}try{fs.readdirSync(${JSON.stringify(peer.directory)})}catch{checks.peerBlocked=true}checks.dbBlocked=await new Promise(r=>{const s=net.connect({host:'127.0.0.1',port:55432},()=>{s.destroy();r(false)});s.on('error',()=>r(true));s.setTimeout(1500,()=>{s.destroy();r(true)})});console.log(JSON.stringify(checks));process.exit(Object.values(checks).every(Boolean)?0:1)})()`;
   const p = spawnSync(
     'sudo',
-    [
-      '-n',
-      'nsenter',
-      '-t',
-      String(d.pid),
-      '--net',
-      '--',
-      'setpriv',
-      `--reuid=${d.uid}`,
-      `--regid=${d.uid}`,
-      '--clear-groups',
-      '--no-new-privs',
-      '--bounding-set=-all',
-      process.execPath,
-      '-e',
-      probe,
-    ],
+    nsenterIsolated(d.pid, d.uid, [process.execPath, '-e', probe]),
     { encoding: 'utf8', timeout: 10000 },
   );
   await fs.unlink(secret);

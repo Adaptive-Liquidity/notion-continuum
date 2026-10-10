@@ -116,9 +116,22 @@ export async function fixture(prefix: string) {
     tenant = 'a',
     overrides: Record<string, unknown> = {},
   ) {
-    return new SignJWT({
+    const claims: Record<string, unknown> = {
       auth_time: Math.floor(Date.now() / 1000),
       amr: ['mfa'],
+    };
+    if (kind === 'machine') {
+      const bound = (
+        await gov.query(
+          'SELECT generation,epoch FROM ct.principals WHERE tenant=$1 AND id=$2',
+          [tenant, principal],
+        )
+      ).rows[0];
+      claims.ct_gen = Number(bound.generation);
+      claims.ct_epoch = Number(bound.epoch);
+    }
+    return new SignJWT({
+      ...claims,
       ...overrides,
     })
       .setProtectedHeader({ alg: 'EdDSA', kid: 'external' })
