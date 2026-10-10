@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: continuum-ci-${{ github.event.pull_request.head.ref || github.ref_name }}
+  group: pr-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -67,7 +67,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: secret-scan-${{ github.sha }}
+          name: secret-scan-${{ github.event.pull_request.head.sha || github.sha }}
           path: .artifacts/audit/gitleaks-*.json
           if-no-files-found: ignore
           retention-days: 7
@@ -189,12 +189,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: canonical-verification-${{ github.sha }}
+          name: canonical-verification-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             .artifacts/canonical/final/**
-            .artifacts/audit/npm-audit-*.json
-            .artifacts/audit/qualification-check.log
-            .artifacts/audit/release-check.log
+            .artifacts/implementation/final/**
+            .artifacts/audit/**
           if-no-files-found: warn
           retention-days: 7
           include-hidden-files: true
