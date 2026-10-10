@@ -2,7 +2,7 @@
 
 Use the prerequisite/setup commands in the root README. `npm ci --ignore-scripts` installs the exact lockfile; backend and frontend intentionally use different Node major versions. Never use live credentials or a production database.
 
-`CT_RESET_LOCAL_FIXTURE=yes CT_RESET_CONSOLE_FIXTURE=yes npm run test:canonical` runs the accepted 121-group backend baseline, native local HA/PITR and minimum legacy refusal fixtures; fresh console contracts/semantics/security tests; frontend typecheck/unit tests; ordinary product and dedicated local-test builds; Chromium integration/accessibility/performance checks; dependency audit; unchanged qualification/release enforcement. Every raw result is retained under `.artifacts/`. The final machine summary records measured counts rather than assuming the historical counts are current.
+`CT_RESET_LOCAL_FIXTURE=yes CT_RESET_CONSOLE_FIXTURE=yes npm run test:canonical` runs the accepted backend baseline, native local HA/PITR and minimum legacy refusal fixtures; fresh console contracts/semantics/security tests; frontend typecheck/unit tests; ordinary product and dedicated local-test builds; Chromium integration/accessibility/performance checks; dependency audit; unchanged qualification/release enforcement. Every raw result is retained under `.artifacts/`. The final machine summary records measured counts. The historical label of 121 groups is not the current assertion; `tools/summarize-canonical-evidence.py` checks the measured total.
 
 Optional `CT_RUN_PUBLIC_READ_FIXTURE=yes` includes the fixed public immutable GitHub GET contract. No protected provider mutation, live identity, cloud DR or compressed substitute for a 24-hour test is allowed. Ordinary PR CI does not require public-provider availability or live secrets.
 

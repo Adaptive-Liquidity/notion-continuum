@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Independent audit priority
 
-Read `docs/handoff/CONTINUUM-INDEPENDENT-AUDIT-2026-10-09.md` before working on merge readiness.
+Read `docs/reconciliation/FINAL-PRODUCT-RECONCILIATION.md` before merge-readiness work. The October 9 audit note may exist only as an untracked local handoff; do not require that path.
 
 The following findings stay closed only while their regressions pass on the current tree. A later failure reopens the finding:
 

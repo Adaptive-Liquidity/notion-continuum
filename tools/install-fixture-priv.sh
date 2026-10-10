@@ -13,8 +13,17 @@ printf 'node=%s\nfixtures=%s\n' "$CT_FIXTURE_NODE" "$fixtures" > /etc/continuum-
 chown root:root /etc/continuum-fixture-priv.conf
 chmod 0644 /etc/continuum-fixture-priv.conf
 if [ -n "${CT_FIXTURE_SUDO_USER:-}" ]; then
-  printf '%s ALL=(root) NOPASSWD: /usr/local/sbin/continuum-fixture-priv\n' "$CT_FIXTURE_SUDO_USER" > /etc/sudoers.d/continuum-local-fixture
-  chmod 0440 /etc/sudoers.d/continuum-local-fixture
-  visudo -cf /etc/sudoers.d/continuum-local-fixture
+  sudo_user=$CT_FIXTURE_SUDO_USER
+  [[ "$sudo_user" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || { echo 'CT_FIXTURE_SUDO_USER must be a local account name.'; exit 2; }
+  getent passwd "$sudo_user" >/dev/null || { echo 'CT_FIXTURE_SUDO_USER does not exist.'; exit 2; }
+  tmp_sudoers=$(mktemp)
+  trap 'rm -f "$tmp_sudoers"' EXIT
+  printf '%s ALL=(root) NOPASSWD: /usr/local/sbin/continuum-fixture-priv\n' "$sudo_user" > "$tmp_sudoers"
+  chown root:root "$tmp_sudoers"
+  chmod 0440 "$tmp_sudoers"
+  visudo -cf "$tmp_sudoers"
+  install -o root -g root -m 0440 "$tmp_sudoers" /etc/sudoers.d/continuum-local-fixture
+  rm -f "$tmp_sudoers"
+  trap - EXIT
 fi
 echo 'Fixture privilege helper installed.'

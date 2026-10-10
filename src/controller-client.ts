@@ -43,9 +43,26 @@ export function callController(
           try {
             const text = decodeBoundedUtf8(chunks, responseLimit);
             if (res.statusCode === 200) {
+              const parsed = JSON.parse(text);
+              const states = [
+                'REQUESTED',
+                'RESERVED',
+                'SENDING',
+                'COMMITTED',
+                'UNKNOWN',
+                'DENIED',
+                'FAILED_KNOWN_NO_EFFECT',
+              ];
+              if (
+                !parsed ||
+                parsed.id !== operation ||
+                typeof parsed.state !== 'string' ||
+                !states.includes(parsed.state)
+              )
+                throw Error('controller response rejected');
               if (settled) return;
               settled = true;
-              resolve(JSON.parse(text));
+              resolve(parsed);
             } else fail(Error(text.slice(0, 500)));
           } catch (e) {
             fail(e);

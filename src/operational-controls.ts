@@ -15,16 +15,18 @@ export class RequestBudget {
     private maxIdentities = 10000,
   ) {}
   take(key: string, now = Date.now()) {
-    for (const [k, v] of this.entries)
-      if (v.until <= now) this.entries.delete(k);
-    const v = this.entries.get(key);
-    if (!v) {
-      if (this.entries.size >= this.maxIdentities)
-        throw Error('request budget capacity');
-      this.entries.set(key, { count: 1, until: now + this.windowMs });
+    const current = this.entries.get(key);
+    if (current && current.until > now) {
+      if (++current.count > this.maximum) throw Error('request budget');
       return;
     }
-    if (++v.count > this.maximum) throw Error('request budget');
+    if (current) this.entries.delete(key);
+    if (this.entries.size >= this.maxIdentities)
+      for (const [k, v] of this.entries)
+        if (v.until <= now) this.entries.delete(k);
+    if (this.entries.size >= this.maxIdentities)
+      throw Error('request budget capacity');
+    this.entries.set(key, { count: 1, until: now + this.windowMs });
   }
 }
 export function validateStagingConfig(x: {

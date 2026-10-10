@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import { readJsonBody } from '../src/bounded-body.js';
 import { pool } from '../src/db.js';
 const config = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const db = pool('ct_provider');
@@ -13,12 +14,7 @@ const server = http.createServer(async (req, res) => {
     const u = new URL(req.url!, 'http://fixture');
     if (u.pathname !== '/effects') throw Error('unsupported');
     if (req.method === 'POST') {
-      let t = '';
-      for await (const p of req) {
-        t += p;
-        if (t.length > 16384) throw Error('too large');
-      }
-      const x = JSON.parse(t);
+      const x = await readJsonBody(req, 16384);
       await db.query(
         'INSERT INTO provider.effects(tenant,operation,digest,idempotency_key,payload) VALUES($1,$2,$3,$4,$5)',
         [x.tenant, x.operation, x.digest, x.idempotency_key, x.payload],

@@ -18,8 +18,12 @@ export function AssignmentForm({
     [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
+    let current = true;
+    setMachines([]);
+    setMachine('');
     read('security')
       .then((r) => {
+        if (!current) return;
         const values = r.items.filter(
           (i) =>
             i.fields.kind === 'machine' &&
@@ -30,10 +34,14 @@ export function AssignmentForm({
         setMachine(values[0]?.id ?? '');
       })
       .catch(() => {
+        if (!current) return;
         setMachines([]);
         setMachine('');
       });
-  }, [open, item.id]);
+    return () => {
+      current = false;
+    };
+  }, [open, item.id, item.fields.principal]);
   const existing = Array.isArray(item.fields.workloadAssignments)
     ? (item.fields.workloadAssignments as any[])
     : [];

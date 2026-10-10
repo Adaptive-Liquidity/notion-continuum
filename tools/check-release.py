@@ -22,6 +22,8 @@ if any(g.get("status") not in ALLOWED for g in gates):
 if not isinstance(x.get("schedulerDecision"), str) or not x["schedulerDecision"]:
     malformed("scheduler")
 blocked = [g["id"] for g in gates if g["status"] != "PASS_PRODUCTION"]
+if "HELD" in x["schedulerDecision"]:
+    blocked.append("scheduler")
 result = {"productionReady": not blocked, "canonPromotionAllowed": not blocked, "blockedGates": blocked, "schedulerDecision": x["schedulerDecision"]}
 Path(".artifacts/core/RELEASE-STATUS.json").write_text(json.dumps(result, indent=2) + "\n")
 print(json.dumps(result))
