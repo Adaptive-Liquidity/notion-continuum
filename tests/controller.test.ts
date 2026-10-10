@@ -282,7 +282,7 @@ test('M3 isolated compromised agent cannot reach provider/DB/secrets or forge co
       '/usr/bin/env',
       'PROBE_CONFIG=' + JSON.stringify(cfg),
       process.execPath,
-      'tests/isolation-probe.mjs',
+      process.cwd() + '/tests/isolation-probe.mjs',
     ]),
     {
       env: { PATH: process.env.PATH },

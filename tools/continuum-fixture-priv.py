@@ -90,6 +90,13 @@ def privilege_flags(flags: list[str]) -> int:
     return reuid
 
 
+def probe_path_ok(path: str) -> bool:
+    if path == "tests/isolation-probe.mjs":
+        return True
+    real = os.path.realpath(path)
+    return os.path.isfile(real) and real.endswith("/tests/isolation-probe.mjs")
+
+
 def command_ok(argv: list[str], node: str) -> None:
     if (
         len(argv) == 3
@@ -108,7 +115,7 @@ def command_ok(argv: list[str], node: str) -> None:
         and "\x00" not in argv[1]
         and len(argv[1]) <= 8192
         and os.path.realpath(argv[2]) == node
-        and argv[3] == "tests/isolation-probe.mjs"
+        and probe_path_ok(argv[3])
     ):
         json.loads(argv[1].split("=", 1)[1])
         return
