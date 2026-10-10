@@ -38,6 +38,8 @@ run PRODUCT-BACKEND dist/tests/product-backend.test.js
 run AUDIT-REGRESSIONS dist/tests/audit-regressions.test.js
 run FONT-NOTICES dist/tests/font-notices.test.js
 run REVIEW-REMEDIATION dist/tests/review-remediation.test.js
+run DEPENDENCY-OVERRIDES dist/tests/dependency-overrides.test.js
+run OBJECT-CONTAINMENT dist/tests/object-store-containment.test.js
 CT_FIXTURE_NODE="$(command -v node)" python3 tests/fixture-priv-bounds.py > .artifacts/implementation/final/FIXTURE-PRIV.json
 run COMPUTER-ISOLATION dist/tests/computer-isolation.test.js
 CT_LOCAL_DR_LAB=yes python3 tools/local-ha-pitr-lab.py > .artifacts/implementation/final/HA-PITR-LAB.log 2>&1

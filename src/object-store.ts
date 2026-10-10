@@ -35,13 +35,39 @@ export class LocalObjectStore implements ImmutableObjectStore {
     )
       throw Error('private trusted object root required');
   }
-  private filename(key: string) {
-    return path.join(this.root, safeObjectKey(key));
+  private async contained(key: string) {
+    await this.initialize();
+    const parts = safeObjectKey(key).split('/');
+    let dir = this.root;
+    for (const part of parts.slice(0, -1)) {
+      const next = path.join(dir, part);
+      let stat: Awaited<ReturnType<typeof fs.lstat>>;
+      try {
+        stat = await fs.lstat(next);
+      } catch (e: any) {
+        if (e.code !== 'ENOENT') throw e;
+        await fs.mkdir(next, { mode: 0o700 });
+        stat = await fs.lstat(next);
+      }
+      if (stat.isSymbolicLink() || !stat.isDirectory())
+        throw Error('object path escapes');
+      dir = next;
+    }
+    const realRoot = await fs.realpath(this.root);
+    const realDir = await fs.realpath(dir);
+    if (realDir !== realRoot && !realDir.startsWith(realRoot + path.sep))
+      throw Error('object path escapes');
+    const final = path.join(dir, parts[parts.length - 1]);
+    try {
+      if ((await fs.lstat(final)).isSymbolicLink())
+        throw Error('object path escapes');
+    } catch (e: any) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+    return final;
   }
   async putIfAbsent(key: string, data: Uint8Array) {
-    await this.initialize();
-    const final = this.filename(key);
-    await fs.mkdir(path.dirname(final), { recursive: true, mode: 0o700 });
+    const final = await this.contained(key);
     const tmp = path.join(this.root, randomUUID() + '.tmp'),
       f = await fs.open(tmp, 'wx', 0o600);
     try {
@@ -67,9 +93,8 @@ export class LocalObjectStore implements ImmutableObjectStore {
     }
   }
   async get(key: string) {
-    await this.initialize();
     const f = await fs.open(
-      this.filename(key),
+      await this.contained(key),
       constants.O_RDONLY | constants.O_NOFOLLOW,
     );
     try {
@@ -81,9 +106,8 @@ export class LocalObjectStore implements ImmutableObjectStore {
     }
   }
   async erase(key: string) {
-    await this.initialize();
     try {
-      await fs.unlink(this.filename(key));
+      await fs.unlink(await this.contained(key));
     } catch (e: any) {
       if (e.code !== 'ENOENT') throw e;
     }
