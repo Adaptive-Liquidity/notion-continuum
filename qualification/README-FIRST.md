@@ -8,7 +8,7 @@ Read `docs/PRODUCTION-QUALIFICATION-RESULT.md` and `PRODUCTION-GATES.json`. New 
 Linux/Node24/Python3.13/PostgreSQL17/sudo+network namespaces required. Install deps, restore executable bits if your ZIP extractor dropped them, then:
 
 ```sh
-npm ci
+npm ci --ignore-scripts --ignore-scripts
 chmod +x tools/*.sh qualification/*.sh
 CT_RESET_LOCAL_FIXTURE=yes bash qualification/run-first-gates.sh
 python3 qualification/check-gates.py --enforce  # EXPECTED EXIT 1

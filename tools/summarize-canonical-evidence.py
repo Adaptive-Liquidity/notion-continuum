@@ -9,7 +9,7 @@ def tap(p):
 base=json.loads((root/'baseline/SUMMARY.json').read_text())
 # The older literal 121 does not match this tree. 122 are the pre-remediation
 # suites on the current HEAD; the audit regressions add 6 and must stay present.
-audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1}
+audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':11}
 expected_groups=122+sum(audit_regressions.values())
 assert base['failed']==base['skipped']==0
 assert base['nodeGroups']==base['passed']==expected_groups

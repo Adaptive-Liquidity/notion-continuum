@@ -4,6 +4,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
+import { readBoundedBytes } from './bounded-body.js';
 import {
   bytesHash,
   safeObjectKey,
@@ -83,11 +84,16 @@ export class S3ObjectStore implements ImmutableObjectStore {
         ChecksumMode: 'ENABLED',
       }),
     );
-    if (!r.Body || Number(r.ContentLength) > 16777216)
+    if (
+      !r.Body ||
+      (typeof r.ContentLength === 'number' && r.ContentLength > 16777216)
+    )
       throw Error('cloud object missing/too large');
-    const b = await r.Body.transformToByteArray();
-    if (b.length > 16777216) throw Error('cloud object size limit');
-    return b as Uint8Array;
+    const b = await readBoundedBytes(
+      r.Body as AsyncIterable<Uint8Array>,
+      16777216,
+    );
+    return new Uint8Array(b);
   }
   async erase(key: string) {
     if (this.config.erasurePolicy !== 'verified-unversioned-disposable-stage')

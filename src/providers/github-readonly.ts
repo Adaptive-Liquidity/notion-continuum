@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { readBoundedBytes } from '../bounded-body.js';
 import type {
   ProviderAdapter,
   ProviderObservation,
@@ -43,8 +44,12 @@ export class GitHubReadOnlyAdapter implements ProviderAdapter {
       signal: AbortSignal.timeout(this.deadlineMs),
       cache: 'no-store',
     });
-    const text = await r.text();
-    if (text.length > 262144) throw Error('oversized provider response');
+    if (!r.body) throw Error('empty provider response');
+    const bytes = await readBoundedBytes(
+      r.body as AsyncIterable<Uint8Array>,
+      262144,
+    );
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     this.evidence.push({
       url,
       method: 'GET',

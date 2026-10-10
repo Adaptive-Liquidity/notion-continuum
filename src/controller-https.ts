@@ -1,4 +1,5 @@
 import https from 'node:https';
+import { readJsonBody } from './bounded-body.js';
 import type { EffectController } from './controller.js';
 import type { PublicCapabilityVerifier } from './production-capability.js';
 import { identifier } from './service-auth.js';
@@ -19,12 +20,7 @@ export function controllerHttps(
         const token = req.headers.authorization?.match(/^Bearer ([^ ]+)$/)?.[1];
         if (!token) throw Error('capability required');
         const actor = await verifier.verify(token);
-        let raw = '';
-        for await (const b of req) {
-          raw += b;
-          if (Buffer.byteLength(raw) > 4096) throw Error('body limit');
-        }
-        const x = JSON.parse(raw);
+        const x = await readJsonBody(req, 4096);
         if (
           !x ||
           typeof x !== 'object' ||

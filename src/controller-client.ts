@@ -1,12 +1,23 @@
 import http from 'node:http';
+import { decodeBoundedUtf8 } from './bounded-body.js';
+const responseLimit = 65536;
 export function callController(
   socket: string,
   capability: string,
   operation: string,
   route = '/dispatch',
   extra?: Record<string, unknown>,
+  timeoutMs = 5000,
 ): Promise<{ state: string; id: string; version: string }> {
   return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    let settled = false;
+    const fail = (e: unknown) => {
+      if (settled) return;
+      settled = true;
+      reject(e instanceof Error ? e : Error('controller response'));
+    };
     const req = http.request(
       {
         socketPath: socket,
@@ -16,16 +27,37 @@ export function callController(
           authorization: 'Bearer ' + capability,
           'content-type': 'application/json',
         },
+        timeout: timeoutMs,
       },
       (res) => {
-        let t = '';
-        res.on('data', (x) => (t += x));
-        res.on('end', () =>
-          res.statusCode === 200 ? resolve(JSON.parse(t)) : reject(Error(t)),
-        );
+        res.on('data', (x: Buffer) => {
+          size += x.length;
+          if (size > responseLimit) {
+            req.destroy();
+            fail(Error('controller response bound'));
+            return;
+          }
+          chunks.push(x);
+        });
+        res.on('end', () => {
+          try {
+            const text = decodeBoundedUtf8(chunks, responseLimit);
+            if (res.statusCode === 200) {
+              if (settled) return;
+              settled = true;
+              resolve(JSON.parse(text));
+            } else fail(Error(text.slice(0, 500)));
+          } catch (e) {
+            fail(e);
+          }
+        });
       },
     );
-    req.on('error', reject);
+    req.on('timeout', () => {
+      req.destroy();
+      fail(Error('controller response deadline'));
+    });
+    req.on('error', fail);
     req.end(JSON.stringify({ operation, ...extra }));
   });
 }

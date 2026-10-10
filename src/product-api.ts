@@ -1,3 +1,4 @@
+import { readJsonBody } from './bounded-body.js';
 import { RequestBudget } from './operational-controls.js';
 import http from 'node:http';
 import type { VerifiedIdentity } from './identity-provider.js';
@@ -36,12 +37,7 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
       if (!token) throw Error('identity required');
       const actor = await verifier.verify(token);
       budget.take(actor.issuer + '|' + actor.subject);
-      let raw = '';
-      for await (const b of req) {
-        raw += b;
-        if (Buffer.byteLength(raw) > 32768) throw Error('body limit');
-      }
-      const x = JSON.parse(raw),
+      const x = await readJsonBody(req, 32768),
         keys = routes[req.url ?? ''];
       if (
         !keys ||

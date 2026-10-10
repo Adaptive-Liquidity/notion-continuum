@@ -1,3 +1,4 @@
+import { readJsonBody } from './bounded-body.js';
 import { RequestBudget } from './operational-controls.js';
 import http from 'node:http';
 import type { IdentityVerifier } from './identity-provider.js';
@@ -14,12 +15,7 @@ export function identityApi(
       if (!bearer) throw Error('identity required');
       const actor = await verifier.verify(bearer);
       budget.take(actor.issuer + '|' + actor.subject);
-      let s = '';
-      for await (const b of req) {
-        s += b;
-        if (Buffer.byteLength(s) > 16384) throw Error('oversized body');
-      }
-      const x = JSON.parse(s);
+      const x = await readJsonBody(req, 16384);
       if (!x || typeof x !== 'object' || Array.isArray(x))
         throw Error('object required');
       const schemas: Record<string, string[]> = {

@@ -10,7 +10,7 @@ for db in ct_restore ct_test; do dropdb --if-exists "$db"; done
 bash tools/local-db.sh
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/005-identity-authority.sql > .artifacts/qualification/IDENTITY-MIGRATION.log
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/006-product-computers.sql >> .artifacts/qualification/MIGRATION-006.log
-npm ci > .artifacts/qualification/NPM-REPRODUCE.log 2>&1
+npm ci --ignore-scripts > .artifacts/qualification/NPM-REPRODUCE.log 2>&1
 npm run build > .artifacts/qualification/BUILD-REPRODUCE.log 2>&1
 node --test --test-concurrency=1 dist/tests/foundation.test.js > .artifacts/qualification/BASELINE-FOUNDATION.tap 2>&1
 bash tools/backup-domain.sh

@@ -29,7 +29,10 @@ export function AssignmentForm({
         setMachines(values);
         setMachine(values[0]?.id ?? '');
       })
-      .catch(() => setMachines([]));
+      .catch(() => {
+        setMachines([]);
+        setMachine('');
+      });
   }, [open, item.id]);
   const existing = Array.isArray(item.fields.workloadAssignments)
     ? (item.fields.workloadAssignments as any[])

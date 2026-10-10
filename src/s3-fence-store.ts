@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { randomUUID } from 'node:crypto';
+import { readBoundedBytes } from './bounded-body.js';
 import { canonical } from './db.js';
 import type { FenceStore, IndependentFence } from './fence-store.js';
 import type { S3StageConfig, StagingAwsCredential } from './s3-object-store.js';
@@ -44,10 +45,16 @@ export class S3FenceStore implements FenceStore {
         ChecksumMode: 'ENABLED',
       }),
     );
-    if (!r.ETag || !r.Body || Number(r.ContentLength) > 4096)
+    if (
+      !r.ETag ||
+      !r.Body ||
+      (typeof r.ContentLength === 'number' && r.ContentLength > 4096)
+    )
       throw Error('independent fence record missing/oversized');
-    const bytes = await r.Body.transformToByteArray();
-    if (bytes.length > 4096) throw Error('fence size');
+    const bytes = await readBoundedBytes(
+      r.Body as AsyncIterable<Uint8Array>,
+      4096,
+    );
     const x = JSON.parse(Buffer.from(bytes).toString('utf8'));
     if (
       !Number.isSafeInteger(x.revision) ||

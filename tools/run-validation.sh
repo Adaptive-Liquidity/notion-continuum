@@ -10,7 +10,7 @@ export PGHOST=127.0.0.1 PGPORT=55432 PGUSER=localtest
 ./tools/local-db.sh
 for d in ct_restore ct_test; do dropdb --if-exists "$d"; done
 bash tools/implementation-db.sh
-npm ci > .artifacts/core/reproduce-npm.log 2>&1
+npm ci --ignore-scripts > .artifacts/core/reproduce-npm.log 2>&1
 npm run build > .artifacts/core/reproduce-build.log 2>&1
 node --test --test-concurrency=1 dist/tests/foundation.test.js > .artifacts/core/M2-foundation-tests.tap 2>&1
 ./tools/backup-domain.sh

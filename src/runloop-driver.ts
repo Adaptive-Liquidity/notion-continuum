@@ -6,6 +6,12 @@ export interface ManagedStageConfig {
   blueprintId: string;
   networkPolicyId: string;
 }
+export function mapRunloopStatus(status: string) {
+  if (status === 'running') return 'RUNNING' as const;
+  if (status === 'shutdown') return 'STOPPED' as const;
+  if (status === 'provisioning') return 'STARTING' as const;
+  throw Error('unmapped provider status');
+}
 export class RunloopDriver implements ComputerDriver {
   constructor(
     private config: ManagedStageConfig,
@@ -46,12 +52,7 @@ export class RunloopDriver implements ComputerDriver {
       tenant: x.metadata.ct_tenant,
       computer: x.metadata.ct_computer,
       generation: Number(x.metadata.ct_generation),
-      status:
-        x.status === 'running'
-          ? 'RUNNING'
-          : x.status === 'shutdown'
-            ? 'STOPPED'
-            : 'STARTING',
+      status: mapRunloopStatus(x.status),
     };
   }
   async start(s: PlacementSpec) {

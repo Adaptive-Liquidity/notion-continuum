@@ -95,12 +95,12 @@ export class LocalIndependentFenceStore implements FenceStore {
     }));
   }
   async activate(expected: number, approvalDigest: string) {
-    await this.change(expected, (x) => ({
-      ...x,
-      revision: x.revision + 1,
-      blocked: false,
-      approvalDigest,
-    }));
+    if (!/^[0-9a-f]{64}$/.test(approvalDigest))
+      throw Error('approval manifest digest');
+    await this.change(expected, (x) => {
+      if (!x.blocked) throw Error('closed recovery required');
+      return { ...x, revision: x.revision + 1, blocked: false, approvalDigest };
+    });
   }
   async assertActive(expected: string) {
     const x = await this.read();

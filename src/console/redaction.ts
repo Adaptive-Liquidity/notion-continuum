@@ -9,7 +9,8 @@ export function redact(value: unknown, depth = 0): unknown {
       /-----BEGIN .*PRIVATE KEY-----/.test(value) ||
       /\beyJ[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\b/.test(
         value,
-      )
+      ) ||
+      /(?:github_pat_|ghp_|gho_|ghu_|ghs_|ghr_)[A-Za-z0-9_]{16,}/.test(value)
     )
       return '[Sensitive value omitted]';
     return value.slice(0, 32768);

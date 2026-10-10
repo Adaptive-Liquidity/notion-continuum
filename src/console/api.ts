@@ -1,3 +1,4 @@
+import { readJsonBody } from '../bounded-body.js';
 import { assertLocalFixtures } from '../runtime-profile.js';
 import http from 'node:http';
 import type { IdentityVerifier } from '../identity-provider.js';
@@ -97,10 +98,5 @@ export function consoleApi(
   return server;
 }
 async function body(req: http.IncomingMessage) {
-  let text = '';
-  for await (const b of req) {
-    text += b;
-    if (Buffer.byteLength(text) > 32768) throw Error('body bound');
-  }
-  return JSON.parse(text);
+  return readJsonBody(req, 32768);
 }
