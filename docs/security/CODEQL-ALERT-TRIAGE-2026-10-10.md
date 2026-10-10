@@ -6,7 +6,7 @@ Scope: the three CodeQL alerts on main after PR #1. No billing, hosting, visibil
 
 `tests/provider-emulator.ts` returned `String(e)` in a 500 response. Although this is an authenticated loopback fixture rather than a product server, errors must not be projected to its HTTP caller. Native Error conversion ordinarily exposes the message rather than the entire stack; the verified defect is internal exception-detail disclosure, not a demonstrated production stack leak.
 
-The new controller regression requests an unsupported path with the fixture credential and requires the exact generic 500 response. Before the fix it failed with `Error: unsupported`. The fixture now returns only `Provider fixture request failed`. No exception contents are sent or logged by this handler.
+The new controller regression requests an unsupported path with the fixture credential and requires the exact generic 500 response. Before the fix it failed with `Error: unsupported`. The fixture now returns only `Provider fixture request failed`. Exception contents are logged to stderr for server-side diagnosis but are not sent to the HTTP caller.
 
 ## Alerts 2 and 3 — local Node probe, false positives
 

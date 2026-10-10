@@ -35,7 +35,8 @@ const server = http.createServer(async (req, res) => {
     );
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(r.rows));
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.writeHead(500);
     res.end('Provider fixture request failed');
   }
