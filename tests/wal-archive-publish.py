@@ -55,6 +55,54 @@ def test_failed_copy_does_not_publish_a_short_segment():
         assert not dest.with_name("." + dest.name + ".partial").exists()
 
 
+def test_same_size_mismatch_is_not_left_archived():
+    with tempfile.TemporaryDirectory() as raw:
+        base = Path(raw)
+        source = base / "segment"
+        source.write_bytes(b"a" * 32)
+        dest = base / "000000010000000000000005"
+        dest.write_bytes(b"b" * 32)
+        module.publish(source, dest)
+        assert dest.read_bytes() == source.read_bytes()
+
+
+def test_publish_fsyncs_the_destination_directory():
+    with tempfile.TemporaryDirectory() as raw:
+        base = Path(raw)
+        source = base / "segment"
+        source.write_bytes(b"a" * 32)
+        dest = base / "archive" / "000000010000000000000004"
+        dest.parent.mkdir()
+        opened = []
+        fsynced = []
+        real_open = os.open
+        real_fsync = os.fsync
+
+        def tracking_open(path, flags, *args, **kwargs):
+            fd = real_open(path, flags, *args, **kwargs)
+            opened.append((Path(path), flags, fd))
+            return fd
+
+        def tracking_fsync(fd):
+            fsynced.append(fd)
+            return real_fsync(fd)
+
+        os.open = tracking_open
+        os.fsync = tracking_fsync
+        try:
+            module.publish(source, dest)
+        finally:
+            os.open = real_open
+            os.fsync = real_fsync
+        directory_fds = {
+            fd
+            for path, flags, fd in opened
+            if path == dest.parent and flags & os.O_DIRECTORY
+        }
+        assert directory_fds & set(fsynced)
+        assert dest.read_bytes() == source.read_bytes()
+
+
 def test_existing_short_file_is_not_treated_as_archived():
     with tempfile.TemporaryDirectory() as raw:
         base = Path(raw)
@@ -70,5 +118,7 @@ def test_existing_short_file_is_not_treated_as_archived():
 if __name__ == "__main__":
     test_complete_publish_matches_source()
     test_failed_copy_does_not_publish_a_short_segment()
+    test_same_size_mismatch_is_not_left_archived()
+    test_publish_fsyncs_the_destination_directory()
     test_existing_short_file_is_not_treated_as_archived()
     print("wal-archive-publish ok")

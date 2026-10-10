@@ -9,7 +9,7 @@ def tap(p):
 base=json.loads((root/'baseline/SUMMARY.json').read_text())
 # 125 counts the original baseline suites plus the identity fence regressions.
 # The named extras are measured separately and must stay present.
-audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':14,'DEPENDENCY-OVERRIDES':1,'OBJECT-CONTAINMENT':2}
+audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':15,'DEPENDENCY-OVERRIDES':1,'OBJECT-CONTAINMENT':2}
 expected_groups=125+sum(audit_regressions.values())
 assert base['failed']==base['skipped']==0
 assert base['nodeGroups']==base['passed']==expected_groups

@@ -200,6 +200,50 @@ test('unknown provider status is not reported as starting', () => {
   assert.throws(() => mapRunloopStatus('mystery'), /unmapped provider status/);
 });
 
+test('controller extra cannot replace the reviewed operation', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'ct-sock-'));
+  const socket = path.join(dir, 'controller.sock');
+  let sent = '';
+  const server = net.createServer((connection) => {
+    const chunks: Buffer[] = [];
+    connection.on('data', (chunk) => {
+      chunks.push(chunk);
+      const text = Buffer.concat(chunks).toString();
+      const split = text.indexOf('\r\n\r\n');
+      if (split < 0) return;
+      const head = text.slice(0, split);
+      const length = Number(head.match(/content-length: (\d+)/i)?.[1] ?? 0);
+      const body = text.slice(split + 4);
+      if (Buffer.byteLength(body) < length) return;
+      sent = body.slice(0, length);
+      const payload = JSON.stringify({
+        id: 'reviewed-op',
+        state: 'COMMITTED',
+        version: '1',
+      });
+      connection.end(
+        `HTTP/1.1 200 OK\r\ncontent-type: application/json\r\ncontent-length: ${Buffer.byteLength(payload)}\r\nconnection: close\r\n\r\n${payload}`,
+      );
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(socket, () => resolve()));
+  try {
+    const result = await callController(
+      socket,
+      'capability',
+      'reviewed-op',
+      '/dispatch',
+      {
+        operation: 'other-op',
+      },
+    );
+    assert.equal(result.id, 'reviewed-op');
+    assert.equal(JSON.parse(sent).operation, 'reviewed-op');
+  } finally {
+    server.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+});
 test('stalled controller response fails closed without another send', async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'ct-sock-'));
   const socket = path.join(dir, 'controller.sock');

@@ -75,6 +75,6 @@ export function callController(
       fail(Error('controller response deadline'));
     });
     req.on('error', fail);
-    req.end(JSON.stringify({ operation, ...extra }));
+    req.end(JSON.stringify({ ...extra, operation }));
   });
 }
