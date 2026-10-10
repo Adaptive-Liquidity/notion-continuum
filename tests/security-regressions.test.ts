@@ -33,6 +33,11 @@ test('SDK logs omit opaque task credentials and arbitrary exception contents', (
       state: 'UNKNOWN',
     }),
   );
+  const synthetic = 'github_pat_' + 'A'.repeat(22);
+  assert.equal(
+    JSON.stringify(redactLog('log ' + synthetic)).includes('github_pat_'),
+    false,
+  );
   assert.ok(!text.includes('test-not-a-secret'));
   assert.ok(text.includes('stable-operation'));
   assert.ok(text.includes('UNKNOWN'));

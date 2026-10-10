@@ -24,6 +24,7 @@ export function redactLog(value: unknown, depth = 0): unknown {
         /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)?/g,
         '[TOKEN_REDACTED]',
       )
+      .replace(/\bgithub_pat_[A-Za-z0-9_]{16,}\b/g, '[TOKEN_REDACTED]')
       .replace(/\bgh[pousr]_[A-Za-z0-9]+\b/g, '[TOKEN_REDACTED]');
   return value;
 }
