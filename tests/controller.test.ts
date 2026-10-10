@@ -77,6 +77,13 @@ test('M3 missing/mismatched approval is denied with zero effects', async () => {
     assert.equal(await count(id), 0);
   }
 });
+test('M3 provider fixture errors do not disclose internal exception details', async () => {
+  const response = await fetch('http://127.0.0.1:56670/unsupported', {
+    headers: { authorization: 'Bearer ' + secrets.providerSecret },
+  });
+  assert.equal(response.status, 500);
+  assert.equal(await response.text(), 'Provider fixture request failed');
+});
 test('M3 stale grant, epoch, generation, deadline, scope and cost deny', async () => {
   for (const [id, opts] of [
     ['m3-epoch', { epoch: 0 }],

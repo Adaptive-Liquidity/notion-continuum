@@ -7,10 +7,11 @@ def tap(p):
  assert counts['fail']==counts['skipped']==counts['cancelled']==0,(p,counts)
  return {'path':str(p),'scope':'LOCAL_FIXTURE',**counts}
 base=json.loads((root/'baseline/SUMMARY.json').read_text())
-# 125 counts the original baseline suites plus the identity fence regressions.
+# 126 counts the original baseline suites, identity fence regressions,
+# and the provider exception-disclosure regression.
 # The named extras are measured separately and must stay present.
 audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':15,'DEPENDENCY-OVERRIDES':1,'OBJECT-CONTAINMENT':2}
-expected_groups=125+sum(audit_regressions.values())
+expected_groups=126+sum(audit_regressions.values())
 assert base['failed']==base['skipped']==0
 assert base['nodeGroups']==base['passed']==expected_groups
 by_suite={s['suite']:s for s in base['suites']}
@@ -18,7 +19,7 @@ for name,count in audit_regressions.items():
  row=by_suite[name]
  assert row['tests']==row['pass']==count and row['fail']==row['skipped']==0
 original=sum(s['tests'] for s in base['suites'] if s['suite'] not in audit_regressions)
-assert original==125
+assert original==126
 back=[tap(root/'backend'/name) for name in ['CONSOLE-DOMAIN.tap','CONSOLE-SEMANTICS.tap','FIXTURE-BOUNDARIES.tap','SECURITY-REGRESSIONS.tap']]
 public=tap(root/'backend/REAL-PUBLIC-READ.tap') if (root/'backend/REAL-PUBLIC-READ.tap').exists() else {'status':'NOT RUN','reason':'Public-network fixture not enabled'}
 if public.get('tests'):public['scope']='PUBLIC_IMMUTABLE_READ — no protected mutation or live identity';back.append(public)

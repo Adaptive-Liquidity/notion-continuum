@@ -35,9 +35,9 @@ const server = http.createServer(async (req, res) => {
     );
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(r.rows));
-  } catch (e) {
+  } catch {
     res.writeHead(500);
-    res.end(String(e));
+    res.end('Provider fixture request failed');
   }
 });
 server.listen(56670, '127.0.0.1', () => {
