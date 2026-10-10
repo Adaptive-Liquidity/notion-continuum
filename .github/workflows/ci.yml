@@ -4,15 +4,13 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - build/canonical-continuum
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: continuum-ci-${{ github.event.pull_request.number || github.ref }}
+  group: continuum-ci-${{ github.event.pull_request.head.ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
