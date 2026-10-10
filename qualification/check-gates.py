@@ -27,11 +27,10 @@ if not isinstance(x.get("narrowSubchecks"), list):
     malformed("narrow subchecks")
 if any(not isinstance(g, dict) or g.get("status") not in allowed for g in x["narrowSubchecks"]):
     malformed("narrow status")
-if not isinstance(x.get("schedulerDecision"), str) or not x["schedulerDecision"]:
+if x.get("schedulerDecision") != "HELD":
     malformed("scheduler")
 blocked = [g["id"] for g in gates if g["status"] != "PASS"]
-if x["schedulerDecision"] == "HELD":
-    blocked.append("scheduler")
+blocked.append("scheduler")
 r = {"productionReady": not blocked, "canary": "NO-GO" if blocked else "OWNER APPROVAL REQUIRED", "scheduler": x["schedulerDecision"], "blocked": blocked}
 Path(".artifacts/qualification/GATE-STATUS.json").write_text(json.dumps(r, indent=2) + "\n")
 print(json.dumps(r))

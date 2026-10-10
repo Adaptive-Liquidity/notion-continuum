@@ -40,6 +40,32 @@ async function ledger(kind: 'production' | 'release', body: unknown) {
   return { dir, result: enforce('tools/check-release.py', dir) };
 }
 
+test('an unrecognized scheduler decision cannot make production ready', async () => {
+  const live = JSON.parse(
+    await (
+      await import('node:fs/promises')
+    ).readFile(path.join(root, 'qualification/PRODUCTION-GATES.json'), 'utf8'),
+  );
+  for (const gate of live.gates) gate.status = 'PASS';
+  live.schedulerDecision = 'UNKNOWN';
+  const { dir, result } = await ledger('production', live);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /malformed/);
+  await rm(dir, { recursive: true, force: true });
+});
+test('an unrecognized scheduler decision cannot allow canon promotion', async () => {
+  const live = JSON.parse(
+    await (
+      await import('node:fs/promises')
+    ).readFile(path.join(root, 'docs/RELEASE-GATES.json'), 'utf8'),
+  );
+  for (const gate of live.gates) gate.status = 'PASS_PRODUCTION';
+  live.schedulerDecision = 'UNKNOWN';
+  const { dir, result } = await ledger('release', live);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /malformed/);
+  await rm(dir, { recursive: true, force: true });
+});
 test('production gate checker rejects an empty ledger', async () => {
   const { dir, result } = await ledger('production', {
     gates: [],
@@ -203,6 +229,15 @@ test('recovery role cannot insert a sendable REQUESTED operation', async () => {
        SELECT tenant,$2,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key||'-copy',cost,deadline,'REQUESTED',1
        FROM ct.operations WHERE tenant='a' AND id=$1`,
       [id, id + '-canary'],
+    ),
+    /recovery cannot import a sendable outcome/,
+  );
+  await assert.rejects(
+    db.query(
+      `INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,state,version,observation)
+       SELECT tenant,$2,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key||'-obs',cost,deadline,'UNKNOWN',1,'{"fabricated":true}'::jsonb
+       FROM ct.operations WHERE tenant='a' AND id=$1`,
+      [id, id + '-observation'],
     ),
     /recovery cannot import a sendable outcome/,
   );

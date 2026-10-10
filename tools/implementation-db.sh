@@ -23,6 +23,7 @@ done
 
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/009-runtime-trigger-permissions.sql > .artifacts/implementation/MIGRATION-009-runtime-trigger-permissions.log 2>&1
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/013-recovery-import-guard.sql > .artifacts/implementation/MIGRATION-013-recovery-import-guard.log 2>&1
+psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/014-recovery-observation-guard.sql > .artifacts/implementation/MIGRATION-014-recovery-observation-guard.log 2>&1
 if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.console_commands') IS NOT NULL")" != t ]; then
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/011-console-domain.sql > .artifacts/implementation/MIGRATION-011-console-domain.log 2>&1
 fi
