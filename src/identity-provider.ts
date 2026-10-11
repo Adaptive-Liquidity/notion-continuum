@@ -24,6 +24,7 @@ export interface VerifiedIdentity {
   // Issuer-signed workload fence. A caller body cannot supply these.
   credentialGeneration?: number;
   credentialEpoch?: number;
+  credentialPlacement?: number;
 }
 export class IdentityVerifier {
   private keys: JWTVerifyGetKey;
@@ -99,6 +100,14 @@ export class IdentityVerifier {
     for (const claim of ['ct_gen', 'ct_epoch'] as const)
       if (payload[claim] !== undefined && !Number.isSafeInteger(payload[claim]))
         throw Error('invalid workload binding');
+    const placementClaim = payload.ct_placement;
+    if (
+      placementClaim !== undefined &&
+      (typeof placementClaim !== 'number' ||
+        !Number.isSafeInteger(placementClaim) ||
+        placementClaim < 1)
+    )
+      throw Error('invalid workload binding');
     for (const [k, v] of Object.entries(this.config.requiredClaims ?? {}))
       if (payload[k] !== v) throw Error('workload claim binding');
     // Token kind is selected by the registered issuer/audience verifier, never caller body or token role fields.
@@ -119,6 +128,10 @@ export class IdentityVerifier {
         typeof payload.ct_gen === 'number' ? payload.ct_gen : undefined,
       credentialEpoch:
         typeof payload.ct_epoch === 'number' ? payload.ct_epoch : undefined,
+      credentialPlacement:
+        typeof payload.ct_placement === 'number'
+          ? payload.ct_placement
+          : undefined,
     });
   }
 }

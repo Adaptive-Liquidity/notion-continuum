@@ -193,7 +193,19 @@ test('AUDIT-GENERATION: pre-rotation workload token cannot renew post-rotation a
       /current authority\/assignment denied/,
     );
     const fresh = await f.capability(newIntent.x.id);
-    assert.equal(fresh.generation, 2);
+    assert.equal(fresh.generation, 1);
+    assert.equal(fresh.placementGeneration, 2);
+    assert.equal(
+      Number(
+        (
+          await admin.query(
+            'SELECT generation FROM ct.principals WHERE tenant=$1 AND id=$2',
+            ['a', f.principal],
+          )
+        ).rows[0].generation,
+      ),
+      1,
+    );
     assert.equal(
       (await f.controller.dispatch(fresh, newIntent.x.id)).state,
       'COMMITTED',

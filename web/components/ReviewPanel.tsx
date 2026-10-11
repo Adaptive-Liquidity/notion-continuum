@@ -71,6 +71,8 @@ export function ReviewPanel({
               'grant',
               'grantVersion',
               'principalEpoch',
+              'principalGeneration',
+              'computerId',
               'placementGeneration',
               'deadline',
               'costCeiling',

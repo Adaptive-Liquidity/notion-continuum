@@ -1,5 +1,11 @@
 import type pg from 'pg';
-import { tx, append, eventOutbox, bindingDigest } from './db.js';
+import {
+  tx,
+  append,
+  eventOutbox,
+  bindingDigest,
+  placementAdmission,
+} from './db.js';
 import type { VerifiedIdentity } from './identity-provider.js';
 import type { CapabilitySigner } from './production-capability.js';
 import { activeControl } from './service-auth.js';
@@ -304,6 +310,13 @@ export class AuthorityService {
           [i.tenant, i.principal],
         )
       ).rows[0];
+      const computer =
+        (
+          await c.query(
+            'SELECT * FROM ct.computers WHERE tenant=$1 AND principal=$2 FOR SHARE',
+            [i.tenant, i.principal],
+          )
+        ).rows[0] ?? null;
       const initial = (
         await c.query('SELECT * FROM ct.operations WHERE tenant=$1 AND id=$2', [
           i.tenant,
@@ -364,7 +377,8 @@ export class AuthorityService {
         (g.approval_required &&
           (!a || a.digest !== o.digest || a.grant_version !== g.version)) ||
         actor.credentialGeneration !== Number(p.generation) ||
-        actor.credentialEpoch !== Number(p.epoch)
+        actor.credentialEpoch !== Number(p.epoch) ||
+        placementAdmission(computer, o, actor.credentialPlacement)
       )
         throw Error('current authority/assignment denied');
       const expires = Math.min(
@@ -383,6 +397,9 @@ export class AuthorityService {
         principal: p.id,
         epoch: p.epoch,
         generation: p.generation,
+        ...(computer
+          ? { placementGeneration: Number(computer.generation) }
+          : {}),
         operations: [o.id],
         expires,
       };

@@ -1,6 +1,6 @@
 import { assertLocalFixtures } from '../runtime-profile.js';
 import type pg from 'pg';
-import { tx, bindingDigest } from '../db.js';
+import { tx, bindingDigest, actionBinding } from '../db.js';
 import type { VerifiedIdentity } from '../identity-provider.js';
 import { enrolled, identifier } from '../service-auth.js';
 import {
@@ -449,7 +449,7 @@ export class ConsoleReads {
     else if (section === 'governance')
       sql = `SELECT o.*,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',r.id,'name',r.name,'revision',r.revision) ORDER BY r.id) FROM ct.role_definitions r WHERE r.tenant=o.tenant AND r.organization=o.id),'[]') roles,COALESCE((SELECT jsonb_agg(jsonb_build_object('subjectKind',m.subject_kind,'subjectId',m.subject_id,'roleId',m.role_id,'ownerSeat',m.owner_seat,'revision',m.revision) ORDER BY m.subject_kind,m.subject_id) FROM ct.memberships m WHERE m.tenant=o.tenant AND m.organization=o.id),'[]') memberships,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',d.id,'revision',d.revision,'version',d.current_version,'title',v.title,'body',v.body) ORDER BY d.id) FROM ct.mandates d JOIN ct.mandate_versions v ON v.tenant=d.tenant AND v.organization=d.organization AND v.mandate=d.id AND v.version=d.current_version WHERE d.tenant=o.tenant AND d.organization=o.id),'[]') mandates FROM ct.organizations o WHERE o.tenant=$1`;
     else if (section === 'agents')
-      sql = `SELECT p.*,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',i.id,'kind',i.kind,'active',i.active,'version',i.version)) FROM ct.identities i WHERE i.tenant=p.tenant AND i.principal=p.id),'[]') workload_identities,(SELECT to_jsonb(b) FROM ct.cognition_bindings b WHERE b.tenant=p.tenant AND b.principal=p.id ORDER BY b.revision DESC LIMIT 1) cognition FROM ct.principals p WHERE p.tenant=$1`;
+      sql = `SELECT p.*,c.id AS computer_id,c.generation AS computer_generation,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',i.id,'kind',i.kind,'active',i.active,'version',i.version)) FROM ct.identities i WHERE i.tenant=p.tenant AND i.principal=p.id),'[]') workload_identities,(SELECT to_jsonb(b) FROM ct.cognition_bindings b WHERE b.tenant=p.tenant AND b.principal=p.id ORDER BY b.revision DESC LIMIT 1) cognition FROM ct.principals p LEFT JOIN ct.computers c ON c.tenant=p.tenant AND c.principal=p.id WHERE p.tenant=$1`;
     else if (section === 'computers')
       sql = `SELECT x.*,v.raw_state,v.provider_class,v.health,v.qualification_scope,v.observed_at,v.fresh_until,v.checkpoint_status,p.execution_mode FROM ct.computers x JOIN ct.principals p ON p.tenant=x.tenant AND p.id=x.principal LEFT JOIN ct.computer_observations v ON v.tenant=x.tenant AND v.computer=x.id AND v.generation=x.generation WHERE x.tenant=$1`;
     else if (['approvals', 'recovery', 'operation'].includes(section))
@@ -574,7 +574,13 @@ export class ConsoleReads {
         {
           VERA: x.id,
           principalEpoch: x.epoch,
-          placementGeneration: x.generation,
+          principalGeneration: Number(x.generation),
+          ...(x.computer_id
+            ? {
+                logicalComputer: x.computer_id,
+                placementGeneration: Number(x.computer_generation),
+              }
+            : {}),
           executionMode: x.execution_mode,
           workloadIdentities: x.workload_identities,
           cognition: x.cognition
@@ -648,30 +654,18 @@ export class ConsoleReads {
             action: x.action,
             resource: x.resource,
             parameters: redact(x.params),
-            canonicalBinding: redact({
-              tenant: x.tenant,
-              id: x.id,
-              principal: x.principal,
-              grant_id: x.grant_id,
-              epoch: x.epoch,
-              generation: x.generation,
-              fence: x.fence,
-              grant_version: x.grant_version,
-              task_id: x.task_id,
-              plan_version: x.plan_version,
-              provider: x.provider,
-              action: x.action,
-              resource: x.resource,
-              params: x.params,
-              idempotency_key: x.idempotency_key,
-              cost: x.cost,
-              deadline: x.deadline,
-            }),
+            canonicalBinding: redact(actionBinding(x)),
             digest: x.digest,
             grant: x.grant_id,
             grantVersion: x.grant_version,
             principalEpoch: x.epoch,
-            placementGeneration: x.generation,
+            principalGeneration: Number(x.generation),
+            ...(Number(x.contract_version) === 2
+              ? {
+                  computerId: x.computer_id,
+                  placementGeneration: Number(x.placement_generation),
+                }
+              : {}),
             deadline: new Date(x.deadline).toISOString(),
             costCeiling: Number(x.cost),
             unit:

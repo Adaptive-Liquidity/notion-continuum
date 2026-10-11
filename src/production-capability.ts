@@ -60,6 +60,9 @@ export class PublicCapabilityVerifier {
       typeof p.principal !== 'string' ||
       !Number.isSafeInteger(p.epoch) ||
       !Number.isSafeInteger(p.generation) ||
+      (p.placementGeneration !== undefined &&
+        (!Number.isSafeInteger(p.placementGeneration) ||
+          Number(p.placementGeneration) < 1)) ||
       !Array.isArray(p.operations) ||
       p.operations.length !== 1 ||
       p.operations.some((x) => typeof x !== 'string') ||
@@ -77,6 +80,9 @@ export class PublicCapabilityVerifier {
       principal: p.principal,
       epoch: Number(p.epoch),
       generation: Number(p.generation),
+      ...(p.placementGeneration === undefined
+        ? {}
+        : { placementGeneration: Number(p.placementGeneration) }),
       operations: p.operations as string[],
       expires: Math.min(Number(p.expires), p.exp! * 1000),
     };

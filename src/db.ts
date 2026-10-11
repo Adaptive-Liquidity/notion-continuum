@@ -110,8 +110,49 @@ export async function eventOutbox(
     payload,
   ]);
 }
-export function actionBinding(o: Record<string, any>) {
+function placementParts(o: Record<string, any>) {
+  const computerId = o.computer_id ?? o.computerId;
+  const placement = o.placement_generation ?? o.placementGeneration;
   return {
+    computerId,
+    placement,
+    hasComputer: computerId !== undefined && computerId !== null,
+    hasPlacement: placement !== undefined && placement !== null,
+  };
+}
+export function contractVersionOf(o: Record<string, any>): 1 | 2 {
+  const fields = placementParts(o);
+  const explicit =
+    o.contract_version !== undefined && o.contract_version !== null
+      ? Number(o.contract_version)
+      : o.contractVersion !== undefined && o.contractVersion !== null
+        ? Number(o.contractVersion)
+        : undefined;
+  if (explicit === undefined) {
+    if (!fields.hasComputer && !fields.hasPlacement) return 1;
+    if (fields.hasComputer && fields.hasPlacement) return 2;
+    throw Error('invalid contract binding');
+  }
+  if (explicit !== 1 && explicit !== 2) throw Error('invalid contract version');
+  if (explicit === 1 && (fields.hasComputer || fields.hasPlacement))
+    throw Error('invalid contract binding');
+  if (explicit === 2 && (!fields.hasComputer || !fields.hasPlacement))
+    throw Error('invalid contract binding');
+  if (explicit === 2) {
+    const generation = Number(fields.placement);
+    if (
+      typeof fields.computerId !== 'string' ||
+      !fields.computerId ||
+      !Number.isSafeInteger(generation) ||
+      generation < 1
+    )
+      throw Error('invalid contract binding');
+  }
+  return explicit;
+}
+export function actionBinding(o: Record<string, any>) {
+  const version = contractVersionOf(o);
+  const binding = {
     tenant: o.tenant,
     id: o.id,
     principal: o.principal,
@@ -129,8 +170,41 @@ export function actionBinding(o: Record<string, any>) {
     idempotencyKey: o.idempotency_key,
     cost: Number(o.cost),
     deadline: new Date(o.deadline).toISOString(),
-    contractVersion: 1,
+    contractVersion: 1 as 1 | 2,
   };
+  if (version === 1) return binding;
+  const fields = placementParts(o);
+  return {
+    ...binding,
+    contractVersion: 2 as const,
+    computerId: fields.computerId,
+    placementGeneration: Number(fields.placement),
+  };
+}
+export function placementAdmission(
+  computer:
+    | { id: string; generation: number | string; state: string }
+    | null
+    | undefined,
+  operation: Record<string, any>,
+  claim: number | undefined,
+): null | 'LEGACY_BINDING' | 'PLACEMENT_FENCE' {
+  const version = contractVersionOf(operation);
+  if (!computer) {
+    if (version !== 1 || claim !== undefined) return 'PLACEMENT_FENCE';
+    return null;
+  }
+  if (version !== 2) return 'LEGACY_BINDING';
+  const fields = placementParts(operation);
+  const generation = Number(computer.generation);
+  if (
+    fields.computerId !== computer.id ||
+    Number(fields.placement) !== generation ||
+    computer.state !== 'RUNNING' ||
+    claim !== generation
+  )
+    return 'PLACEMENT_FENCE';
+  return null;
 }
 export const bindingDigest = (o: Record<string, any>) =>
   sha(canonical(actionBinding(o)));

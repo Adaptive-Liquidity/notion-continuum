@@ -4,7 +4,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { fixture } from './implementation-helpers.js';
 import { admin, gov, fence } from './helpers.js';
-import { pool, canonical, sha } from '../src/db.js';
+import { pool, bindingDigest, canonical, sha } from '../src/db.js';
 import { LocalObjectStore } from '../src/object-store.js';
 import {
   EvidenceExporter,
@@ -26,6 +26,10 @@ let journal: any[] = [];
 let first: string, second: string;
 before(async () => {
   f = await fixture('recovery');
+  await admin.query(
+    "INSERT INTO ct.computers(tenant,id,principal,generation,state) VALUES('a','recovery-computer',$1,1,'RUNNING')",
+    [f.principal],
+  );
   exporter = new EvidenceExporter(
     expDb,
     new LocalObjectStore(path.resolve('.local/recovery-anchors')),
@@ -127,6 +131,22 @@ test('Recovery incomplete inventory blocks activation and never fabricates autho
   complete = true;
 });
 test('Recovery imports lost binding as UNKNOWN without write approval or second send', async () => {
+  const saved = inventory;
+  const forged = structuredClone(
+    inventory.find((item) => item.binding.id === second),
+  );
+  forged.binding = {
+    ...forged.binding,
+    id: 'recovery-missing-computer',
+    computerId: 'missing-computer',
+  };
+  forged.digest = sha(canonical(forged.binding));
+  inventory = [forged];
+  await assert.rejects(
+    recovery.importInventory(await f.actor('user'), run.id),
+    /missing historical computer record/,
+  );
+  inventory = saved;
   await admin.query(
     'DELETE FROM ct.assignments WHERE tenant=$1 AND operation=$2',
     ['a', second],
@@ -151,15 +171,17 @@ test('Recovery imports lost binding as UNKNOWN without write approval or second 
     await recovery.importInventory(await f.actor('user'), run.id),
     1,
   );
-  assert.equal(
-    (
-      await admin.query(
-        "SELECT state FROM ct.operations WHERE tenant='a' AND id=$1",
-        [second],
-      )
-    ).rows[0].state,
-    'UNKNOWN',
-  );
+  const restored = (
+    await admin.query(
+      "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+      [second],
+    )
+  ).rows[0];
+  assert.equal(restored.state, 'UNKNOWN');
+  assert.equal(Number(restored.contract_version), 2);
+  assert.equal(restored.computer_id, 'recovery-computer');
+  assert.equal(Number(restored.placement_generation), 1);
+  assert.equal(bindingDigest(restored), restored.digest);
   assert.equal(
     (
       await admin.query(

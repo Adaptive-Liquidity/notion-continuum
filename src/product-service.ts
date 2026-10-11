@@ -121,6 +121,13 @@ export class ProductService {
           [i.tenant, initial.principal],
         )
       ).rows[0];
+      const computer =
+        (
+          await c.query(
+            'SELECT * FROM ct.computers WHERE tenant=$1 AND principal=$2 FOR SHARE',
+            [i.tenant, initial.principal],
+          )
+        ).rows[0] ?? null;
       const t = (
         await c.query(
           'SELECT * FROM ct.tasks WHERE tenant=$1 AND id=$2 FOR UPDATE',
@@ -184,7 +191,23 @@ export class ProductService {
         idempotency_key: x.id,
         cost: x.cost,
         deadline,
+        contract_version: 1 as 1 | 2,
+        computer_id: null as string | null,
+        placement_generation: null as number | null,
       };
+      if (!computer) {
+        if (actor.credentialPlacement !== undefined)
+          throw Error('placement claim without computer');
+      } else if (
+        actor.credentialPlacement === undefined ||
+        actor.credentialPlacement !== Number(computer.generation)
+      )
+        throw Error('stale placement claim');
+      else {
+        o.contract_version = 2;
+        o.computer_id = computer.id;
+        o.placement_generation = Number(computer.generation);
+      }
       const digest = bindingDigest(o);
       const old = (
         await c.query('SELECT * FROM ct.operations WHERE tenant=$1 AND id=$2', [
@@ -197,7 +220,7 @@ export class ProductService {
         return { id: old.id, digest, reused: true, state: old.state };
       }
       await c.query(
-        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)',
+        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,computer_id,placement_generation,contract_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)',
         [
           o.tenant,
           o.id,
@@ -217,6 +240,9 @@ export class ProductService {
           o.idempotency_key,
           o.cost,
           o.deadline,
+          o.computer_id ?? null,
+          o.placement_generation ?? null,
+          o.contract_version,
         ],
       );
       await c.query('INSERT INTO ct.task_operations VALUES($1,$2,$3)', [

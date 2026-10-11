@@ -33,3 +33,6 @@ fi
 if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.organizations') IS NOT NULL")" != t ]; then
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/015-regency-foundation.sql > .artifacts/implementation/MIGRATION-015-regency-foundation.log 2>&1
 fi
+if [ "$(psql -d ct_test -Atc "SELECT 1 FROM information_schema.columns WHERE table_schema='ct' AND table_name='operations' AND column_name='contract_version'")" != 1 ]; then
+ psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/016-placement-generation.sql > .artifacts/implementation/MIGRATION-016-placement-generation.log 2>&1
+fi

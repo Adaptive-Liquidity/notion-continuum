@@ -39,7 +39,6 @@ export class ManualControl {
       if (
         !p.active ||
         comp.generation !== generation ||
-        p.generation !== generation ||
         p.execution_mode !== 'AGENT'
       )
         throw Error('mode/generation conflict');
@@ -89,7 +88,7 @@ export class ManualControl {
       const i = await enrolled(c, a, true);
       const row = (
         await c.query(
-          'SELECT l.*,p.generation current_generation,p.execution_mode FROM ct.manual_leases l JOIN ct.principals p ON p.tenant=l.tenant AND p.id=l.principal WHERE l.tenant=$1 AND l.id=$2 AND l.human_identity=$3',
+          'SELECT l.*,c.generation current_generation,p.execution_mode FROM ct.manual_leases l JOIN ct.principals p ON p.tenant=l.tenant AND p.id=l.principal JOIN ct.computers c ON c.tenant=l.tenant AND c.id=l.computer WHERE l.tenant=$1 AND l.id=$2 AND l.human_identity=$3',
           [i.tenant, id, i.id],
         )
       ).rows[0];

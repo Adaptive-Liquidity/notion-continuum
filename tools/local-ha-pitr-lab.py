@@ -35,7 +35,7 @@ try:
  with (primary/'postgresql.conf').open('a') as f:f.write(f"\nwal_level=replica\nmax_wal_senders=6\narchive_mode=on\narchive_timeout=1\narchive_command='{archive_command}'\nfsync=on\nsynchronous_commit=on\n")
  with (primary/'pg_hba.conf').open('a') as f:f.write('\nhost replication localtest 127.0.0.1/32 trust\n')
  start(primary,55440);cmd(['createdb','-h','127.0.0.1','-p',55440,'-U','localtest','ct_dr'])
- for filename in ['001-foundation.sql','002-lock-privileges.sql','004-monotonic-fences.sql','005-identity-authority.sql','006-product-computers.sql','008-recovery-controls.sql']:
+ for filename in ['001-foundation.sql','002-lock-privileges.sql','004-monotonic-fences.sql','005-identity-authority.sql','006-product-computers.sql','008-recovery-controls.sql','016-placement-generation.sql']:
   cmd(['psql','-h','127.0.0.1','-p',55440,'-U','localtest','-d','ct_dr','-v','ON_ERROR_STOP=1','-f',root/'migrations'/filename])
  probe('seed',55440);backup=base/'backup';cmd(['pg_basebackup','-h','127.0.0.1','-p',55440,'-U','localtest','-D',backup,'-X','stream','--checkpoint=fast']);results['cases'].append({'case':'native physical base backup','status':'PASS'})
  lsn=sql(55440,"SELECT pg_create_restore_point('before_effect')");(out/'RESTORE-POINT.json').write_text(json.dumps({'name':'before_effect','lsn':lsn},indent=2))

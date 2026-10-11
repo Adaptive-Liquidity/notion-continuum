@@ -24,6 +24,13 @@ const f = await fixture('focus'),
   writer = pool('ct_authority_api');
 const coord = new WorkCoordination(writer, fence),
   owner = await f.actor('user');
+await admin.query(
+  "INSERT INTO ct.computers(tenant,id,principal,generation,state) VALUES('a','continuity-desk',$1,1,'RUNNING')",
+  [f.principal],
+);
+await gov.query(
+  "INSERT INTO ct.computer_observations VALUES('a','continuity-desk',1,'stopped','local-process','unknown','LOCAL_FIXTURE',now(),now()+interval '10 minutes',NULL)",
+);
 await coord.project(
   owner,
   'operations',
@@ -91,13 +98,6 @@ await f.product.createTask(owner, {
   deadline: new Date(Date.now() + 3600000).toISOString(),
 });
 await coord.link(owner, 'work-next-week', 'operations', 0);
-await admin.query(
-  "INSERT INTO ct.computers(tenant,id,principal,generation,state) VALUES('a','continuity-desk',$1,1,'STOPPED')",
-  [f.principal],
-);
-await gov.query(
-  "INSERT INTO ct.computer_observations VALUES('a','continuity-desk',1,'stopped','local-process','unknown','LOCAL_FIXTURE',now(),now()+interval '10 minutes',NULL)",
-);
 await gov.query(
   "INSERT INTO ct.incidents(tenant,id,root_id,cause,severity,status,title,owner_vera,source_version) VALUES('a','unknown-ledger','ledger-uncertain','LOST_ACK',0,'OPEN','Provider acknowledgement missing — retain uncertainty',$1,1)",
   [f.principal],

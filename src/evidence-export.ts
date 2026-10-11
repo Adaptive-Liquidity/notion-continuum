@@ -39,12 +39,19 @@ export function rowFromBinding(b: Record<string, any>) {
     idempotency_key: b.idempotencyKey,
     cost: b.cost,
     deadline: new Date(b.deadline),
+    contract_version: b.contractVersion,
+    ...(b.contractVersion === 2
+      ? {
+          computer_id: b.computerId,
+          placement_generation: b.placementGeneration,
+        }
+      : {}),
   };
 }
 export function verifyOperationArchive(o: OperationArchive) {
   const r = rowFromBinding(o.binding);
   if (
-    o.binding.contractVersion !== 1 ||
+    (o.binding.contractVersion !== 1 && o.binding.contractVersion !== 2) ||
     canonical(actionBinding(r)) !== canonical(o.binding) ||
     sha(canonical(o.binding)) !== o.digest
   )
