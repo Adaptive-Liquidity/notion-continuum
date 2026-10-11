@@ -55,9 +55,13 @@ after(async () => {
 });
 
 function psql(database: string, args: string[]) {
-  const result = spawnSync('psql', ['-d', database, '-v', 'ON_ERROR_STOP=1', ...args], {
-    encoding: 'utf8',
-  });
+  const result = spawnSync(
+    'psql',
+    ['-d', database, '-v', 'ON_ERROR_STOP=1', ...args],
+    {
+      encoding: 'utf8',
+    },
+  );
   assert.equal(result.status, 0, result.stderr || result.stdout);
   return result.stdout;
 }
@@ -141,10 +145,7 @@ test('version selection keeps version 1 digest bytes and rejects invalid combina
     state: 'REQUESTED',
   });
   assert.equal(bindingDigest(archived), sha(canonical(v1)));
-  assert.equal(
-    'computerId' in actionBinding(archived),
-    false,
-  );
+  assert.equal('computerId' in actionBinding(archived), false);
   const archivedV2 = verifyOperationArchive({
     binding: v2,
     digest: sha(canonical(v2)),
@@ -159,15 +160,22 @@ test('version selection keeps version 1 digest bytes and rejects invalid combina
     assert.equal(again.reused, true);
     assert.equal(again.digest, first.op.digest);
     const stored = (
-      await admin.query("SELECT * FROM ct.operations WHERE tenant='a' AND id=$1", [
-        first.x.id,
-      ])
+      await admin.query(
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+        [first.x.id],
+      )
     ).rows[0];
     assert.equal(Number(stored.contract_version), 1);
     assert.equal(stored.computer_id, null);
     assert.equal(bindingDigest(stored), stored.digest);
-    assert.equal(canonical(actionBinding(stored)).includes('"contractVersion":1'), true);
-    assert.equal(canonical(actionBinding(stored)).includes('computerId'), false);
+    assert.equal(
+      canonical(actionBinding(stored)).includes('"contractVersion":1'),
+      true,
+    );
+    assert.equal(
+      canonical(actionBinding(stored)).includes('computerId'),
+      false,
+    );
   } finally {
     await f.close();
   }
@@ -188,11 +196,16 @@ test('database binding is immutable and placement loss does not move the VERA', 
     );
     const legacy = await f.intent('placement-fence-legacy');
     const before = (
-      await admin.query("SELECT digest FROM ct.operations WHERE tenant='a' AND id=$1", [
-        legacy.x.id,
-      ])
+      await admin.query(
+        "SELECT digest FROM ct.operations WHERE tenant='a' AND id=$1",
+        [legacy.x.id],
+      )
     ).rows[0].digest;
-    const registered = await computers.register(owner, 'fence-computer', f.principal);
+    const registered = await computers.register(
+      owner,
+      'fence-computer',
+      f.principal,
+    );
     assert.equal(registered.generation, 1);
     const principal = (
       await admin.query(
@@ -275,9 +288,10 @@ test('database binding is immutable and placement loss does not move the VERA', 
     );
     assert.equal(
       (
-        await admin.query("SELECT digest FROM ct.operations WHERE tenant='a' AND id=$1", [
-          legacy.x.id,
-        ])
+        await admin.query(
+          "SELECT digest FROM ct.operations WHERE tenant='a' AND id=$1",
+          [legacy.x.id],
+        )
       ).rows[0].digest,
       before,
     );
@@ -297,7 +311,12 @@ test('database binding is immutable and placement loss does not move the VERA', 
         "SELECT grantee FROM information_schema.column_privileges WHERE table_schema='ct' AND table_name='operations' AND column_name='computer_id' AND privilege_type IN('INSERT','UPDATE')",
       )
     ).rows.map((row) => row.grantee);
-    for (const role of ['ct_controller', 'ct_tenant_a', 'ct_tenant_b', 'ct_computer_broker'])
+    for (const role of [
+      'ct_controller',
+      'ct_tenant_a',
+      'ct_tenant_b',
+      'ct_computer_broker',
+    ])
       assert.equal(writers.includes(role), false, role);
   } finally {
     await broker.end();
@@ -309,9 +328,16 @@ test('database binding is immutable and placement loss does not move the VERA', 
 });
 
 test('upgrade preserves historical rows and a repeated migration does not rewrite them', async () => {
-  psql('postgres', ['-c', "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_placement_upgrade' AND pid<>pg_backend_pid()"]);
-  spawnSync('dropdb', ['--if-exists', 'ct_placement_upgrade'], { encoding: 'utf8' });
-  const created = spawnSync('createdb', ['ct_placement_upgrade'], { encoding: 'utf8' });
+  psql('postgres', [
+    '-c',
+    "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_placement_upgrade' AND pid<>pg_backend_pid()",
+  ]);
+  spawnSync('dropdb', ['--if-exists', 'ct_placement_upgrade'], {
+    encoding: 'utf8',
+  });
+  const created = spawnSync('createdb', ['ct_placement_upgrade'], {
+    encoding: 'utf8',
+  });
   assert.equal(created.status, 0, created.stderr);
   try {
     for (const file of [
@@ -352,8 +378,14 @@ test('upgrade preserves historical rows and a repeated migration does not rewrit
       '-c',
       `INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline) VALUES('a','historical-op','historical-vera','historical-grant',1,1,'fixture-fence-v1',1,'historical-task',1,'fixture','write','fixture-object','{"value":"vector"}','${digest}','historical-op',1,'2026-01-01T00:00:00Z')`,
     ]);
-    psql('ct_placement_upgrade', ['-f', 'migrations/016-placement-generation.sql']);
-    psql('ct_placement_upgrade', ['-f', 'migrations/016-placement-generation.sql']);
+    psql('ct_placement_upgrade', [
+      '-f',
+      'migrations/016-placement-generation.sql',
+    ]);
+    psql('ct_placement_upgrade', [
+      '-f',
+      'migrations/016-placement-generation.sql',
+    ]);
     const snapshot = psql('ct_placement_upgrade', [
       '-At',
       '-F',
@@ -366,8 +398,13 @@ test('upgrade preserves historical rows and a repeated migration does not rewrit
       `${digest}|1|<null>|<null>|historical-computer|4|historical-vera|4|1`,
     );
   } finally {
-    psql('postgres', ['-c', "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_placement_upgrade' AND pid<>pg_backend_pid()"]);
-    spawnSync('dropdb', ['--if-exists', 'ct_placement_upgrade'], { encoding: 'utf8' });
+    psql('postgres', [
+      '-c',
+      "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_placement_upgrade' AND pid<>pg_backend_pid()",
+    ]);
+    spawnSync('dropdb', ['--if-exists', 'ct_placement_upgrade'], {
+      encoding: 'utf8',
+    });
   }
 });
 
@@ -448,9 +485,10 @@ test('same operation id conflicts across placement and a stale claim cannot prop
       /operation identity conflict/,
     );
     const row = (
-      await admin.query("SELECT * FROM ct.operations WHERE tenant='a' AND id=$1", [
-        first.x.id,
-      ])
+      await admin.query(
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+        [first.x.id],
+      )
     ).rows[0];
     assert.equal(row.digest, first.op.digest);
     assert.equal(Number(row.placement_generation), 1);
@@ -497,18 +535,26 @@ test('legacy version 1 cannot be renewed or sent after registration', async () =
       ),
       /current authority\/assignment denied/,
     );
-    assert.equal((await f.controller.dispatch(cap, legacy.x.id)).state, 'DENIED');
+    assert.equal(
+      (await f.controller.dispatch(cap, legacy.x.id)).state,
+      'DENIED',
+    );
     const fresh = await f.intent('legacy-enrollment', true);
     const issued = await f.capability(fresh.x.id);
     assert.equal(
-      (await f.controller.dispatch({ ...issued, identityVersion: 99 }, fresh.x.id))
-        .state,
+      (
+        await f.controller.dispatch(
+          { ...issued, identityVersion: 99 },
+          fresh.x.id,
+        )
+      ).state,
       'DENIED',
     );
     const stored = (
-      await admin.query("SELECT * FROM ct.operations WHERE tenant='a' AND id=$1", [
-        legacy.x.id,
-      ])
+      await admin.query(
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+        [legacy.x.id],
+      )
     ).rows[0];
     assert.equal(stored.digest, legacy.op.digest);
     assert.equal(Number(stored.contract_version), 1);
@@ -538,7 +584,10 @@ test('version 1 UNKNOWN reconciles after replacement without a second send or su
     const issued = await f.capability(uncertain.x.id);
     const digest = uncertain.op.digest;
     f.provider.loseAck = true;
-    assert.equal((await f.controller.dispatch(issued, uncertain.x.id)).state, 'UNKNOWN');
+    assert.equal(
+      (await f.controller.dispatch(issued, uncertain.x.id)).state,
+      'UNKNOWN',
+    );
     assert.equal(f.provider.sends, 1);
     const owner = await f.actor('user');
     await computers.register(owner, 'unknown-computer', f.principal);
@@ -552,16 +601,20 @@ test('version 1 UNKNOWN reconciles after replacement without a second send or su
       }),
       /no substitute operation/,
     );
-    assert.equal((await f.controller.reconcile(issued, uncertain.x.id)).state, 'COMMITTED');
+    assert.equal(
+      (await f.controller.reconcile(issued, uncertain.x.id)).state,
+      'COMMITTED',
+    );
     assert.equal(f.provider.sends, 1);
     assert.equal(
       f.provider.rows.filter((row) => row.operation === uncertain.x.id).length,
       1,
     );
     const stored = (
-      await admin.query("SELECT * FROM ct.operations WHERE tenant='a' AND id=$1", [
-        uncertain.x.id,
-      ])
+      await admin.query(
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+        [uncertain.x.id],
+      )
     ).rows[0];
     assert.equal(stored.digest, digest);
     assert.equal(Number(stored.contract_version), 1);
@@ -598,14 +651,16 @@ test('version 2 read-back sends once and loss before the final admission sends n
     await computers.start(owner, 'send-computer');
     const fresh = await f.intent('send-fresh', true);
     assert.equal(
-      (await f.controller.dispatch(await f.capability(fresh.x.id), fresh.x.id)).state,
+      (await f.controller.dispatch(await f.capability(fresh.x.id), fresh.x.id))
+        .state,
       'COMMITTED',
     );
     assert.equal(f.provider.sends, 1);
     const stored = (
-      await admin.query("SELECT * FROM ct.operations WHERE tenant='a' AND id=$1", [
-        fresh.x.id,
-      ])
+      await admin.query(
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id=$1",
+        [fresh.x.id],
+      )
     ).rows[0];
     assert.equal(stored.computer_id, 'send-computer');
     assert.equal(Number(stored.placement_generation), 2);
@@ -676,7 +731,11 @@ test('placement claims, cross-tenant scope, and approval evidence stay exact', a
   );
   assert.equal(omitted.placementGeneration, undefined);
   const keys = await generateKeyPair('EdDSA');
-  const signer = new CapabilitySigner(keys.privateKey, 'cap', 'https://placement.test-cap.invalid');
+  const signer = new CapabilitySigner(
+    keys.privateKey,
+    'cap',
+    'https://placement.test-cap.invalid',
+  );
   const verifier = new PublicCapabilityVerifier(
     {
       keys: [
@@ -700,12 +759,17 @@ test('placement claims, cross-tenant scope, and approval evidence stay exact', a
     expires: Date.now() + 60000,
   };
   assert.equal(
-    (await verifier.verify(await signer.sign({ ...base, placementGeneration: 2 }, 'worker')))
-      .placementGeneration,
+    (
+      await verifier.verify(
+        await signer.sign({ ...base, placementGeneration: 2 }, 'worker'),
+      )
+    ).placementGeneration,
     2,
   );
   await assert.rejects(
-    verifier.verify(await signer.sign({ ...base, placementGeneration: 0 }, 'worker')),
+    verifier.verify(
+      await signer.sign({ ...base, placementGeneration: 0 }, 'worker'),
+    ),
     /invalid scoped capability/,
   );
   const f = await fixture('placement-view');
@@ -726,12 +790,16 @@ test('placement claims, cross-tenant scope, and approval evidence stay exact', a
     );
     const historical = await f.intent('view-historical');
     const owner = await f.actor('user');
-    const historicalView = await reads.read(owner, 'operation', { id: historical.x.id });
+    const historicalView = await reads.read(owner, 'operation', {
+      id: historical.x.id,
+    });
     assert.equal(historicalView.items[0].fields.computerId, undefined);
     assert.equal(historicalView.items[0].fields.placementGeneration, undefined);
     assert.equal(historicalView.items[0].fields.principalGeneration, 1);
     assert.equal(
-      JSON.stringify(historicalView.items[0].fields.canonicalBinding).includes('computerId'),
+      JSON.stringify(historicalView.items[0].fields.canonicalBinding).includes(
+        'computerId',
+      ),
       false,
     );
     await computers.register(owner, 'view-computer', f.principal);
@@ -750,12 +818,16 @@ test('placement claims, cross-tenant scope, and approval evidence stay exact', a
     assert.equal(view.items[0].fields.computerId, 'view-computer');
     assert.equal(view.items[0].fields.placementGeneration, 1);
     assert.equal(
-      (view.items[0].fields.canonicalBinding as { computerId?: string }).computerId,
+      (view.items[0].fields.canonicalBinding as { computerId?: string })
+        .computerId,
       'view-computer',
     );
     assert.equal(
-      (view.items[0].fields.canonicalBinding as { placementGeneration?: number })
-        .placementGeneration,
+      (
+        view.items[0].fields.canonicalBinding as {
+          placementGeneration?: number;
+        }
+      ).placementGeneration,
       1,
     );
   } finally {

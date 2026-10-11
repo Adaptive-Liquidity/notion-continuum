@@ -239,8 +239,18 @@ export class RecoveryService {
           ).rowCount
         )
           throw Error('missing historical authority record; stay blocked');
+        if (
+          Number(o.contract_version) === 2 &&
+          !(
+            await c.query(
+              'SELECT 1 FROM ct.computers WHERE tenant=$1 AND id=$2',
+              [o.tenant, o.computer_id],
+            )
+          ).rowCount
+        )
+          throw Error('missing historical computer record; stay blocked');
         await c.query(
-          "INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,state) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'UNKNOWN')",
+          "INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,state,computer_id,placement_generation,contract_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'UNKNOWN',$19,$20,$21)",
           [
             o.tenant,
             o.id,
@@ -260,6 +270,9 @@ export class RecoveryService {
             o.idempotency_key,
             o.cost,
             o.deadline,
+            o.computer_id ?? null,
+            o.placement_generation ?? null,
+            o.contract_version,
           ],
         );
         const task = (
