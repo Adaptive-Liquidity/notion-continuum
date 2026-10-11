@@ -36,6 +36,7 @@ python3 tests/legacy-hotfix-probe.py > .artifacts/implementation/final/LEGACY-PY
 run BASELINE-RELEASE-LOCAL dist/tests/release-local.test.js
 run PRODUCT-BACKEND dist/tests/product-backend.test.js
 run AUDIT-REGRESSIONS dist/tests/audit-regressions.test.js
+run CONTINUITY dist/tests/continuity.test.js
 run FONT-NOTICES dist/tests/font-notices.test.js
 run REVIEW-REMEDIATION dist/tests/review-remediation.test.js
 run DEPENDENCY-OVERRIDES dist/tests/dependency-overrides.test.js

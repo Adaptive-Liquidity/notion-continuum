@@ -10,7 +10,8 @@ base=json.loads((root/'baseline/SUMMARY.json').read_text())
 # 126 counts the original baseline suites, identity fence regressions,
 # and the provider exception-disclosure regression.
 # The named extras are measured separately and must stay present.
-audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':15,'DEPENDENCY-OVERRIDES':1,'OBJECT-CONTAINMENT':2}
+# CONTINUITY is the composed same-VERA interruption regression.
+audit_regressions={'AUDIT-REGRESSIONS':4,'AUDIT-RECOVERY':1,'FONT-NOTICES':1,'REVIEW-REMEDIATION':15,'DEPENDENCY-OVERRIDES':1,'OBJECT-CONTAINMENT':2,'CONTINUITY':1}
 expected_groups=126+sum(audit_regressions.values())
 assert base['failed']==base['skipped']==0
 assert base['nodeGroups']==base['passed']==expected_groups
