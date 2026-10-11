@@ -16,6 +16,7 @@ CREATE FUNCTION ct.keep_organization_owner() RETURNS trigger LANGUAGE plpgsql AS
  IF TG_OP='DELETE' AND OLD.owner_seat THEN ten=OLD.tenant; org=OLD.organization;
  ELSIF TG_OP='UPDATE' AND OLD.owner_seat AND NOT NEW.owner_seat THEN ten=NEW.tenant; org=NEW.organization;
  ELSE RETURN COALESCE(NEW,OLD); END IF;
+ PERFORM 1 FROM ct.organizations WHERE tenant=ten AND id=org FOR UPDATE;
  SELECT count(*) INTO n FROM ct.memberships WHERE tenant=ten AND organization=org AND owner_seat AND NOT (subject_kind=OLD.subject_kind AND subject_id=OLD.subject_id);
  IF n=0 THEN RAISE EXCEPTION 'last organization owner'; END IF;
  RETURN COALESCE(NEW,OLD);END$$;

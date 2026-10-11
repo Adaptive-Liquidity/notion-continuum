@@ -836,6 +836,12 @@ test('Regency records stay visible and never change a grant or approval', async 
   );
   const kept = await reads.read(owner, 'governance');
   assert.equal(kept.items[0].title, 'Asentxia Desk');
+  assert.equal(
+    (kept.items[0].fields.mandates as any[]).find(
+      (mandate) => mandate.id === 'operating',
+    ).body,
+    'Plan and work inside permissions already granted.',
+  );
   assert.ok(
     (kept.items[0].fields.memberships as any[]).some(
       (member) => member.ownerSeat && member.subjectId === seat.subjectId,
@@ -843,4 +849,51 @@ test('Regency records stay visible and never change a grant or approval', async 
   );
   assert.deepEqual(await grants(), beforeGrants);
   assert.equal(await approvals(), beforeApprovals);
+  await admin.query(
+    "INSERT INTO ct.identities(id,issuer,subject,audience,kind,tenant,domain_role) VALUES('regency-second-owner',$1,'regency-second-owner',$2,'user','a','owner')",
+    [f.issuer, f.audience],
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'add_membership',
+          'regency-second-owner',
+          {
+            organization: 'regency-org',
+            subjectKind: 'human',
+            roleId: 'steward',
+            ownerSeat: true,
+          },
+          0,
+          'second-owner',
+        ),
+      )
+    ).status,
+    'APPLIED',
+  );
+  const first = await admin.connect();
+  const second = await admin.connect();
+  try {
+    await first.query('BEGIN');
+    await first.query(
+      "DELETE FROM ct.memberships WHERE tenant='a' AND organization='regency-org' AND subject_kind='human' AND subject_id=$1",
+      [seat.subjectId],
+    );
+    const otherDelete = (async () => {
+      await second.query('BEGIN');
+      await second.query(
+        "DELETE FROM ct.memberships WHERE tenant='a' AND organization='regency-org' AND subject_kind='human' AND subject_id='regency-second-owner'",
+      );
+    })();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await first.query('COMMIT');
+    await assert.rejects(otherDelete, /last organization owner/);
+  } finally {
+    await second.query('ROLLBACK').catch(() => undefined);
+    await first.query('ROLLBACK').catch(() => undefined);
+    first.release();
+    second.release();
+  }
 });
