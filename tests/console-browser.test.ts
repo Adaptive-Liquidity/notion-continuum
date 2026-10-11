@@ -462,6 +462,7 @@ test('A20 bounded grant form persists exact scope and does not assign, approve o
 test('A07/A08/A10/A14/A15/A19/A26/A33/A35/A37 every major read surface uses authenticated backend facts', async () => {
   for (const section of [
     'projects',
+    'governance',
     'agents',
     'computers',
     'authority',

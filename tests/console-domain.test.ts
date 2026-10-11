@@ -666,3 +666,234 @@ test('Stage commands remain qualification-pending, even with a signed fresh owne
     ),
   );
 });
+test('Regency records stay visible and never change a grant or approval', async () => {
+  const owner = await f.actor('user');
+  const grants = async () =>
+    (
+      await admin.query(
+        "SELECT count(*)::int n, COALESCE(max(version),0)::int v FROM ct.grants WHERE tenant='a'",
+      )
+    ).rows[0];
+  const approvals = async () =>
+    Number(
+      (
+        await admin.query(
+          "SELECT count(*)::int n FROM ct.approvals WHERE tenant='a'",
+        )
+      ).rows[0].n,
+    );
+  const beforeGrants = await grants();
+  const beforeApprovals = await approvals();
+  const created = await commands.execute(
+    owner,
+    cmd('create_organization', 'regency-org', { name: 'Asentxia' }),
+  );
+  assert.equal(created.status, 'APPLIED');
+  assert.equal((created.result as any).effectAuthority, false);
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd('define_role', 'writer', {
+          organization: 'regency-org',
+          name: 'write',
+        }),
+      )
+    ).status,
+    'APPLIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd('add_membership', f.principal, {
+          organization: 'regency-org',
+          subjectKind: 'vera',
+          roleId: 'steward',
+          ownerSeat: false,
+        }),
+      )
+    ).status,
+    'APPLIED',
+  );
+  const mandate = await commands.execute(
+    owner,
+    cmd('record_mandate', 'operating', {
+      organization: 'regency-org',
+      title: 'Operate',
+      body: 'Plan and work inside permissions already granted.',
+    }),
+  );
+  assert.equal(mandate.status, 'APPLIED');
+  assert.equal((mandate.result as any).effectAuthority, false);
+  assert.deepEqual(await grants(), beforeGrants);
+  assert.equal(await approvals(), beforeApprovals);
+  const view = await reads.read(owner, 'governance');
+  assert.equal(view.items[0].title, 'Asentxia');
+  assert.equal(view.items[0].fields.effectAuthority, false);
+  assert.equal(
+    (view.items[0].fields.note as string).includes('does not authorize'),
+    true,
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Stale' },
+          9,
+          'rename-stale',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Asentxia Desk' },
+          1,
+          'rename-current',
+        ),
+      )
+    ).status,
+    'APPLIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Conflict' },
+          1,
+          'rename-conflict',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        await f.actor('user', 'b'),
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Stolen' },
+          2,
+          'rename-cross-tenant',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  const other = await reads.read(await f.actor('user', 'b'), 'governance');
+  assert.equal(
+    other.items.some((item) => item.id === 'regency-org'),
+    false,
+  );
+  const current = await reads.read(owner, 'governance');
+  const seat = (current.items[0].fields.memberships as any[]).find(
+    (member) => member.ownerSeat,
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'remove_membership',
+          seat.subjectId,
+          { organization: 'regency-org', subjectKind: 'human' },
+          seat.revision,
+          'drop-last-owner',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        await f.actor('user', 'b'),
+        cmd(
+          'remove_membership',
+          seat.subjectId,
+          { organization: 'regency-org', subjectKind: 'human' },
+          seat.revision,
+          'guess-member',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  const kept = await reads.read(owner, 'governance');
+  assert.equal(kept.items[0].title, 'Asentxia Desk');
+  assert.equal(
+    (kept.items[0].fields.mandates as any[]).find(
+      (mandate) => mandate.id === 'operating',
+    ).body,
+    'Plan and work inside permissions already granted.',
+  );
+  assert.ok(
+    (kept.items[0].fields.memberships as any[]).some(
+      (member) => member.ownerSeat && member.subjectId === seat.subjectId,
+    ),
+  );
+  assert.deepEqual(await grants(), beforeGrants);
+  assert.equal(await approvals(), beforeApprovals);
+  await admin.query(
+    "INSERT INTO ct.identities(id,issuer,subject,audience,kind,tenant,domain_role) VALUES('regency-second-owner',$1,'regency-second-owner',$2,'user','a','owner')",
+    [f.issuer, f.audience],
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'add_membership',
+          'regency-second-owner',
+          {
+            organization: 'regency-org',
+            subjectKind: 'human',
+            roleId: 'steward',
+            ownerSeat: true,
+          },
+          0,
+          'second-owner',
+        ),
+      )
+    ).status,
+    'APPLIED',
+  );
+  const first = await admin.connect();
+  const second = await admin.connect();
+  try {
+    await first.query('BEGIN');
+    await first.query(
+      "DELETE FROM ct.memberships WHERE tenant='a' AND organization='regency-org' AND subject_kind='human' AND subject_id=$1",
+      [seat.subjectId],
+    );
+    const otherDelete = (async () => {
+      await second.query('BEGIN');
+      await second.query(
+        "DELETE FROM ct.memberships WHERE tenant='a' AND organization='regency-org' AND subject_kind='human' AND subject_id='regency-second-owner'",
+      );
+    })();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await first.query('COMMIT');
+    await assert.rejects(otherDelete, /last organization owner/);
+  } finally {
+    await second.query('ROLLBACK').catch(() => undefined);
+    await first.query('ROLLBACK').catch(() => undefined);
+    first.release();
+    second.release();
+  }
+});

@@ -30,3 +30,6 @@ fi
 if [ "$(psql -d ct_test -Atc "SELECT 1 FROM pg_constraint WHERE conname='tasks_created_by_tenant_fkey'")" != 1 ]; then
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/012-tenant-identity-fks.sql > .artifacts/implementation/MIGRATION-012-tenant-identity-fks.log 2>&1
 fi
+if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.organizations') IS NOT NULL")" != t ]; then
+ psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/015-regency-foundation.sql > .artifacts/implementation/MIGRATION-015-regency-foundation.log 2>&1
+fi

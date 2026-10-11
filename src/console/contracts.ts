@@ -113,6 +113,12 @@ export const CommandSchema = z
       'ack_incident',
       'mark_notification_read',
       'export_evidence',
+      'create_organization',
+      'rename_organization',
+      'define_role',
+      'add_membership',
+      'remove_membership',
+      'record_mandate',
     ]),
     target: Identifier,
     expected_version: z.number().int().nonnegative(),
@@ -157,10 +163,37 @@ export const CommandInputs = {
       snapshot: z.number().int().nonnegative(),
     })
     .strict(),
+  create_organization: z.object({ name: z.string().min(1).max(200) }).strict(),
+  rename_organization: z.object({ name: z.string().min(1).max(200) }).strict(),
+  define_role: z
+    .object({ organization: Identifier, name: z.string().min(1).max(80) })
+    .strict(),
+  add_membership: z
+    .object({
+      organization: Identifier,
+      subjectKind: z.enum(['human', 'vera']),
+      roleId: Identifier,
+      ownerSeat: z.boolean(),
+    })
+    .strict(),
+  remove_membership: z
+    .object({
+      organization: Identifier,
+      subjectKind: z.enum(['human', 'vera']),
+    })
+    .strict(),
+  record_mandate: z
+    .object({
+      organization: Identifier,
+      title: z.string().min(1).max(200),
+      body: z.string().min(1).max(8000),
+    })
+    .strict(),
 };
 export const SECTIONS = [
   'work',
   'projects',
+  'governance',
   'agents',
   'computers',
   'approvals',

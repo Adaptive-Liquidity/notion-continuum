@@ -101,6 +101,7 @@ export class ConsoleReads {
         [
           'work',
           'projects',
+          'governance',
           'agents',
           'computers',
           'approvals',
@@ -445,6 +446,8 @@ export class ConsoleReads {
       sql = `SELECT t.*,w.project,w.accountable_vera,w.waiting_reason,w.revision AS coordination_revision,COALESCE((SELECT jsonb_agg(to_jsonb(o) ORDER BY o.id) FROM ct.task_operations m JOIN ct.operations o ON o.tenant=m.tenant AND o.id=m.operation WHERE m.tenant=t.tenant AND m.task=t.id),'[]') ops,COALESCE((SELECT jsonb_agg(d.depends_on ORDER BY d.depends_on) FROM ct.task_dependencies d WHERE d.tenant=t.tenant AND d.task=t.id),'[]') dependencies FROM ct.tasks t LEFT JOIN ct.work_coordination w ON w.tenant=t.tenant AND w.task=t.id WHERE t.tenant=$1`;
     else if (section === 'projects')
       sql = `SELECT p.*,COALESCE((SELECT jsonb_agg(w.task ORDER BY w.task) FROM ct.work_coordination w WHERE w.tenant=p.tenant AND w.project=p.id),'[]') tasks FROM ct.projects p WHERE p.tenant=$1`;
+    else if (section === 'governance')
+      sql = `SELECT o.*,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',r.id,'name',r.name,'revision',r.revision) ORDER BY r.id) FROM ct.role_definitions r WHERE r.tenant=o.tenant AND r.organization=o.id),'[]') roles,COALESCE((SELECT jsonb_agg(jsonb_build_object('subjectKind',m.subject_kind,'subjectId',m.subject_id,'roleId',m.role_id,'ownerSeat',m.owner_seat,'revision',m.revision) ORDER BY m.subject_kind,m.subject_id) FROM ct.memberships m WHERE m.tenant=o.tenant AND m.organization=o.id),'[]') memberships,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',d.id,'revision',d.revision,'version',d.current_version,'title',v.title,'body',v.body) ORDER BY d.id) FROM ct.mandates d JOIN ct.mandate_versions v ON v.tenant=d.tenant AND v.organization=d.organization AND v.mandate=d.id AND v.version=d.current_version WHERE d.tenant=o.tenant AND d.organization=o.id),'[]') mandates FROM ct.organizations o WHERE o.tenant=$1`;
     else if (section === 'agents')
       sql = `SELECT p.*,COALESCE((SELECT jsonb_agg(jsonb_build_object('id',i.id,'kind',i.kind,'active',i.active,'version',i.version)) FROM ct.identities i WHERE i.tenant=p.tenant AND i.principal=p.id),'[]') workload_identities,(SELECT to_jsonb(b) FROM ct.cognition_bindings b WHERE b.tenant=p.tenant AND b.principal=p.id ORDER BY b.revision DESC LIMIT 1) cognition FROM ct.principals p WHERE p.tenant=$1`;
     else if (section === 'computers')
@@ -532,6 +535,21 @@ export class ConsoleReads {
         },
       );
     }
+    if (section === 'governance')
+      return item(
+        x.id,
+        'organization',
+        x.name,
+        Number(x.revision),
+        'Governance record',
+        {
+          roles: x.roles ?? [],
+          memberships: x.memberships ?? [],
+          mandates: x.mandates ?? [],
+          effectAuthority: false,
+          note: 'A role, membership, or mandate does not authorize an effect.',
+        },
+      );
     if (section === 'projects')
       return item(
         x.id,
