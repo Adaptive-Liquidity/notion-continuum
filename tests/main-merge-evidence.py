@@ -50,9 +50,17 @@ def commit(directory, name, body):
     ).strip()
 
 
-def repository():
+def init_repository():
     directory = Path(tempfile.mkdtemp())
     git(directory, "init", "-q", "-b", "main")
+    # The merge commit needs an author. CI runners have no global identity.
+    git(directory, "config", "user.name", "eng006")
+    git(directory, "config", "user.email", "eng006@example.invalid")
+    return directory
+
+
+def repository():
+    directory = init_repository()
     base = commit(directory, "base.txt", "base")
     git(directory, "checkout", "-q", "-b", "change")
     change = commit(directory, "change.txt", "change")
@@ -126,8 +134,7 @@ def test_missing_or_failed_evidence_requires_full_verification():
 
 
 def test_a_merge_that_changes_the_tested_tree_is_not_reused():
-    directory = Path(tempfile.mkdtemp())
-    git(directory, "init", "-q", "-b", "main")
+    directory = init_repository()
     commit(directory, "base.txt", "base")
     git(directory, "checkout", "-q", "-b", "change")
     commit(directory, "change.txt", "change")
