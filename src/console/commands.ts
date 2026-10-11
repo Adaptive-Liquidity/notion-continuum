@@ -13,6 +13,8 @@ import {
   type HumanCommand,
 } from './contracts.js';
 import { redact, requiresRedaction } from './redaction.js';
+import { OrganizationService } from '../regency/organization-service.js';
+import { MandateService } from '../regency/mandate-service.js';
 export class ConsoleCommands {
   constructor(
     private db: pg.Pool,
@@ -20,6 +22,8 @@ export class ConsoleCommands {
     private product: ProductService,
     private fence: string,
     private mode: 'LOCAL_FIXTURE' | 'STAGING',
+    private organizations = new OrganizationService(),
+    private mandates = new MandateService(),
   ) {
     if (this.mode === 'LOCAL_FIXTURE')
       assertLocalFixtures('local console commands profile');
@@ -224,6 +228,69 @@ export class ConsoleCommands {
         ).rows[0];
         if (!row) throw Error('notification CAS conflict');
         return { ...row, incidentResolved: false };
+      }
+      case 'create_organization': {
+        if (cmd.expected_version !== 0) throw Error('new organization version');
+        const actor = await enrolled(c, a, true);
+        return this.organizations.create(
+          c,
+          tenant,
+          actor.id,
+          cmd.target,
+          b.name,
+        );
+      }
+      case 'rename_organization':
+        return this.organizations.rename(
+          c,
+          tenant,
+          cmd.target,
+          b.name,
+          cmd.expected_version,
+        );
+      case 'define_role': {
+        if (cmd.expected_version !== 0) throw Error('new role version');
+        return this.organizations.defineRole(
+          c,
+          tenant,
+          b.organization,
+          cmd.target,
+          b.name,
+        );
+      }
+      case 'add_membership': {
+        if (cmd.expected_version !== 0) throw Error('new membership version');
+        return this.organizations.addMembership(
+          c,
+          tenant,
+          b.organization,
+          b.subjectKind,
+          cmd.target,
+          b.roleId,
+          b.ownerSeat,
+        );
+      }
+      case 'remove_membership':
+        return this.organizations.removeMembership(
+          c,
+          tenant,
+          b.organization,
+          b.subjectKind,
+          cmd.target,
+          cmd.expected_version,
+        );
+      case 'record_mandate': {
+        const actor = await enrolled(c, a, true);
+        return this.mandates.record(
+          c,
+          tenant,
+          actor.id,
+          b.organization,
+          cmd.target,
+          b.title,
+          b.body,
+          cmd.expected_version,
+        );
       }
       case 'export_evidence': {
         const head = Number(

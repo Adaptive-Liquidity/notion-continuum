@@ -18,6 +18,7 @@ import { CreationForm } from './CreationForms';
 const nav = [
   ['work', 'Work'],
   ['projects', 'Projects'],
+  ['governance', 'Governance'],
   ['agents', 'Agents / VERA'],
   ['computers', 'Computers'],
   ['approvals', 'Approvals'],
@@ -44,6 +45,8 @@ const titles = Object.fromEntries(nav),
       'Persistent accountable principals, independent of models and computers.',
     computers:
       'Logical environments, observed placement and explicit recovery obligations.',
+    governance:
+      'Mandates, roles and membership. None of these authorize an effect.',
     context: 'Attributable context is data, never permission.',
     evidence:
       'Inspect provenance and integrity without mistaking logs for provider truth.',

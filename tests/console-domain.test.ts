@@ -666,3 +666,181 @@ test('Stage commands remain qualification-pending, even with a signed fresh owne
     ),
   );
 });
+test('Regency records stay visible and never change a grant or approval', async () => {
+  const owner = await f.actor('user');
+  const grants = async () =>
+    (
+      await admin.query(
+        "SELECT count(*)::int n, COALESCE(max(version),0)::int v FROM ct.grants WHERE tenant='a'",
+      )
+    ).rows[0];
+  const approvals = async () =>
+    Number(
+      (
+        await admin.query(
+          "SELECT count(*)::int n FROM ct.approvals WHERE tenant='a'",
+        )
+      ).rows[0].n,
+    );
+  const beforeGrants = await grants();
+  const beforeApprovals = await approvals();
+  const created = await commands.execute(
+    owner,
+    cmd('create_organization', 'regency-org', { name: 'Asentxia' }),
+  );
+  assert.equal(created.status, 'APPLIED');
+  assert.equal((created.result as any).effectAuthority, false);
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd('define_role', 'writer', {
+          organization: 'regency-org',
+          name: 'write',
+        }),
+      )
+    ).status,
+    'APPLIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd('add_membership', f.principal, {
+          organization: 'regency-org',
+          subjectKind: 'vera',
+          roleId: 'steward',
+          ownerSeat: false,
+        }),
+      )
+    ).status,
+    'APPLIED',
+  );
+  const mandate = await commands.execute(
+    owner,
+    cmd('record_mandate', 'operating', {
+      organization: 'regency-org',
+      title: 'Operate',
+      body: 'Plan and work inside permissions already granted.',
+    }),
+  );
+  assert.equal(mandate.status, 'APPLIED');
+  assert.equal((mandate.result as any).effectAuthority, false);
+  assert.deepEqual(await grants(), beforeGrants);
+  assert.equal(await approvals(), beforeApprovals);
+  const view = await reads.read(owner, 'governance');
+  assert.equal(view.items[0].title, 'Asentxia');
+  assert.equal(view.items[0].fields.effectAuthority, false);
+  assert.equal(
+    (view.items[0].fields.note as string).includes('does not authorize'),
+    true,
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Stale' },
+          9,
+          'rename-stale',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Asentxia Desk' },
+          1,
+          'rename-current',
+        ),
+      )
+    ).status,
+    'APPLIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Conflict' },
+          1,
+          'rename-conflict',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        await f.actor('user', 'b'),
+        cmd(
+          'rename_organization',
+          'regency-org',
+          { name: 'Stolen' },
+          2,
+          'rename-cross-tenant',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  const other = await reads.read(await f.actor('user', 'b'), 'governance');
+  assert.equal(
+    other.items.some((item) => item.id === 'regency-org'),
+    false,
+  );
+  const current = await reads.read(owner, 'governance');
+  const seat = (current.items[0].fields.memberships as any[]).find(
+    (member) => member.ownerSeat,
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        owner,
+        cmd(
+          'remove_membership',
+          seat.subjectId,
+          { organization: 'regency-org', subjectKind: 'human' },
+          seat.revision,
+          'drop-last-owner',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  assert.equal(
+    (
+      await commands.execute(
+        await f.actor('user', 'b'),
+        cmd(
+          'remove_membership',
+          seat.subjectId,
+          { organization: 'regency-org', subjectKind: 'human' },
+          seat.revision,
+          'guess-member',
+        ),
+      )
+    ).status,
+    'DENIED',
+  );
+  const kept = await reads.read(owner, 'governance');
+  assert.equal(kept.items[0].title, 'Asentxia Desk');
+  assert.ok(
+    (kept.items[0].fields.memberships as any[]).some(
+      (member) => member.ownerSeat && member.subjectId === seat.subjectId,
+    ),
+  );
+  assert.deepEqual(await grants(), beforeGrants);
+  assert.equal(await approvals(), beforeApprovals);
+});
