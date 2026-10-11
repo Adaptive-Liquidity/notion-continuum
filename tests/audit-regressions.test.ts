@@ -17,13 +17,33 @@ after(async () => {
 test('AUDIT-MFA: approval waiting on authority locks rejects stale MFA', async () => {
   const f = await fixture('audit-mfa');
   const hold = await gov.connect();
+  // Same five-minute owner MFA window as AuthorityService.owner.
+  const mfaWindowMs = 300000;
+  const dbNow = async () =>
+    new Date(
+      (await admin.query('SELECT clock_timestamp() t')).rows[0].t,
+    ).getTime();
+  // FOR UPDATE on a held principal row waits on that transaction id.
+  const principalLockWaiters = async () =>
+    Number(
+      (
+        await admin.query(
+          "SELECT count(*)::int n FROM pg_stat_activity WHERE wait_event_type='Lock' AND wait_event='transactionid' AND state='active' AND query LIKE 'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE%'",
+        )
+      ).rows[0].n,
+    );
   try {
     const { x, op } = await f.intent('audit-mfa-operation');
+    const mintedAt = await dbNow();
     const actor = await f.human.verify(
       await f.token('user', 'a', {
-        auth_time: Math.floor(Date.now() / 1000) - 299,
+        // About thirty seconds of freshness remain, so approval can reach
+        // the principal lock before the window closes.
+        auth_time: Math.floor((mintedAt - (mfaWindowMs - 30000)) / 1000),
       }),
     );
+    assert.equal(typeof actor.authTime, 'number');
+    assert.ok(mintedAt - actor.authTime! <= mfaWindowMs);
     await hold.query('BEGIN');
     await hold.query(
       'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
@@ -36,22 +56,49 @@ test('AUDIT-MFA: approval waiting on authority locks rejects stale MFA', async (
         expires: x.deadline,
       })
       .then(
-        () => ({ applied: true }),
-        (e: Error) => ({ applied: false, error: e.message }),
+        () => ({ applied: true as const }),
+        (e: Error) => ({ applied: false as const, error: e.message }),
       );
-    await delay(100);
-    const waiting = Number(
-      (
-        await admin.query(
-          "SELECT count(*) n FROM pg_stat_activity WHERE wait_event_type='Lock' AND query LIKE 'SELECT * FROM ct.principals WHERE tenant=%'",
-        )
-      ).rows[0].n,
+    const observeUntil = Date.now() + 10000;
+    let waiting = 0;
+    while (Date.now() < observeUntil) {
+      waiting = await principalLockWaiters();
+      if (waiting > 0) break;
+      await delay(50);
+    }
+    assert.ok(waiting > 0, 'approval was not blocked on the principal lock');
+    const blockedAt = await dbNow();
+    assert.ok(
+      blockedAt - actor.authTime! <= mfaWindowMs,
+      'MFA was already expired when the principal lock wait was observed',
     );
-    await delay(1500);
+    const expireUntil = Date.now() + 60000;
+    while ((await dbNow()) - actor.authTime! <= mfaWindowMs) {
+      assert.ok(
+        Date.now() < expireUntil,
+        'database clock did not pass the five-minute MFA window while the lock was held',
+      );
+      await delay(100);
+    }
     await hold.query('COMMIT');
     const outcome = await pending;
-    assert.equal(waiting > 0, true);
-    assert.equal(outcome.applied, false);
+    if (outcome.applied)
+      assert.fail('stale MFA approval was applied after the lock was released');
+    assert.match(
+      outcome.error,
+      /fresh independently enrolled owner MFA required/,
+    );
+    assert.equal(
+      Number(
+        (
+          await admin.query(
+            "SELECT count(*)::int n FROM ct.approvals WHERE tenant='a' AND operation=$1",
+            [x.id],
+          )
+        ).rows[0].n,
+      ),
+      0,
+    );
     const fresh = await f.actor('user');
     const again = await f.intent('audit-mfa-fresh');
     await f.authority.approve(fresh, {
@@ -59,6 +106,17 @@ test('AUDIT-MFA: approval waiting on authority locks rejects stale MFA', async (
       digest: again.op.digest,
       expires: again.x.deadline,
     });
+    assert.equal(
+      Number(
+        (
+          await admin.query(
+            "SELECT count(*)::int n FROM ct.approvals WHERE tenant='a' AND operation=$1",
+            [again.x.id],
+          )
+        ).rows[0].n,
+      ),
+      1,
+    );
   } finally {
     await hold.query('ROLLBACK').catch(() => {});
     hold.release();
