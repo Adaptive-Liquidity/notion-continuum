@@ -26,7 +26,7 @@ jobs:
       reason: ${{ steps.decide.outputs.reason }}
     steps:
       - name: Checkout exact commit
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -59,19 +59,19 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout exact commit
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
       - name: Install Node 22 for frontend
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22.23.3
       - name: Record separate Node 22 binary
         shell: bash
         run: echo "CT_NODE22_BIN=$(dirname "$(command -v node)")" >> "$GITHUB_ENV"
       - name: Install Node 24 for backend
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.14.1
       - name: Install locked dependencies
