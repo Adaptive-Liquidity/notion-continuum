@@ -4,7 +4,7 @@ import { pool } from '../src/db.js';
 import { ComputerService, type Placement } from '../src/computers.js';
 import { EffectController } from '../src/controller.js';
 import { fixture } from './implementation-helpers.js';
-import { admin, fence } from './helpers.js';
+import { admin, fence, gov } from './helpers.js';
 
 test('Continuity: one VERA survives interruption, reconciles UNKNOWN without a resend, and denies the stale worker', async () => {
   const f = await fixture('continuity');
@@ -104,6 +104,15 @@ test('Continuity: one VERA survives interruption, reconciles UNKNOWN without a r
     const replaced = await computers.start(owner, 'continuity-computer');
     assert.equal(replaced.principal, f.principal);
     assert.equal(Number(replaced.generation), 2);
+    await assert.rejects(
+      computers.authorizePlacement(
+        await f.machine.verify(staleWorker),
+        'continuity-computer',
+        replaced.placement,
+        2,
+      ),
+      /placement generation denied/,
+    );
     assert.equal(
       (
         await admin.query(
@@ -136,5 +145,6 @@ test('Continuity: one VERA survives interruption, reconciles UNKNOWN without a r
     await computersDb.end();
     await f.close();
     await admin.end();
+    await gov.end();
   }
 });
