@@ -420,6 +420,10 @@ test('upgrade preserves historical rows and the database rejects a partial manif
       '017-context-cognition-binding.sql',
     ])
       psql('ct_manifest_recovery_schema', ['-f', `migrations/${file}`]);
+    psql('ct_manifest_recovery_schema', [
+      '-f',
+      'migrations/017-context-cognition-binding.sql',
+    ]);
     assert.equal(
       psql('ct_manifest_recovery_schema', [
         '-At',
@@ -428,6 +432,57 @@ test('upgrade preserves historical rows and the database rejects a partial manif
       ]).trim(),
       't',
     );
+    for (const database of [
+      'ct_manifest_upgrade',
+      'ct_manifest_recovery_schema',
+    ]) {
+      if (database === 'ct_manifest_recovery_schema')
+        psql(database, [
+          '-c',
+          "INSERT INTO ct.tenants VALUES('a')",
+          '-c',
+          "INSERT INTO ct.principals VALUES('a','cog-zero',1,1,true)",
+        ]);
+      const principal =
+        database === 'ct_manifest_upgrade' ? 'historical-vera' : 'cog-zero';
+      const rejected = spawnSync(
+        'psql',
+        [
+          '-d',
+          database,
+          '-c',
+          `INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES('a','${principal}',0,'fixture','model','zero','UNKNOWN')`,
+        ],
+        { encoding: 'utf8' },
+      );
+      assert.notEqual(rejected.status, 0, rejected.stdout);
+      assert.match(rejected.stderr, /cognition revision/);
+      psql(database, [
+        '-c',
+        `INSERT INTO ct.cognition_bindings(tenant,principal,provider,model,configuration_reference,compatibility) VALUES('a','${principal}','fixture','model','omitted','UNKNOWN')`,
+      ]);
+      psql(database, ['-f', 'migrations/017-context-cognition-binding.sql']);
+      assert.equal(
+        psql(database, [
+          '-At',
+          '-c',
+          `SELECT revision::text FROM ct.cognition_bindings WHERE tenant='a' AND principal='${principal}'`,
+        ]).trim(),
+        '1',
+      );
+      const stillRejected = spawnSync(
+        'psql',
+        [
+          '-d',
+          database,
+          '-c',
+          `INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES('a','${principal}',0,'fixture','model','zero-again','UNKNOWN')`,
+        ],
+        { encoding: 'utf8' },
+      );
+      assert.notEqual(stillRejected.status, 0);
+      assert.match(stillRejected.stderr, /cognition revision/);
+    }
   } finally {
     psql('postgres', [
       '-c',
@@ -1114,6 +1169,72 @@ test('direct cognition inserts lock the principal before the next revision', asy
         [f.principal],
       ),
       /cognition revision sequence/,
+    );
+    const zeroPrincipal = 'zero-' + f.prefix;
+    await gov.query(
+      'INSERT INTO ct.principals(tenant,id,epoch,generation) VALUES($1,$2,1,1)',
+      ['a', zeroPrincipal],
+    );
+    for (const revision of [0, -1])
+      await assert.rejects(
+        gov.query(
+          'INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES($1,$2,$3,$4,$5,$6,$7)',
+          [
+            'a',
+            zeroPrincipal,
+            revision,
+            'fixture',
+            'model',
+            'rejected-' + revision,
+            'UNKNOWN',
+          ],
+        ),
+        /cognition revision/,
+      );
+    await assert.rejects(
+      gov.query(
+        'INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES($1,$2,2,$3,$4,$5,$6)',
+        ['a', zeroPrincipal, 'fixture', 'model', 'gap', 'UNKNOWN'],
+      ),
+      /cognition revision sequence/,
+    );
+    assert.equal(
+      (
+        await gov.query(
+          'SELECT count(*)::int AS n FROM ct.cognition_bindings WHERE tenant=$1 AND principal=$2',
+          ['a', zeroPrincipal],
+        )
+      ).rows[0].n,
+      0,
+    );
+    assert.equal(
+      Number(
+        (
+          await gov.query(
+            'INSERT INTO ct.cognition_bindings(tenant,principal,provider,model,configuration_reference,compatibility) VALUES($1,$2,$3,$4,$5,$6) RETURNING revision',
+            ['a', zeroPrincipal, 'fixture', 'model', 'omitted', 'UNKNOWN'],
+          )
+        ).rows[0].revision,
+      ),
+      1,
+    );
+    await assert.rejects(
+      gov.query(
+        'INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES($1,$2,1,$3,$4,$5,$6)',
+        ['a', zeroPrincipal, 'fixture', 'model', 'duplicate', 'UNKNOWN'],
+      ),
+      /cognition revision sequence/,
+    );
+    assert.equal(
+      Number(
+        (
+          await gov.query(
+            'INSERT INTO ct.cognition_bindings(tenant,principal,revision,provider,model,configuration_reference,compatibility) VALUES($1,$2,2,$3,$4,$5,$6) RETURNING revision',
+            ['a', zeroPrincipal, 'fixture', 'model', 'exact-next', 'TESTED'],
+          )
+        ).rows[0].revision,
+      ),
+      2,
     );
     await assert.rejects(
       admin.query(

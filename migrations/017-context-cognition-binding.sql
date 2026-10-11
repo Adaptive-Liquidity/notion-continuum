@@ -8,7 +8,7 @@ ALTER TABLE ct.operations ADD COLUMN IF NOT EXISTS cognition_revision bigint;
 ALTER TABLE ct.context_heads ADD COLUMN IF NOT EXISTS lock_tag bigint NOT NULL DEFAULT 0;
 DO $$BEGIN
  IF to_regclass('ct.cognition_bindings') IS NULL THEN
-  CREATE TABLE ct.cognition_bindings(tenant text NOT NULL,principal text NOT NULL,revision bigint NOT NULL DEFAULT 0,provider text NOT NULL,model text NOT NULL,configuration_reference text NOT NULL,compatibility text NOT NULL CHECK(compatibility IN('UNKNOWN','TESTED','NEEDS_TESTING')),PRIMARY KEY(tenant,principal,revision),FOREIGN KEY(tenant,principal) REFERENCES ct.principals(tenant,id));
+  CREATE TABLE ct.cognition_bindings(tenant text NOT NULL,principal text NOT NULL,revision bigint NOT NULL,provider text NOT NULL,model text NOT NULL,configuration_reference text NOT NULL,compatibility text NOT NULL CHECK(compatibility IN('UNKNOWN','TESTED','NEEDS_TESTING')),PRIMARY KEY(tenant,principal,revision),FOREIGN KEY(tenant,principal) REFERENCES ct.principals(tenant,id));
   ALTER TABLE ct.cognition_bindings ENABLE ROW LEVEL SECURITY;
   ALTER TABLE ct.cognition_bindings FORCE ROW LEVEL SECURITY;
   CREATE POLICY canonical_trusted ON ct.cognition_bindings TO ct_owner,ct_governor,ct_authority_api USING(true) WITH CHECK(true);
@@ -19,7 +19,7 @@ DO $$BEGIN
 END$$;
 DO $$BEGIN
  IF to_regclass('ct.cognition_bindings') IS NOT NULL THEN
-  ALTER TABLE ct.cognition_bindings ALTER COLUMN revision SET DEFAULT 0;
+  ALTER TABLE ct.cognition_bindings ALTER COLUMN revision DROP DEFAULT;
  END IF;
 END$$;
 ALTER TABLE ct.operations DROP CONSTRAINT IF EXISTS operations_binding_version;
@@ -63,9 +63,9 @@ DO $$BEGIN
   PERFORM 1 FROM ct.principals WHERE tenant=NEW.tenant AND id=NEW.principal FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'cognition principal'; END IF;
   SELECT COALESCE(MAX(revision),0)+1 INTO next_revision FROM ct.cognition_bindings WHERE tenant=NEW.tenant AND principal=NEW.principal;
-  IF NEW.revision IS NULL OR NEW.revision=0 THEN NEW.revision:=next_revision;
+  IF NEW.revision IS NULL THEN NEW.revision:=next_revision;
+  ELSIF NEW.revision<1 THEN RAISE EXCEPTION 'cognition revision';
   ELSIF NEW.revision<>next_revision THEN RAISE EXCEPTION 'cognition revision sequence'; END IF;
-  IF NEW.revision IS NULL OR NEW.revision<1 THEN RAISE EXCEPTION 'cognition revision'; END IF;
   RETURN NEW;END$fn$;
  CREATE OR REPLACE FUNCTION ct.guard_cognition_mutation() RETURNS trigger LANGUAGE plpgsql AS $fn$BEGIN
   RAISE EXCEPTION 'cognition append only';END$fn$;
