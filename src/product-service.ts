@@ -1,5 +1,6 @@
 import type pg from 'pg';
 import { tx, canonical, bindingDigest, append, eventOutbox } from './db.js';
+import { lockContextHead } from './context-lock.js';
 import type { VerifiedIdentity } from './identity-provider.js';
 import { reserveResources } from './resource-controls.js';
 import {
@@ -25,6 +26,7 @@ export interface OperationInput {
   params: unknown;
   cost: number;
   deadline: string;
+  context?: string;
 }
 export class ProductService {
   constructor(
@@ -191,9 +193,12 @@ export class ProductService {
         idempotency_key: x.id,
         cost: x.cost,
         deadline,
-        contract_version: 1 as 1 | 2,
+        contract_version: 1 as 1 | 2 | 3,
         computer_id: null as string | null,
         placement_generation: null as number | null,
+        context_id: null as string | null,
+        context_version: null as number | null,
+        cognition_revision: null as number | null,
       };
       if (!computer) {
         if (actor.credentialPlacement !== undefined)
@@ -208,6 +213,44 @@ export class ProductService {
         o.computer_id = computer.id;
         o.placement_generation = Number(computer.generation);
       }
+      const cognitionTable = (
+        await c.query(
+          "SELECT to_regclass('ct.cognition_bindings') IS NOT NULL AS present",
+        )
+      ).rows[0].present;
+      if (cognitionTable) {
+        const cognition = (
+          await c.query(
+            'SELECT MAX(revision) AS r FROM ct.cognition_bindings WHERE tenant=$1 AND principal=$2',
+            [i.tenant, p.id],
+          )
+        ).rows[0];
+        if (cognition?.r != null) o.cognition_revision = Number(cognition.r);
+      }
+      if (x.context) {
+        const head = await lockContextHead(c, i.tenant, identifier(x.context));
+        const version = head
+          ? ((
+              await c.query(
+                'SELECT erased_at,expires FROM ct.context_versions WHERE tenant=$1 AND id=$2 AND version=$3',
+                [i.tenant, head.id, head.version],
+              )
+            ).rows[0] ?? null)
+          : null;
+        const allowed =
+          !!head &&
+          Number(head.version) > 0 &&
+          !head.deleted &&
+          version &&
+          !version.erased_at &&
+          +new Date(version.expires) > now &&
+          (head.visibility === 'TENANT' ||
+            (head.visibility === 'PRIVATE' && head.principal === p.id));
+        if (!head || !allowed) throw Error('context binding unavailable');
+        o.context_id = head.id;
+        o.context_version = Number(head.version);
+      }
+      if (o.context_id || o.cognition_revision != null) o.contract_version = 3;
       const digest = bindingDigest(o);
       const old = (
         await c.query('SELECT * FROM ct.operations WHERE tenant=$1 AND id=$2', [
@@ -220,7 +263,7 @@ export class ProductService {
         return { id: old.id, digest, reused: true, state: old.state };
       }
       await c.query(
-        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,computer_id,placement_generation,contract_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)',
+        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,computer_id,placement_generation,contract_version,context_id,context_version,cognition_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)',
         [
           o.tenant,
           o.id,
@@ -243,6 +286,9 @@ export class ProductService {
           o.computer_id ?? null,
           o.placement_generation ?? null,
           o.contract_version,
+          o.context_id,
+          o.context_version,
+          o.cognition_revision,
         ],
       );
       await c.query('INSERT INTO ct.task_operations VALUES($1,$2,$3)', [

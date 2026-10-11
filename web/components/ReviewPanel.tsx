@@ -194,6 +194,12 @@ export function ReviewPanel({
         </>
       ) : (
         <>
+          {item.kind === 'operation' && f.contextQuarantined === true ? (
+            <p className="muted">
+              Quarantined context is not an admitted fact and is not effect
+              authority.
+            </p>
+          ) : null}
           <Facts
             item={item}
             omit={[

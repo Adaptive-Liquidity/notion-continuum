@@ -40,18 +40,26 @@ export function rowFromBinding(b: Record<string, any>) {
     cost: b.cost,
     deadline: new Date(b.deadline),
     contract_version: b.contractVersion,
-    ...(b.contractVersion === 2
+    ...((b.contractVersion === 2 || b.computerId) && b.contractVersion !== 1
       ? {
           computer_id: b.computerId,
           placement_generation: b.placementGeneration,
         }
+      : {}),
+    ...(b.contractVersion === 3 && b.contextId
+      ? { context_id: b.contextId, context_version: b.contextVersion }
+      : {}),
+    ...(b.contractVersion === 3 && b.cognitionRevision != null
+      ? { cognition_revision: b.cognitionRevision }
       : {}),
   };
 }
 export function verifyOperationArchive(o: OperationArchive) {
   const r = rowFromBinding(o.binding);
   if (
-    (o.binding.contractVersion !== 1 && o.binding.contractVersion !== 2) ||
+    (o.binding.contractVersion !== 1 &&
+      o.binding.contractVersion !== 2 &&
+      o.binding.contractVersion !== 3) ||
     canonical(actionBinding(r)) !== canonical(o.binding) ||
     sha(canonical(o.binding)) !== o.digest
   )

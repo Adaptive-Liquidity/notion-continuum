@@ -5,7 +5,9 @@ import {
   eventOutbox,
   bindingDigest,
   placementAdmission,
+  manifestAdmission,
 } from './db.js';
+import { lockBoundManifest } from './context-lock.js';
 import type { VerifiedIdentity } from './identity-provider.js';
 import type { CapabilitySigner } from './production-capability.js';
 import { activeControl } from './service-auth.js';
@@ -355,6 +357,7 @@ export class AuthorityService {
           [i.id, i.tenant, operation],
         )
       ).rows[0];
+      const manifest = await lockBoundManifest(c, o);
       const now = new Date(
         (await c.query('SELECT clock_timestamp() t')).rows[0].t,
       ).getTime();
@@ -378,7 +381,14 @@ export class AuthorityService {
           (!a || a.digest !== o.digest || a.grant_version !== g.version)) ||
         actor.credentialGeneration !== Number(p.generation) ||
         actor.credentialEpoch !== Number(p.epoch) ||
-        placementAdmission(computer, o, actor.credentialPlacement)
+        placementAdmission(computer, o, actor.credentialPlacement) ||
+        manifestAdmission(
+          o,
+          manifest.head,
+          manifest.version,
+          manifest.cognition,
+          now,
+        )
       )
         throw Error('current authority/assignment denied');
       const expires = Math.min(
