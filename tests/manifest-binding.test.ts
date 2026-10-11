@@ -25,6 +25,7 @@ import {
 } from '../src/evidence-export.js';
 import { LocalIndependentFenceStore } from '../src/fence-store.js';
 import { RecoveryService } from '../src/recovery.js';
+import { productApi } from '../src/product-api.js';
 import { fixture } from './implementation-helpers.js';
 import { admin, bootstrap, fence, gov } from './helpers.js';
 import { randomBytes } from 'node:crypto';
@@ -393,12 +394,49 @@ test('upgrade preserves historical rows and the database rejects a partial manif
     );
     assert.notEqual(changed.status, 0);
     assert.match(changed.stderr, /immutable operation binding/);
+    spawnSync('dropdb', ['--if-exists', 'ct_manifest_recovery_schema'], {
+      encoding: 'utf8',
+    });
+    assert.equal(
+      spawnSync('createdb', ['ct_manifest_recovery_schema'], {
+        encoding: 'utf8',
+      }).status,
+      0,
+    );
+    for (const file of [
+      '001-foundation.sql',
+      '002-lock-privileges.sql',
+      '004-monotonic-fences.sql',
+      '005-identity-authority.sql',
+      '006-product-computers.sql',
+      '007-context-artifacts.sql',
+      '008-recovery-controls.sql',
+      '009-runtime-trigger-permissions.sql',
+      '010-resource-controls.sql',
+      '012-tenant-identity-fks.sql',
+      '013-recovery-import-guard.sql',
+      '014-recovery-observation-guard.sql',
+      '016-placement-generation.sql',
+      '017-context-cognition-binding.sql',
+    ])
+      psql('ct_manifest_recovery_schema', ['-f', `migrations/${file}`]);
+    assert.equal(
+      psql('ct_manifest_recovery_schema', [
+        '-At',
+        '-c',
+        "SELECT to_regclass('ct.cognition_bindings') IS NOT NULL",
+      ]).trim(),
+      't',
+    );
   } finally {
     psql('postgres', [
       '-c',
-      "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='ct_manifest_upgrade' AND pid<>pg_backend_pid()",
+      "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN('ct_manifest_upgrade','ct_manifest_recovery_schema') AND pid<>pg_backend_pid()",
     ]);
     spawnSync('dropdb', ['--if-exists', 'ct_manifest_upgrade'], {
+      encoding: 'utf8',
+    });
+    spawnSync('dropdb', ['--if-exists', 'ct_manifest_recovery_schema'], {
       encoding: 'utf8',
     });
   }
@@ -585,6 +623,63 @@ test('privacy and quarantine bind metadata without admitting the payload', async
       ).rows[0].n,
       0,
     );
+    const api = productApi(f.machine, f.product);
+    await new Promise<void>((resolve) => api.listen(0, '127.0.0.1', resolve));
+    try {
+      const deadline = new Date(Date.now() + 3600000).toISOString();
+      await f.authority.createGrant(owner, {
+        id: 'g-http-context',
+        principal: f.principal,
+        action: 'write',
+        resource: 'fixture-object',
+        expires: deadline,
+        maxCost: 5,
+        budget: 20,
+      });
+      await f.product.createTask(machine, {
+        id: 't-http-context',
+        principal: f.principal,
+        objective: 'HTTP context binding',
+        deadline,
+      });
+      const response = await fetch(
+        'http://127.0.0.1:' +
+          (api.address() as { port: number }).port +
+          '/operations',
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            authorization: 'Bearer ' + (await f.token('machine')),
+          },
+          body: JSON.stringify({
+            id: 'http-context-op',
+            task: 't-http-context',
+            grant: 'g-http-context',
+            provider: 'fixture',
+            action: 'write',
+            resource: 'fixture-object',
+            params: { value: 'http' },
+            cost: 1,
+            deadline,
+            context: 'private-note',
+          }),
+        },
+      );
+      assert.equal(response.status, 200);
+      assert.equal(
+        Number(
+          (
+            await admin.query(
+              "SELECT contract_version FROM ct.operations WHERE tenant='a' AND id='http-context-op'",
+            )
+          ).rows[0].contract_version,
+        ),
+        3,
+      );
+    } finally {
+      await new Promise<void>((resolve) => api.close(() => resolve()));
+    }
   } finally {
     await reader.end();
     await f.close();
@@ -901,6 +996,47 @@ test('shared and ownerless context races deny admission without a send', async (
       assert.equal(await denial(item.id), 'MANIFEST_UNAVAILABLE');
     }
     assert.equal(f.provider.sends, 0);
+    await note(f, 'cross-a', true);
+    await contexts.ingest(other.worker, {
+      id: 'cross-b',
+      expectedVersion: 0,
+      payload: { text: 'owned by the other VERA' },
+      source: { kind: 'document', reference: 'doc:cross-b' },
+      ttlSeconds: 3600,
+    });
+    const crossReview = await contexts.inspectQuarantine(owner, 'cross-b');
+    await contexts.approve(
+      owner,
+      'cross-b',
+      crossReview.version,
+      crossReview.digest,
+      true,
+    );
+    const fromA = await publish(
+      f,
+      'cross-a-op',
+      machine,
+      f.principal,
+      f.prefix + '-worker-a',
+      'cross-b',
+    );
+    const fromB = await publish(
+      f,
+      'cross-b-op',
+      other.worker,
+      other.principal,
+      other.workerId,
+      'cross-a',
+    );
+    const crossed = await Promise.all([
+      f.controller.dispatch(fromA.cap, fromA.x.id),
+      f.controller.dispatch(fromB.cap, fromB.x.id),
+    ]);
+    assert.deepEqual(crossed.map((row) => row.state).sort(), [
+      'COMMITTED',
+      'COMMITTED',
+    ]);
+    assert.equal(f.provider.sends, 2);
   } finally {
     await hold.query('ROLLBACK').catch(() => undefined);
     hold.release();

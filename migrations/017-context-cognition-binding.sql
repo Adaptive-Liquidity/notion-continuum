@@ -7,6 +7,17 @@ ALTER TABLE ct.operations ADD COLUMN IF NOT EXISTS context_version integer;
 ALTER TABLE ct.operations ADD COLUMN IF NOT EXISTS cognition_revision bigint;
 ALTER TABLE ct.context_heads ADD COLUMN IF NOT EXISTS lock_tag bigint NOT NULL DEFAULT 0;
 DO $$BEGIN
+ IF to_regclass('ct.cognition_bindings') IS NULL THEN
+  CREATE TABLE ct.cognition_bindings(tenant text NOT NULL,principal text NOT NULL,revision bigint NOT NULL DEFAULT 0,provider text NOT NULL,model text NOT NULL,configuration_reference text NOT NULL,compatibility text NOT NULL CHECK(compatibility IN('UNKNOWN','TESTED','NEEDS_TESTING')),PRIMARY KEY(tenant,principal,revision),FOREIGN KEY(tenant,principal) REFERENCES ct.principals(tenant,id));
+  ALTER TABLE ct.cognition_bindings ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE ct.cognition_bindings FORCE ROW LEVEL SECURITY;
+  CREATE POLICY canonical_trusted ON ct.cognition_bindings TO ct_owner,ct_governor,ct_authority_api USING(true) WITH CHECK(true);
+  CREATE POLICY tenant_read ON ct.cognition_bindings FOR SELECT TO ct_tenant_a,ct_tenant_b USING(tenant=ct.my_tenant());
+  GRANT SELECT,INSERT ON ct.cognition_bindings TO ct_governor;
+  GRANT SELECT ON ct.cognition_bindings TO ct_authority_api;
+ END IF;
+END$$;
+DO $$BEGIN
  IF to_regclass('ct.cognition_bindings') IS NOT NULL THEN
   ALTER TABLE ct.cognition_bindings ALTER COLUMN revision SET DEFAULT 0;
  END IF;

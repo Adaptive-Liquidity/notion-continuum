@@ -4,6 +4,7 @@ export async function lockContextHead(
   c: pg.PoolClient,
   tenant: string,
   id: string,
+  lockOwner = true,
 ) {
   const peek = (
     await c.query(
@@ -12,7 +13,7 @@ export async function lockContextHead(
     )
   ).rows[0];
   if (!peek) return null;
-  if (peek.principal) {
+  if (lockOwner && peek.principal) {
     const principal = (
       await c.query(
         'SELECT id FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
@@ -37,7 +38,7 @@ export async function lockBoundManifest(
   operation: Record<string, any>,
 ) {
   const head = operation.context_id
-    ? await lockContextHead(c, operation.tenant, operation.context_id)
+    ? await lockContextHead(c, operation.tenant, operation.context_id, false)
     : null;
   const version =
     operation.context_id && head

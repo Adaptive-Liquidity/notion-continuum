@@ -228,7 +228,12 @@ export class ProductService {
         if (cognition?.r != null) o.cognition_revision = Number(cognition.r);
       }
       if (x.context) {
-        const head = await lockContextHead(c, i.tenant, identifier(x.context));
+        const head = await lockContextHead(
+          c,
+          i.tenant,
+          identifier(x.context),
+          false,
+        );
         const version = head
           ? ((
               await c.query(
