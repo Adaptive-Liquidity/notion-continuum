@@ -42,16 +42,16 @@ export class ComputerService {
       ).rows[0];
       if (!p?.active) throw Error('principal scope');
       await c.query(
-        "INSERT INTO ct.computers(tenant,id,principal,generation,state) VALUES($1,$2,$3,$4,'STOPPED')",
-        [i.tenant, id, principal, p.generation],
+        "INSERT INTO ct.computers(tenant,id,principal,generation,state) VALUES($1,$2,$3,1,'STOPPED')",
+        [i.tenant, id, principal],
       );
       await append(c, i.tenant, 'COMPUTER_REGISTERED', {
         id,
         principal,
-        generation: p.generation,
+        generation: 1,
         owner: i.id,
       });
-      return { id, generation: p.generation };
+      return { id, generation: 1 };
     });
   }
   private async lock(c: pg.PoolClient, a: VerifiedIdentity, id: string) {
@@ -78,7 +78,6 @@ export class ComputerService {
     ).rows[0];
     if (
       !p?.active ||
-      p.generation !== r.generation ||
       a.expires <= +(await c.query('SELECT clock_timestamp() t')).rows[0].t
     )
       throw Error('computer/identity fence');
@@ -179,10 +178,6 @@ export class ComputerService {
   async lose(actor: VerifiedIdentity, id: string) {
     return tx(this.db, async (c) => {
       const { i, r } = await this.lock(c, actor, id);
-      await c.query(
-        'UPDATE ct.principals SET generation=generation+1 WHERE tenant=$1 AND id=$2',
-        [i.tenant, r.principal],
-      );
       const row = (
         await c.query(
           "UPDATE ct.computers SET generation=generation+1,state='LOST',revision=revision+1 WHERE tenant=$1 AND id=$2 RETURNING *",
@@ -228,26 +223,35 @@ export class ComputerService {
     return tx(this.db, async (c) => {
       await activeControl(c, this.fence);
       const i = await enrolled(c, actor);
-      if (i.kind !== 'machine') throw Error('machine required');
+      if (i.kind !== 'machine' || !i.principal) throw Error('machine required');
+      const p = (
+        await c.query(
+          'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR SHARE',
+          [i.tenant, i.principal],
+        )
+      ).rows[0];
       const r = (
         await c.query(
-          'SELECT c.*,p.active,p.epoch AS principal_epoch FROM ct.computers c JOIN ct.principals p ON p.tenant=c.tenant AND p.id=c.principal WHERE c.tenant=$1 AND c.id=$2 FOR SHARE OF c,p',
-          [i.tenant, identifier(id)],
+          'SELECT * FROM ct.computers WHERE tenant=$1 AND principal=$2 FOR SHARE',
+          [i.tenant, i.principal],
         )
       ).rows[0];
       if (
-        !r?.active ||
-        r.principal !== i.principal ||
+        !p?.active ||
+        !r ||
+        r.id !== identifier(id) ||
         r.placement !== placement ||
-        r.generation !== generation ||
-        actor.credentialGeneration !== Number(r.generation) ||
-        actor.credentialEpoch !== Number(r.principal_epoch) ||
+        actor.credentialPlacement === undefined ||
+        actor.credentialPlacement !== Number(r.generation) ||
+        generation !== actor.credentialPlacement ||
+        actor.credentialGeneration !== Number(p.generation) ||
+        actor.credentialEpoch !== Number(p.epoch) ||
         r.state !== 'RUNNING' ||
         actor.expires <=
           +(await c.query('SELECT clock_timestamp() t')).rows[0].t
       )
         throw Error('placement generation denied');
-      return { tenant: i.tenant, computer: id, generation: r.generation };
+      return { tenant: i.tenant, computer: r.id, generation: r.generation };
     });
   }
 }

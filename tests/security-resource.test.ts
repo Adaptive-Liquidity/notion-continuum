@@ -260,6 +260,9 @@ test('Security staging assembly disabled; restricted roles/TLS required', () => 
   );
 });
 test('Security expired provider read-back retention does not permit UNKNOWN resend', async () => {
+  await admin.query(
+    "UPDATE ct.computers SET state='RUNNING',revision=revision+1 WHERE tenant='a' AND id='resource-computer'",
+  );
   const { x } = await f.intent('resource-stale-provider-key', true);
   f.provider.loseAck = true;
   const cap = await f.capability(x.id);

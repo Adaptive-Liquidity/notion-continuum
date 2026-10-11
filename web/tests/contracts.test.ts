@@ -16,6 +16,7 @@ const fields = {
   grant: 'grant-one',
   grantVersion: 1,
   principalEpoch: 1,
+  principalGeneration: 1,
   placementGeneration: 1,
   deadline: '2026-10-09T00:00:00Z',
   verificationMethod: 'Matching fixture read-back',

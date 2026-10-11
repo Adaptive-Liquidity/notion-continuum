@@ -129,6 +129,13 @@ export async function fixture(prefix: string) {
       ).rows[0];
       claims.ct_gen = Number(bound.generation);
       claims.ct_epoch = Number(bound.epoch);
+      const computer = (
+        await gov.query(
+          'SELECT generation FROM ct.computers WHERE tenant=$1 AND principal=$2',
+          [tenant, principal],
+        )
+      ).rows[0];
+      if (computer) claims.ct_placement = Number(computer.generation);
     }
     return new SignJWT({
       ...claims,

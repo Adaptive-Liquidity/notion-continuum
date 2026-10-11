@@ -130,7 +130,19 @@ test('Continuity: one VERA survives interruption, reconciles UNKNOWN without a r
     f.provider.loseAck = false;
     const fresh = await f.capability(resumedWork.x.id);
     assert.equal(fresh.principal, f.principal);
-    assert.equal(fresh.generation, 2);
+    assert.equal(fresh.generation, 1);
+    assert.equal(fresh.placementGeneration, 2);
+    assert.equal(
+      Number(
+        (
+          await admin.query(
+            'SELECT generation FROM ct.principals WHERE tenant=$1 AND id=$2',
+            ['a', f.principal],
+          )
+        ).rows[0].generation,
+      ),
+      1,
+    );
     assert.equal(
       (await resumed.dispatch(fresh, resumedWork.x.id)).state,
       'COMMITTED',

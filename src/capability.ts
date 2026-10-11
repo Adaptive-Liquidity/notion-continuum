@@ -8,6 +8,7 @@ export interface Capability {
   principal: string;
   epoch: number;
   generation: number;
+  placementGeneration?: number;
   operations: string[];
   expires: number;
 }
@@ -32,6 +33,9 @@ export function verifyCapability(secret: string, token: string): Capability {
     typeof c.principal !== 'string' ||
     !Number.isSafeInteger(c.epoch) ||
     !Number.isSafeInteger(c.generation) ||
+    (c.placementGeneration !== undefined &&
+      (!Number.isSafeInteger(c.placementGeneration) ||
+        c.placementGeneration < 1)) ||
     !Array.isArray(c.operations) ||
     c.operations.some((x: unknown) => typeof x !== 'string') ||
     !Number.isSafeInteger(c.expires) ||

@@ -1,7 +1,13 @@
 import { safeError } from './operational-controls.js';
 import { randomUUID } from 'node:crypto';
 import type pg from 'pg';
-import { tx, eventOutbox, bindingDigest, canonical } from './db.js';
+import {
+  tx,
+  eventOutbox,
+  bindingDigest,
+  canonical,
+  placementAdmission,
+} from './db.js';
 import type { Capability } from './capability.js';
 import type { ProviderAdapter } from './provider-adapter.js';
 export interface Hooks {
@@ -49,6 +55,13 @@ export class EffectController {
         [tenant, initial.principal],
       )
     ).rows[0];
+    const computer =
+      (
+        await c.query(
+          'SELECT * FROM ct.computers WHERE tenant=$1 AND principal=$2 FOR SHARE',
+          [tenant, initial.principal],
+        )
+      ).rows[0] ?? null;
     const task = (
       await c.query(
         'SELECT t.* FROM ct.tasks t JOIN ct.task_operations m ON m.tenant=t.tenant AND m.task=t.id WHERE m.tenant=$1 AND m.operation=$2 FOR SHARE OF t',
@@ -67,7 +80,7 @@ export class EffectController {
         [tenant, id],
       )
     ).rows[0];
-    return { control, p, g, o, identity, task };
+    return { control, p, g, o, identity, task, computer };
   }
   private async authority(
     c: pg.PoolClient,
@@ -75,7 +88,7 @@ export class EffectController {
     actor: Capability,
     budget: boolean,
   ) {
-    const { control, p, g, o, identity, task } = l;
+    const { control, p, g, o, identity, task, computer } = l;
     try {
       await this.externalFenceGuard?.(this.deploymentFence);
     } catch {
@@ -129,6 +142,12 @@ export class EffectController {
       return 'PRINCIPAL_FENCE';
     if (p.execution_mode && p.execution_mode !== 'AGENT')
       return 'HUMAN_OR_PAUSED_EXECUTION_MODE';
+    const placement = placementAdmission(
+      computer,
+      o,
+      actor.placementGeneration,
+    );
+    if (placement) return placement;
     if (
       task &&
       (task.status === 'CANCELLED' || task.plan_version !== o.plan_version)

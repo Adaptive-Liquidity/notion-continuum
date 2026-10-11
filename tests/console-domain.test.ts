@@ -605,6 +605,9 @@ test('A29/A30 durable lease denies missing/multitab/stale generation, fences eff
   await admin.query(
     "UPDATE ct.computer_observations SET raw_state='ready',health='healthy' WHERE tenant='a' AND computer='canonical-computer'",
   );
+  await admin.query(
+    "UPDATE ct.computers SET state='RUNNING',revision=revision+1 WHERE tenant='a' AND id='canonical-computer'",
+  );
   const owner = await f.actor('user'),
     manual = new ManualControl(writeDb, fence, true),
     live = new ManualControl(writeDb, fence, false),
