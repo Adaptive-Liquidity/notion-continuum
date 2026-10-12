@@ -43,3 +43,4 @@ fi
 if [ "$(psql -d ct_test -Atc "SELECT 1 FROM information_schema.columns WHERE table_schema='ct' AND table_name='tasks' AND column_name='mandate'")" != 1 ]; then
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/019-task-mandate-admission.sql > .artifacts/implementation/MIGRATION-019-task-mandate-admission.log 2>&1
 fi
+psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/020-tool-manifest.sql > .artifacts/implementation/MIGRATION-020-tool-manifest.log 2>&1

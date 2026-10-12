@@ -49,6 +49,8 @@ const OperationFieldsSchema = z
     contextId: Identifier.optional(),
     contextVersion: z.number().int().positive().optional(),
     cognitionRevision: z.number().int().positive().optional(),
+    toolId: Identifier.optional(),
+    toolRevision: z.number().int().positive().optional(),
     contextQuarantined: z.boolean().optional(),
     contextNote: z.string().optional(),
     deadline: z.string(),

@@ -47,7 +47,7 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
       budget.take(actor.issuer + '|' + actor.subject);
       const x = await readJsonBody(req, 32768),
         keys = routes[req.url ?? ''];
-      const optional = req.url === '/operations' ? ['context'] : [];
+      const optional = req.url === '/operations' ? ['context', 'tool'] : [];
       const present =
         x && typeof x === 'object' && !Array.isArray(x) ? Object.keys(x) : [];
       if (
@@ -68,6 +68,8 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
         )
           throw Error('field type');
       if (present.includes('context') && typeof x.context !== 'string')
+        throw Error('field type');
+      if (present.includes('tool') && typeof x.tool !== 'string')
         throw Error('field type');
       let r: unknown;
       switch (req.url) {

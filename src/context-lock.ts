@@ -59,5 +59,42 @@ export async function lockBoundManifest(
     ).rows[0];
     cognition = row?.r == null ? null : Number(row.r);
   }
-  return { head, version, cognition };
+  let tool: {
+    boundRevision: number | null;
+    maximum: number | null;
+    maximumDigest: string | null;
+    indexRevision: number | null;
+    indexDigest: string | null;
+  } | null = null;
+  if (operation.tool_id) {
+    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
+      'tool-manifest|' + operation.tenant + '|' + operation.tool_id,
+    ]);
+    const index = (
+      await c.query(
+        'SELECT revision,definition_digest FROM ct.tool_manifest_index WHERE tenant=$1 AND tool_id=$2 FOR UPDATE',
+        [operation.tenant, operation.tool_id],
+      )
+    ).rows[0];
+    const latest = (
+      await c.query(
+        'SELECT revision,definition_digest FROM ct.tool_manifests WHERE tenant=$1 AND tool_id=$2 ORDER BY revision DESC LIMIT 1',
+        [operation.tenant, operation.tool_id],
+      )
+    ).rows[0];
+    const bound = (
+      await c.query(
+        'SELECT revision FROM ct.tool_manifests WHERE tenant=$1 AND tool_id=$2 AND revision=$3',
+        [operation.tenant, operation.tool_id, operation.tool_revision],
+      )
+    ).rows[0];
+    tool = {
+      boundRevision: bound ? Number(bound.revision) : null,
+      maximum: latest ? Number(latest.revision) : null,
+      maximumDigest: latest ? latest.definition_digest : null,
+      indexRevision: index ? Number(index.revision) : null,
+      indexDigest: index ? index.definition_digest : null,
+    };
+  }
+  return { head, version, cognition, tool };
 }

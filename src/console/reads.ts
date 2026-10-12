@@ -670,7 +670,8 @@ export class ConsoleReads {
                   placementGeneration: Number(x.placement_generation),
                 }
               : {}),
-            ...(Number(x.contract_version) === 3
+            ...(Number(x.contract_version) === 3 ||
+            Number(x.contract_version) === 4
               ? {
                   ...(x.context_id
                     ? {
@@ -685,6 +686,12 @@ export class ConsoleReads {
                   ...(x.cognition_revision != null
                     ? { cognitionRevision: Number(x.cognition_revision) }
                     : {}),
+                }
+              : {}),
+            ...(Number(x.contract_version) === 4 && x.tool_id
+              ? {
+                  toolId: x.tool_id,
+                  toolRevision: Number(x.tool_revision),
                 }
               : {}),
             deadline: new Date(x.deadline).toISOString(),

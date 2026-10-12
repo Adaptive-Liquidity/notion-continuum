@@ -623,7 +623,7 @@ describe('tenant notice envelope', { concurrency: 1 }, () => {
     const listed = script.match(/for m in ([^;]+);do/);
     assert.ok(listed);
     const files = listed[1].trim().split(/\s+/);
-    assert.equal(files.at(-1), '019-task-mandate-admission.sql');
+    assert.equal(files.at(-1), '020-tool-manifest.sql');
     assert.ok(files.includes('011-console-domain.sql'));
     const database = 'ct_notice_schema';
     psql('postgres', [

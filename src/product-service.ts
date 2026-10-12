@@ -30,6 +30,7 @@ export interface OperationInput {
   cost: number;
   deadline: string;
   context?: string;
+  tool?: string;
 }
 export class ProductService {
   constructor(
@@ -278,12 +279,14 @@ export class ProductService {
         idempotency_key: x.id,
         cost: x.cost,
         deadline,
-        contract_version: 1 as 1 | 2 | 3,
+        contract_version: 1 as 1 | 2 | 3 | 4,
         computer_id: null as string | null,
         placement_generation: null as number | null,
         context_id: null as string | null,
         context_version: null as number | null,
         cognition_revision: null as number | null,
+        tool_id: null as string | null,
+        tool_revision: null as number | null,
       };
       if (!computer) {
         if (actor.credentialPlacement !== undefined)
@@ -341,6 +344,22 @@ export class ProductService {
         o.context_version = Number(head.version);
       }
       if (o.context_id || o.cognition_revision != null) o.contract_version = 3;
+      if (x.tool) {
+        const toolId = identifier(x.tool);
+        await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
+          'tool-manifest|' + i.tenant + '|' + toolId,
+        ]);
+        const current = (
+          await c.query(
+            'SELECT revision FROM ct.tool_manifests WHERE tenant=$1 AND tool_id=$2 ORDER BY revision DESC LIMIT 1',
+            [i.tenant, toolId],
+          )
+        ).rows[0];
+        if (!current) throw Error('tool binding unavailable');
+        o.tool_id = toolId;
+        o.tool_revision = Number(current.revision);
+        o.contract_version = 4;
+      }
       const digest = bindingDigest(o);
       const old = (
         await c.query('SELECT * FROM ct.operations WHERE tenant=$1 AND id=$2', [
@@ -353,7 +372,7 @@ export class ProductService {
         return { id: old.id, digest, reused: true, state: old.state };
       }
       await c.query(
-        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,computer_id,placement_generation,contract_version,context_id,context_version,cognition_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)',
+        'INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,computer_id,placement_generation,contract_version,context_id,context_version,cognition_revision,tool_id,tool_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)',
         [
           o.tenant,
           o.id,
@@ -379,6 +398,8 @@ export class ProductService {
           o.context_id,
           o.context_version,
           o.cognition_revision,
+          o.tool_id,
+          o.tool_revision,
         ],
       );
       await c.query('INSERT INTO ct.task_operations VALUES($1,$2,$3)', [
