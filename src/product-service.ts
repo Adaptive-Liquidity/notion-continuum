@@ -100,9 +100,8 @@ export class ProductService {
         if (!same(existing)) throw Error('task identity conflict');
         return reused(existing);
       }
-      // KEY SHARE conflicts with the mandate edit's FOR UPDATE and with
-      // membership DELETE. The product role has SELECT only, so the lock is
-      // taken by ct.share_mandate rather than a direct locking select.
+      // FOR SHARE conflicts with a mandate update and a membership delete.
+      // The product role has SELECT only, so ct.share_mandate takes that lock.
       const mandate = (
         await c.query(
           'SELECT ct.share_mandate($1, $2, $3) AS current_version',

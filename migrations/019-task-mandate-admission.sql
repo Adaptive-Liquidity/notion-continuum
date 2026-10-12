@@ -30,13 +30,17 @@ CREATE TRIGGER task_mandate_admission BEFORE INSERT ON ct.tasks FOR EACH ROW EXE
 DO $$DECLARE t text; BEGIN FOREACH t IN ARRAY ARRAY['organizations','memberships','mandates','mandate_versions'] LOOP
  EXECUTE format('CREATE POLICY regency_product_read ON ct.%I FOR SELECT TO ct_product_api USING(true)', t);
 END LOOP;END$$;
+-- PostgreSQL 17 requires UPDATE privilege for FOR SHARE. ct_product_api has
+-- SELECT only, so the table owner takes that lock in the caller's transaction.
+-- FOR SHARE conflicts with an update of the mandate row and a delete of the
+-- membership row. It does not grant the product role a write privilege.
 CREATE FUNCTION ct.share_mandate(p_tenant text, p_organization text, p_id text)
 RETURNS bigint LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $$
 DECLARE v bigint;
 BEGIN
   SELECT m.current_version INTO v FROM ct.mandates m
   WHERE m.tenant = p_tenant AND m.organization = p_organization AND m.id = p_id
-  FOR KEY SHARE;
+  FOR SHARE;
   RETURN v;
 END $$;
 CREATE FUNCTION ct.share_vera_membership(p_tenant text, p_organization text, p_subject text)
@@ -46,7 +50,7 @@ BEGIN
   SELECT m.subject_id INTO s FROM ct.memberships m
   WHERE m.tenant = p_tenant AND m.organization = p_organization
     AND m.subject_kind = 'vera' AND m.subject_id = p_subject
-  FOR KEY SHARE;
+  FOR SHARE;
   RETURN s;
 END $$;
 RESET ROLE;
