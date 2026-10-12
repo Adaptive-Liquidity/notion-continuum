@@ -1,0 +1,9 @@
+---
+description: Persistent checkout and environment onboarding for every Continuum agent
+alwaysApply: true
+---
+
+Read AGENTS.md and docs/AGENT-START.md at task startup. Establish the actual checkout,
+approved task, runtime and database ownership before making changes or running tests.
+Preserve dirty work and private files. Follow the existing engineering workflow rule;
+chat history does not substitute for verified current source or owner approval.
