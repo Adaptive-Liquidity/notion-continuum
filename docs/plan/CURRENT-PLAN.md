@@ -8,12 +8,14 @@ or releasing production. Read [START-HERE.md](START-HERE.md) and
 
 Production stays BLOCKED. The scheduler stays HELD. Canary stays NO-GO.
 
-Current `main`, fetched 2026-10-12: `21df0150b99e8874916d5b247ca65c8b68006b99`, the merge of pull request #17. Fetch `main` again before implementation.
+Current `main`, fetched 2026-10-12: `c6072deed1bb73c2ed6b89830ead23fe31f14777`, the merge of pull request #19. Fetch `main` again before implementation.
 
 This plan consolidates the prior acceptance map and later verified merge history.
-The owner-approved D01–D04 scopes are recorded in OWNER-DECISIONS.md. Earlier private
-revisions remain historical evidence; they neither reopen those decisions nor close
-unverified tasks. Task numbers are identifiers, not chronological steps. A row marked
+The owner-approved D01–D04 scopes are recorded in OWNER-DECISIONS.md. D05–D12 are
+recorded there on 2026-10-12 with their exact limits and the inputs still missing.
+Those directions do not close every subdecision and do not prove qualification.
+Earlier private revisions remain historical evidence; they neither reopen D01–D04
+nor close unverified tasks. Task numbers are identifiers, not chronological steps. A row marked
 partial is not complete merely because its first implementation PR merged.
 
 No ENG requirement is dropped. NEXUS, AEON-IQ, VERA, and Regency remain. Donor test runs do not close Continuum acceptance tests.
@@ -49,27 +51,32 @@ See OWNER-DECISIONS.md for the durable authorization record and exact boundaries
 These are architecture approvals, not completion claims or permission to merge,
 deploy, copy donor trees, provision resources, or relax frozen contracts.
 
-## Decisions still needing approval
+## Directions recorded on 2026-10-12
 
-| Decision | Record | What stays blocked |
+D05–D12 are recorded in OWNER-DECISIONS.md. Each direction stops at the limit in
+that record. These directions do not close every subdecision and do not prove
+qualification. The missing inputs stay missing. Production stays BLOCKED. The
+scheduler stays HELD. Canary stays NO-GO.
+
+| Decision | Recorded limit | What stays blocked |
 |---|---|---|
-| D05 | Unapproved since the first plan | Copying donor source, publication, and licensing. ENG-051 and ENG-052’s publication half |
-| D06 | Unapproved | Live human sign-in and workload renewal. ENG-010’s live half, ENG-022’s live gateway, ENG-037 |
-| D07 | Unapproved | A protected provider action. ENG-017 and ENG-039. External channels for ENG-034 |
-| D08 | Unapproved | Paid or managed computers, databases, backups, and numeric recovery targets. ENG-016 beyond a design note, ENG-038, and the managed halves of ENG-015 and ENG-040 |
-| D09 | Unapproved | Choosing pg-boss or Temporal. ENG-029 stays reference-only. ENG-041 may not choose |
-| D10 | Unapproved | Numeric product or research thresholds. ENG-025, ENG-036’s volume target, ENG-041’s measurement rule, ENG-045, ENG-046, ENG-048, ENG-049, and ENG-050 |
-| D11 | Unapproved | Retention, disclosure, and commercial scope beyond current test units. ENG-024’s retention policy, ENG-035, ENG-047, and ENG-051 |
-| D12 | Unapproved | Independent release review, shadow, and canary. ENG-006’s live review, ENG-042, ENG-043’s live cutover, ENG-044, and ENG-052 |
+| D05 | Reuse NEXUS and AEON through restricted, pinned integrations. Verify licensing and provenance before copying or distributing donor code. Do not change repository visibility or choose a new product license. | Licensing and provenance evidence. ENG-051 and ENG-052’s publication half |
+| D06 | Use the existing WorkOS account for human sign-in. Keep separately enrolled, short-lived workload credentials for agents. Never place credentials in chat or Git. | WorkOS account settings and a secure way to supply credentials. Live sign-in. ENG-010’s live half, ENG-022’s live gateway, and ENG-037 |
+| D07 | Build the first protected-action adapter around one controlled file write in a dedicated GitHub test repository, followed by authoritative read-back. | The test repository name, scope, credentials, and an exact authorization for that write. Live execution. ENG-017, ENG-039, and external channels for ENG-034 |
+| D08 | Continue development and testing locally. A costed customer-hosting proposal may cover servers, databases, worker isolation, backups, region, and recovery targets. | Any new infrastructure purchase and any numeric recovery target. ENG-016 beyond a design note, ENG-038, and the managed halves of ENG-015 and ENG-040 |
+| D09 | Evaluate pg-boss and Temporal against the required workload and recovery tests, and recommend the simplest qualifying option with measured evidence. Final selection waits for approved comparison criteria. | Those comparison criteria. Any scheduler selection. ENG-029 stays reference-only. ENG-041 may not choose. The scheduler ledger stays HELD |
+| D10 | The first autonomy milestone requires a real model, one VERA completing a defined application objective, independent functionality checks, and safe resumption after interruption. Fixtures prove plumbing only. Propose broader numerical targets before evaluating against them. | That proposal and the milestone itself. ENG-025, ENG-036’s volume target, ENG-041’s measurement rule, ENG-045, ENG-046, ENG-048, ENG-049, and ENG-050 |
+| D11 | Start with the isolated owner pilot. Keep Stripe billing disabled. Propose retention, deletion, backup, disclosure, and commercial policies before customer use. Do not invent an approved retention period. | Those policies. ENG-024’s retention policy, ENG-035, ENG-047, and ENG-051 |
+| D12 | Require independent release review and mandatory qualification evidence. Live deployment, shadow, and canary require separate authorization. | That review and evidence. ENG-006’s live review, ENG-042, ENG-043’s live cutover, ENG-044, and ENG-052 |
 
-ENG-026's six choices are recorded for that task only in OWNER-DECISIONS.md. They do not approve D05–D12, donor copying, spending, merge, deploy, or live gates.
+ENG-026's six choices stay scoped to that task in OWNER-DECISIONS.md. They are not these D05–D12 directions, and they do not authorize donor copying, spending, or a live gate.
 
 These product choices remain open:
 
 1. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
 2. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
 3. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
-4. Publication and task designs. The choices above stay open. The recorded ENG-026 work-admission slice does not need another proposal. The private environment supplement stays outside Git.
+4. Publication and the remaining task designs. The choices above stay open. Pull request #19 merged only the ENG-026 work-admission behavior it demonstrated. Later ENG-026 project-command behavior remains open. The private environment supplement stays outside Git.
 
 ## What is already built, tested, and merged
 
@@ -84,37 +91,39 @@ These product choices remain open:
 | #15 | `e52bb37` | ENG-012 for `TENANT_NOTICE` only. Migration 018 | Other event kinds and a bus |
 | #16 | `5b3b2de` | Tracked agent startup instructions | Machine-specific settings stay outside Git |
 | #17 | `21df0150` | Local test launcher and run evidence | The launcher does not install runtimes or start a database |
+| #19 | `c6072dee` | ENG-026 work admission only. A new task names a current mandate and an active VERA with a `vera` membership in that organization. The task stores the organization, mandate, and accepted version. Historical tasks stay unbound. An identical authorized repeat returns the stored result, and a changed binding conflicts. Direct inserts share the same locks. Task and command records stay off the tenant-notice path. A mandate creates no grant, approval, workflow, or permission to send | Later ENG-026 project-command behavior. Live gates |
 
 Pull requests #3, #4, #5, #8, and #9 are also on this `main`. They are CodeQL remediation, review and CI evidence, a dependency update, ENG-006 post-merge verification, and merge-evidence identity. ENG-001 through ENG-006 are recorded complete in revision 3 against older commits. This pass did not re-run them. Their acceptance text stays binding. ENG-006’s live independent review stays NOT RUN until D12.
 
-Migrations on this `main` run from 001 through 018. Frozen M1 was not edited.
+Migrations on this `main` run from 001 through 019. Frozen M1 was not edited.
 
 NEXUS and AEON-IQ integration has not started. The recommendation’s 192 NEXUS tests and 18 AEON tests are donor evidence. They do not close ENG-013, ENG-014, ENG-019, or ENG-021. No Continuum adapter calls either donor. Those donor observations were not re-run for this draft.
 
 ### Hosted checks
 
-On current `main`, post-merge run `38220893744` compared the merge with pull-request evidence and then ran missing verification. Secret scan passed. Canonical local verification passed. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
+On current `main` `c6072deed1bb73c2ed6b89830ead23fe31f14777`, post-merge run `38261032152` succeeded. Compare merged code with pull request evidence succeeded. Secret scan succeeded. Canonical local verification succeeded. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
 
-The job “Confirm product build and blocked gates” was skipped. In `.github/workflows/main-verification.yml` that job runs only when the evidence decision is `reuse`. When the decision is not reuse, the workflow skips it and calls the full PR workflow instead. The skip is the designed branch, not a missing check.
+The job “Confirm product build and blocked gates” was skipped because full verification ran. In `.github/workflows/main-verification.yml` that job runs only when the evidence decision is `reuse`. When the decision is not reuse, the workflow skips it and calls the full PR workflow instead. The skip is the designed branch, not a missing check.
 
-The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. The following step requires qualification enforcement and release enforcement to exit 1. Both of those ran and passed on `21df0150`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
+The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. The following step requires qualification enforcement and release enforcement to exit 1. Both of those ran and passed inside the canonical job on `c6072dee`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
 
-The same job pattern appears on the pull request #15 merge, run `38203399745`: compare succeeded, secret scan succeeded, canonical verification succeeded, and the reuse confirmation job was skipped. This revision read the inner step names on `21df0150`, not on `e52bb37`. The workflow rule is the same.
+The same designed skip appears on earlier merges, including pull request #15 run `38203399745` and `21df0150` run `38220893744`. This revision read the job conclusions on `c6072dee`.
 
-Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`.
+Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`. Pull request #19 merged after its required checks. The main evidence for this snapshot is run `38261032152`.
 
 The tracked qualification file on this commit still says overall BLOCKED, scheduler HELD, and canary NO-GO. The release file still says production is not ready. A passing check that those commands exit 1 is evidence that the ledgers stayed blocked. It is not a promotion.
 
-A private local canonical run on this same commit is recorded in the private environment supplement. It is local evidence and does not move a live gate.
+A private local canonical run on an earlier commit stays outside Git. It is not evidence for `c6072dee` and does not move a live gate.
 
 ## Dependency order and task selection
 
-After publishing this plan, the next product work is the ENG-026 work-admission
-slice. Its six choices are recorded in OWNER-DECISIONS.md for that task only.
-This order is a priority guide, not authorization
-to code every row. A task is ready only when its required **slices** are verified on
-current main, its design is accepted, and its owner gates are satisfied. If a row is
-held, report it; independent ready work may be proposed without skipping requirements.
+Pull request #19 merged the ENG-026 work-admission slice, and only the behavior
+that pull request demonstrated. The next product priority is the ENG-011
+tool-manifest proposal, not implementation of that binding. This order is a
+priority guide, not authorization to code every row. A task is ready only when
+its required **slices** are verified on current main, its design is accepted,
+and its owner gates are satisfied. If a row is held, report it; independent
+ready work may be proposed without skipping requirements.
 
 Do not require completion of an entire umbrella task when a named local slice is
 the prerequisite. Do not use a local slice to close its live/managed/retention half.
@@ -123,8 +132,8 @@ The individual catalog below retains the full acceptance obligations.
 | Priority | Work | Prerequisites | Remaining boundary |
 |---|---|---|---|
 | 0 | Publish plan, starting point and decision record | Owner review of this focused documentation PR | No product implementation |
-| 1 | ENG-026 accepted work-admission slice | Merged ENG-007 records and ENG-012 notice foundation | Six ENG-026 choices are recorded for that task only. D05–D12 stay open |
-| 2 | ENG-011 remaining tool-manifest binding, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Scoped proposals first; do not label v3 context/cognition binding a tool manifest |
+| 1 | ENG-026 work-admission slice, merged in #19 | Merged ENG-007 records and ENG-012 notice foundation | Merged only for the admission behavior pull request #19 demonstrated. Later project-command behavior and live gates stay open |
+| 2 | ENG-011 tool-manifest proposal, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Next product priority is the proposal, not implementation. Do not label v3 context/cognition binding a tool manifest |
 | 3 | ENG-013 NEXUS adapter, then ENG-014 boundary tests | ENG-006 and the required ENG-011 bindings/interfaces; ENG-008 existing v1 safeguards | D05 if copying/packaging donor source; no production qualification from donor tests |
 | 4 | Separate application workspace | ENG-014 credential boundary and runtime interfaces | Exec/filesystem/test isolation is distinct from NEXUS WASM; no secrets or unapproved network |
 | 5 | ENG-020 fuller context admission, then ENG-019 restricted AEON interface, then ENG-021 recall/extraction | ENG-007/012 foundations; interfaces for ENG-019; ENG-013 plus ENG-019/020 for ENG-021 | D06 for live identity and D05 for donor copying; deterministic local tests do not close live gates |
@@ -155,7 +164,7 @@ unauthorized and is not made a dependency of non-delegating product work.
 
 ## ENG-001 through ENG-052
 
-Each entry keeps the revision 3 requirement, acceptance test, dependency, and owner gate. Status is against `21df0150` as read for this draft. “Recorded complete” means revision 3 says the task was already done. This pass did not re-run those tests.
+Each entry keeps the revision 3 requirement, acceptance test, dependency, and owner gate. Status is the prior read against `21df0150`, except the ENG-026 work-admission slice, which this pass records from the merge at `c6072dee`. “Recorded complete” means revision 3 says the task was already done. This pass did not re-run those tests and does not mark any other task complete.
 
 ### ENG-001
 
@@ -265,7 +274,7 @@ Requirement: semantic truth separate from retrieval. Acceptance: false or uncert
 
 ### ENG-026
 
-Requirement: project and task commands that do not send effects. Acceptance: duplicate commands are looked up. Creating a task does not start a workflow or send. Admission needs an eligible VERA and a current mandate. Dependencies: ENG-007 and ENG-012. Status: the work-admission slice is authorized for ENG-026 only by the 2026-10-12 record in OWNER-DECISIONS.md. Duplicate command lookup and a non-effect task create already exist. This slice adds the mandate check. It does not close later project-command work, and it is not a merge or a live-gate change. Owner gate: D02, D03, and D04, in the revision 3 scopes.
+Requirement: project and task commands that do not send effects. Acceptance: duplicate commands are looked up. Creating a task does not start a workflow or send. Admission needs an eligible VERA and a current mandate. Dependencies: ENG-007 and ENG-012. Status: partial. Pull request #19, merge `c6072dee`, merged the work-admission slice only. A new task requires a current mandate and an active VERA with a `vera` membership in that mandate's organization. The task stores the organization, mandate, and accepted version. Historical tasks stay unbound and are not backfilled. An identical authorized repeat returns the stored result after the mandate advances, and a changed binding conflicts. Direct inserts take the same share locks as product admission. Task and command records stay off the ENG-012 tenant-notice path. Creating a task does not start a workflow or send, and a mandate does not create a grant, an approval, or permission to send. Later project-command behavior is not started. This merge is not a live-gate change. Owner gate: D02, D03, and D04, in the revision 3 scopes. The six ENG-026 choices stay scoped to that task.
 
 ### ENG-027
 
