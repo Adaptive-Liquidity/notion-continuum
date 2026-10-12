@@ -388,6 +388,7 @@ export class AuthorityService {
           manifest.version,
           manifest.cognition,
           now,
+          manifest.tool,
         )
       )
         throw Error('current authority/assignment denied');

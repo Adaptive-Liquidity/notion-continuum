@@ -165,9 +165,35 @@ function manifestValid(fields: ReturnType<typeof manifestParts>) {
   }
   return fields.hasContext || fields.hasCognition;
 }
-export function contractVersionOf(o: Record<string, any>): 1 | 2 | 3 {
+function toolParts(o: Record<string, any>) {
+  const toolId = o.tool_id ?? o.toolId;
+  const toolRevision = o.tool_revision ?? o.toolRevision;
+  return {
+    toolId,
+    toolRevision,
+    hasTool: present(toolId),
+    hasToolRevision: present(toolRevision),
+  };
+}
+function toolPairValid(fields: ReturnType<typeof toolParts>) {
+  const revision = Number(fields.toolRevision);
+  return (
+    fields.hasTool &&
+    fields.hasToolRevision &&
+    typeof fields.toolId === 'string' &&
+    /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(fields.toolId) &&
+    Number.isSafeInteger(revision) &&
+    revision > 0
+  );
+}
+function placementShapeOk(fields: ReturnType<typeof placementParts>) {
+  if (fields.hasComputer !== fields.hasPlacement) return false;
+  return !fields.hasComputer || placementPairValid(fields);
+}
+export function contractVersionOf(o: Record<string, any>): 1 | 2 | 3 | 4 {
   const placement = placementParts(o);
   const manifest = manifestParts(o);
+  const tool = toolParts(o);
   const explicit =
     o.contract_version !== undefined && o.contract_version !== null
       ? Number(o.contract_version)
@@ -177,29 +203,37 @@ export function contractVersionOf(o: Record<string, any>): 1 | 2 | 3 {
   const hasPlacement = placement.hasComputer || placement.hasPlacement;
   const hasManifest =
     manifest.hasContext || manifest.hasContextVersion || manifest.hasCognition;
+  const hasTool = tool.hasTool || tool.hasToolRevision;
+  const manifestOk = !hasManifest || manifestValid(manifest);
   if (explicit === undefined) {
-    if (!hasPlacement && !hasManifest) return 1;
+    if (!hasPlacement && !hasManifest && !hasTool) return 1;
+    if (hasTool) {
+      if (!toolPairValid(tool) || !placementShapeOk(placement) || !manifestOk)
+        throw Error('invalid contract binding');
+      return 4;
+    }
     if (hasPlacement && !hasManifest && placementPairValid(placement)) return 2;
-    if (
-      hasManifest &&
-      manifestValid(manifest) &&
-      (!hasPlacement || placementPairValid(placement))
-    )
+    if (hasManifest && manifestValid(manifest) && placementShapeOk(placement))
       return 3;
     throw Error('invalid contract binding');
   }
-  if (explicit !== 1 && explicit !== 2 && explicit !== 3)
+  if (explicit !== 1 && explicit !== 2 && explicit !== 3 && explicit !== 4)
     throw Error('invalid contract version');
-  if (explicit === 1 && (hasPlacement || hasManifest))
+  if (explicit === 1 && (hasPlacement || hasManifest || hasTool))
     throw Error('invalid contract binding');
-  if (explicit === 2 && (!placementPairValid(placement) || hasManifest))
+  if (
+    explicit === 2 &&
+    (!placementPairValid(placement) || hasManifest || hasTool)
+  )
     throw Error('invalid contract binding');
   if (
     explicit === 3 &&
-    (!manifestValid(manifest) ||
-      (hasPlacement && !placementPairValid(placement)) ||
-      (!placement.hasComputer && placement.hasPlacement) ||
-      (placement.hasComputer && !placement.hasPlacement))
+    (!manifestValid(manifest) || hasTool || !placementShapeOk(placement))
+  )
+    throw Error('invalid contract binding');
+  if (
+    explicit === 4 &&
+    (!toolPairValid(tool) || !manifestOk || !placementShapeOk(placement))
   )
     throw Error('invalid contract binding');
   return explicit;
@@ -222,12 +256,14 @@ export interface ActionBinding {
   idempotencyKey: string;
   cost: number;
   deadline: string;
-  contractVersion: 1 | 2 | 3;
+  contractVersion: 1 | 2 | 3 | 4;
   computerId?: string;
   placementGeneration?: number;
   contextId?: string;
   contextVersion?: number;
   cognitionRevision?: number;
+  toolId?: string;
+  toolRevision?: number;
 }
 export function actionBinding(o: Record<string, any>): ActionBinding {
   const version = contractVersionOf(o);
@@ -249,7 +285,7 @@ export function actionBinding(o: Record<string, any>): ActionBinding {
     idempotencyKey: o.idempotency_key,
     cost: Number(o.cost),
     deadline: new Date(o.deadline).toISOString(),
-    contractVersion: 1 as 1 | 2 | 3,
+    contractVersion: 1 as 1 | 2 | 3 | 4,
   };
   if (version === 1) return binding;
   const placement = placementParts(o);
@@ -261,24 +297,38 @@ export function actionBinding(o: Record<string, any>): ActionBinding {
       placementGeneration: Number(placement.placement),
     };
   const manifest = manifestParts(o);
+  const placed = placement.hasComputer
+    ? {
+        computerId: placement.computerId,
+        placementGeneration: Number(placement.placement),
+      }
+    : {};
+  const context = manifest.hasContext
+    ? {
+        contextId: manifest.contextId,
+        contextVersion: Number(manifest.contextVersion),
+      }
+    : {};
+  const cognition = manifest.hasCognition
+    ? { cognitionRevision: Number(manifest.cognition) }
+    : {};
+  if (version === 3)
+    return {
+      ...binding,
+      contractVersion: 3 as const,
+      ...placed,
+      ...context,
+      ...cognition,
+    };
+  const tool = toolParts(o);
   return {
     ...binding,
-    contractVersion: 3 as const,
-    ...(placement.hasComputer
-      ? {
-          computerId: placement.computerId,
-          placementGeneration: Number(placement.placement),
-        }
-      : {}),
-    ...(manifest.hasContext
-      ? {
-          contextId: manifest.contextId,
-          contextVersion: Number(manifest.contextVersion),
-        }
-      : {}),
-    ...(manifest.hasCognition
-      ? { cognitionRevision: Number(manifest.cognition) }
-      : {}),
+    contractVersion: 4 as const,
+    ...placed,
+    ...context,
+    ...cognition,
+    toolId: tool.toolId,
+    toolRevision: Number(tool.toolRevision),
   };
 }
 export function placementAdmission(
@@ -306,6 +356,13 @@ export function placementAdmission(
     return 'PLACEMENT_FENCE';
   return null;
 }
+export interface BoundTool {
+  boundRevision: number | null;
+  maximum: number | null;
+  maximumDigest: string | null;
+  indexRevision: number | null;
+  indexDigest: string | null;
+}
 export function manifestAdmission(
   operation: Record<string, any>,
   head: {
@@ -318,10 +375,11 @@ export function manifestAdmission(
   boundVersion: { erased_at: unknown; expires: unknown } | null,
   visibleCognitionRevision: number | null,
   now: number,
+  tool: BoundTool | null = null,
 ): null | 'MANIFEST_UNAVAILABLE' | 'MANIFEST_STALE' | 'MANIFEST_SCOPE' {
   const version = contractVersionOf(operation);
   const manifest = manifestParts(operation);
-  if (version !== 3) return null;
+  if (version !== 3 && version !== 4) return null;
   if (manifest.hasContext) {
     if (!head || head.deleted || !boundVersion || boundVersion.erased_at)
       return 'MANIFEST_UNAVAILABLE';
@@ -340,6 +398,22 @@ export function manifestAdmission(
     if (visibleCognitionRevision == null) return 'MANIFEST_UNAVAILABLE';
     if (Number(visibleCognitionRevision) !== Number(manifest.cognition))
       return 'MANIFEST_STALE';
+  }
+  if (version === 4) {
+    const revision = Number(toolParts(operation).toolRevision);
+    if (
+      !tool ||
+      tool.boundRevision == null ||
+      tool.maximum == null ||
+      tool.maximumDigest == null ||
+      tool.indexRevision == null ||
+      tool.indexDigest == null ||
+      tool.boundRevision !== revision ||
+      tool.indexRevision !== tool.maximum ||
+      tool.indexDigest !== tool.maximumDigest
+    )
+      return 'MANIFEST_UNAVAILABLE';
+    if (tool.maximum !== revision) return 'MANIFEST_STALE';
   }
   return null;
 }

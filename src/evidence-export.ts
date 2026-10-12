@@ -46,11 +46,15 @@ export function rowFromBinding(b: Record<string, any>) {
           placement_generation: b.placementGeneration,
         }
       : {}),
-    ...(b.contractVersion === 3 && b.contextId
+    ...((b.contractVersion === 3 || b.contractVersion === 4) && b.contextId
       ? { context_id: b.contextId, context_version: b.contextVersion }
       : {}),
-    ...(b.contractVersion === 3 && b.cognitionRevision != null
+    ...((b.contractVersion === 3 || b.contractVersion === 4) &&
+    b.cognitionRevision != null
       ? { cognition_revision: b.cognitionRevision }
+      : {}),
+    ...(b.contractVersion === 4
+      ? { tool_id: b.toolId, tool_revision: b.toolRevision }
       : {}),
   };
 }
@@ -59,7 +63,8 @@ export function verifyOperationArchive(o: OperationArchive) {
   if (
     (o.binding.contractVersion !== 1 &&
       o.binding.contractVersion !== 2 &&
-      o.binding.contractVersion !== 3) ||
+      o.binding.contractVersion !== 3 &&
+      o.binding.contractVersion !== 4) ||
     canonical(actionBinding(r)) !== canonical(o.binding) ||
     sha(canonical(o.binding)) !== o.digest
   )

@@ -128,6 +128,10 @@ test('version selection keeps version 1 digest bytes and rejects invalid combina
   );
   assert.throws(
     () => actionBinding({ ...vectorRow, contract_version: 4 }),
+    /invalid contract binding/,
+  );
+  assert.throws(
+    () => actionBinding({ ...vectorRow, contract_version: 5 }),
     /invalid contract version/,
   );
   assert.throws(

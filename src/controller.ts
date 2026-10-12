@@ -157,6 +157,7 @@ export class EffectController {
       l.manifest.version,
       l.manifest.cognition,
       dbNow,
+      l.manifest.tool,
     );
     if (manifest) return manifest;
     if (
