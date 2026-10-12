@@ -1,5 +1,9 @@
 # Updated 40-contract traceability
 
+Later scoped implementations and remaining work are tracked in
+`../plan/CURRENT-PLAN.md`. The rows below preserve their original evidence scope;
+they are not a fresh audit of every latest-main interaction or a production approval.
+
 Source catalogue is preserved without silently changing acceptance. PASS below means the **named local subset**, not live qualification or every future extension. PARTIAL is not PASS. Disabled controls never stand in for an implemented full feature.
 
 | Contract | Product classification | Local acceptance | Delivered scope / limitation |

@@ -1,5 +1,10 @@
 # Asentxia Continuum
 
+For new tasks and the completion roadmap, read
+[the repository starting point](docs/plan/START-HERE.md),
+[current plan](docs/plan/CURRENT-PLAN.md) and
+[owner decision record](docs/plan/OWNER-DECISIONS.md).
+
 Continuum is the governed operating environment for persistent autonomous intelligence. VERA is the durable accountable principal, not a model, session, credential or Computer. PostgreSQL owns domain truth; the scheduler owns workflow progression; the independent Effect Controller enforces consequential actions; authoritative provider observation establishes external truth.
 
 **Development baseline only. P1/P2 PARTIAL · P3/P4/P5 NOT RUN · scheduler HELD · production BLOCKED · canary NO-GO · independent security review NOT RUN.** A passing local build does not clear these gates.
