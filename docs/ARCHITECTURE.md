@@ -2,6 +2,12 @@
 
 No broad redesign. Asentxia is the institution; Continuum is the governed persistent environment; VERA is the durable accountable principal, not a model/session/machine/Computer.
 
+The approved integration direction is NEXUS bounded execution and AEON-IQ governed
+derived memory behind Continuum; see `plan/OWNER-DECISIONS.md`. That direction is
+not implemented or qualified in the topology below. `plan/CURRENT-PLAN.md` keeps
+adapter acceptance, separate application-workspace isolation and remaining live
+gates explicit. PostgreSQL and the Effect Controller retain their responsibilities.
+
 ```mermaid
 flowchart LR
   H[Human / AuthKit staging bridge] --> N[Next.js Focus Desk / private BFF]

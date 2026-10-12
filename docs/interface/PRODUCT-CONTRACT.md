@@ -2,6 +2,12 @@
 
 Revision 1 • 2026-10-09 UTC • Focus Desk reconciliation • Ready for workflow review, not yet approved for implementation or release.
 
+Later scoped implementations and approved integration direction are recorded in
+`../plan/CURRENT-PLAN.md` and `../plan/OWNER-DECISIONS.md`. D01 approves restricted
+NEXUS/AEON architecture, not enabling gated production memory or shared writable
+Team Computers. Proposed controls below still require implemented contracts and
+their qualification; this historical revision header is not a reversal of merged work.
+
 ## 1. Decision and scope
 
 Keep Focus Desk: Work is the landing page, a stable navigator opens durable objects, and a contextual inspector explains decisions, blockers and results. This specification supersedes historical UI assumptions only; it does not supersede the frozen safety core or approve production deployment. Asentxia is the institution, Continuum the operating environment, VERA the persistent accountable principal, and The Regency the governance responsibility. The console is a human client, not an authority root or execution dependency.

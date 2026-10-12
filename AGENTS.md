@@ -2,6 +2,9 @@
 
 This repository implements Asentxia Continuum. Read `docs/AGENT-START.md` before
 substantial work and follow the existing `.cursor/rules/20-continuum-workflow.mdc`.
+Read `docs/plan/START-HERE.md`, `docs/plan/CURRENT-PLAN.md` and
+`docs/plan/OWNER-DECISIONS.md` to select work. These are the maintained task and
+decision records; private older revisions are history, not the current queue.
 
 ## Preserve the contracts
 
@@ -40,3 +43,7 @@ WSL distribution found on PATH. Check the running database's actual data directo
 before resets. Do not reuse another task's cluster, edit test cleanup to bypass the
 fixture helper, or change helper configuration without authorization. Do not kill
 unrelated processes or shut down WSL. Keep machine-specific paths outside Git.
+Find the private guide with `git config --get continuum.environmentGuide` or
+owner-provided Project context. Linked worktrees share that local Git setting;
+new clones/cloud agents do not. Read its value as a path, never execute it blindly.
+Carry the locator into task handovers and report missing access before local testing.

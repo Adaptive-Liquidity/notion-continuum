@@ -15,9 +15,13 @@ can organize chats, but is not evidence that a branch, database or private file 
    `docs/reconciliation/CANONICAL-TRACEABILITY.md`,
    `docs/interface/PRODUCT-CONTRACT.md` and `docs/interface/FOCUS-DESK-DESIGN.md`
    for the task's requirements and existing coverage.
-4. Locate the owner's current phased plan and approved task proposal explicitly.
-   These may live outside Git. Missing private material is a missing input, not
-   permission to reconstruct decisions from older donors or a previous chat.
+4. Read `docs/plan/START-HERE.md`, `docs/plan/CURRENT-PLAN.md` and
+   `docs/plan/OWNER-DECISIONS.md`, then the approved task proposal. Check actual
+   current-main work against the snapshot. Find the private environment guide with
+   `git config --get continuum.environmentGuide` or owner-provided Project context.
+   Linked worktrees share the local locator; fresh clones/cloud machines do not.
+   Missing private material is a missing input, not permission to reconstruct
+   decisions from older donors or a previous chat.
 5. Read `README.md` and `docs/TESTING.md`. Identify the Linux distribution/user,
    Node 24 backend, separate Node 22 frontend, PostgreSQL 17 binaries, Chromium,
    restricted fixture helper and owned fixture cluster. Obtain private local paths

@@ -1,5 +1,10 @@
 # Updated gap register
 
+This register contains the qualification snapshot described below. For subsequent
+merged work, remaining requirements and scoped owner decisions, read
+`../plan/CURRENT-PLAN.md` and `../plan/OWNER-DECISIONS.md`. Do not interpret an older
+PASS/PARTIAL row as a new whole-product audit or a live gate promotion.
+
 The historical register is retained in `docs/interface-source`. This register revises it once against the newer implemented baseline and current canonical build. PASS applies only to named source/local gaps. Production gates remain unchanged.
 
 | Gap | Status | Current disposition |
