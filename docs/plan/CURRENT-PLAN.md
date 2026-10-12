@@ -62,13 +62,14 @@ deploy, copy donor trees, provision resources, or relax frozen contracts.
 | D11 | Unapproved | Retention, disclosure, and commercial scope beyond current test units. ENG-024’s retention policy, ENG-035, ENG-047, and ENG-051 |
 | D12 | Unapproved | Independent release review, shadow, and canary. ENG-006’s live review, ENG-042, ENG-043’s live cutover, ENG-044, and ENG-052 |
 
-These product choices are also open:
+ENG-026's six choices are recorded for that task only in OWNER-DECISIONS.md. They do not approve D05–D12, donor copying, spending, merge, deploy, or live gates.
 
-1. ENG-026 binding. Settled for ENG-026 only on 2026-10-12 in OWNER-DECISIONS.md. Every product task-creation path supplies a current mandate, eligibility is an active VERA member of that organization, the task stores the accepted version, historical tasks stay unbound, task and command records stay out of the ENG-012 notice path, and an identical authorized repeat returns the stored result. That decision does not approve D05–D12, donor copying, spending, merge, deploy, or live gates.
-2. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
-3. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
-4. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
-5. Publication and task designs. This documentation PR does not settle choices 1–4. ENG-026 needs its own scoped proposal before implementation. The private environment supplement stays outside Git.
+These product choices remain open:
+
+1. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
+2. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
+3. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
+4. Publication and task designs. The choices above stay open. The recorded ENG-026 work-admission slice does not need another proposal. The private environment supplement stays outside Git.
 
 ## What is already built, tested, and merged
 
