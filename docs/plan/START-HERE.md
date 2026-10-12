@@ -10,10 +10,14 @@ task map: [CURRENT-PLAN.md](CURRENT-PLAN.md). Owner scope lives in
 2. Compare the plan snapshot with actual merged code and main checks. Read the
    relevant catalog entry, owner decisions and task proposal. A partial slice is
    not the whole feature. Pull request #19 merged the ENG-026 work-admission
-   slice only for the behavior it demonstrated. The next product priority is the
-   ENG-011 tool-manifest proposal, not implementation. D05–D12 are recorded in
-   OWNER-DECISIONS.md with their limits and missing inputs. They do not prove
-   qualification. No donor integration starts automatically from reading a plan.
+   slice only for the behavior it demonstrated. Pull request #20 recorded
+   D05–D12 with their limits. The ENG-011 tool-manifest recommendation is
+   [ENG-011-TOOL-MANIFEST-PROPOSAL.md](ENG-011-TOOL-MANIFEST-PROPOSAL.md). It is
+   waiting for review. It is not an implementation and it is not owner approval.
+   Pull request #14 is context and cognition binding and contract extension v3.
+   D05–D12 are recorded in OWNER-DECISIONS.md with their limits and missing
+   inputs. They do not prove qualification. No donor integration starts
+   automatically from reading a plan.
 3. Use the frozen safety/recovery contracts and applicable versioned extensions.
    Read `docs/ARCHITECTURE.md`, `docs/interface/PRODUCT-CONTRACT.md`,
    `docs/interface/FOCUS-DESK-DESIGN.md` and relevant gap/traceability entries.
