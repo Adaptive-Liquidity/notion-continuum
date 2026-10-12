@@ -1,5 +1,8 @@
 -- Regency records inside Continuum. A role or mandate is not effect authority.
 BEGIN;
+DO $$BEGIN
+ IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='ct_console_reader') THEN CREATE ROLE ct_console_reader LOGIN; END IF;
+END$$;
 SET ROLE ct_owner;
 CREATE TABLE ct.organizations(tenant text NOT NULL,id text NOT NULL,name text NOT NULL CHECK(length(name) BETWEEN 1 AND 200),revision bigint NOT NULL DEFAULT 1,created_by text NOT NULL REFERENCES ct.identities(id),PRIMARY KEY(tenant,id),FOREIGN KEY(tenant) REFERENCES ct.tenants(id));
 CREATE TABLE ct.role_definitions(tenant text NOT NULL,organization text NOT NULL,id text NOT NULL,name text NOT NULL CHECK(length(name) BETWEEN 1 AND 80),revision bigint NOT NULL DEFAULT 1,PRIMARY KEY(tenant,organization,id),FOREIGN KEY(tenant,organization) REFERENCES ct.organizations(tenant,id));
