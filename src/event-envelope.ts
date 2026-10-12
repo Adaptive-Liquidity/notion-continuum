@@ -178,6 +178,9 @@ async function writeNotice(
   );
 }
 
+// Recording checks the locked tail. Rehashing every earlier event would hold
+// the shared evidence-head lock, which other appends use too. Apply and
+// rebuild rehash the chain before they publish a projection.
 export async function recordTenantNotice(
   c: pg.PoolClient,
   tenant: string,

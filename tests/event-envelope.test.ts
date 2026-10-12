@@ -1,4 +1,6 @@
+import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { after, before, describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { append, pool, tx } from '../src/db.js';
@@ -100,6 +102,16 @@ async function authority() {
       )
     ).rows,
   };
+}
+
+function psql(database: string, args: string[]) {
+  const result = spawnSync(
+    'psql',
+    ['-d', database, '-v', 'ON_ERROR_STOP=1', ...args],
+    { encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  return result.stdout;
 }
 
 async function eventPayload(tenant: string, seq: number) {
@@ -533,6 +545,154 @@ describe('tenant notice envelope', { concurrency: 1 }, () => {
       if (!closed) await holder.query('ROLLBACK').catch(() => undefined);
       holder.release();
       if (pending) await pending.catch(() => undefined);
+    }
+  });
+
+  test('an earlier broken link does not publish a later notice', async () => {
+    const tenant = name('earlier');
+    await ensureTenant(tenant);
+    const beforeAuthority = await authority();
+    const earlier = await tx(gov, (c) =>
+      append(c, tenant, 'PARALLEL', { n: 1 }),
+    );
+    const kept = await tx(gov, (c) =>
+      recordTenantNotice(c, tenant, 'kept', 'already applied'),
+    );
+    await tx(gov, (c) => applyTenantNotice(c, tenant, kept.seq));
+    const tail = await head(tenant);
+    await tx(admin, async (c) => {
+      await c.query(
+        'ALTER TABLE ct.evidence_events DISABLE TRIGGER evidence_immutable',
+      );
+      await c.query(
+        "UPDATE ct.evidence_events SET hash=repeat('cd',32) WHERE tenant=$1 AND seq=$2",
+        [tenant, earlier.seq],
+      );
+      await c.query(
+        'ALTER TABLE ct.evidence_events ENABLE TRIGGER evidence_immutable',
+      );
+    });
+    try {
+      const saved = await tx(gov, (c) =>
+        recordTenantNotice(c, tenant, 'later', 'not published'),
+      );
+      assert.equal(saved.seq, tail.seq + 1);
+      const linked = (
+        await admin.query(
+          'SELECT prev_hash FROM ct.evidence_events WHERE tenant=$1 AND seq=$2',
+          [tenant, saved.seq],
+        )
+      ).rows[0];
+      assert.equal(linked.prev_hash, tail.hash);
+      await assert.rejects(
+        tx(gov, (c) => applyTenantNotice(c, tenant, saved.seq)),
+        /evidence chain does not match head/,
+      );
+      await assert.rejects(
+        tx(gov, (c) => rebuildTenantNotices(c, tenant)),
+        /evidence chain does not match head/,
+      );
+      assert.deepEqual(await notices(tenant), [
+        {
+          seq: kept.seq,
+          subjectId: 'kept',
+          body: 'already applied',
+          source: 'governor',
+        },
+      ]);
+      assert.notEqual(await eventPayload(tenant, saved.seq), '');
+      assert.deepEqual(await authority(), beforeAuthority);
+    } finally {
+      await tx(admin, async (c) => {
+        await c.query(
+          'ALTER TABLE ct.evidence_events DISABLE TRIGGER evidence_immutable',
+        );
+        await c.query(
+          'UPDATE ct.evidence_events SET hash=$3 WHERE tenant=$1 AND seq=$2',
+          [tenant, earlier.seq, earlier.hash],
+        );
+        await c.query(
+          'ALTER TABLE ct.evidence_events ENABLE TRIGGER evidence_immutable',
+        );
+      });
+    }
+  });
+
+  test('a fresh console schema includes the notice tables', () => {
+    const script = readFileSync('tools/setup-console-db.sh', 'utf8');
+    const listed = script.match(/for m in ([^;]+);do/);
+    assert.ok(listed);
+    const files = listed[1].trim().split(/\s+/);
+    assert.equal(files.at(-1), '018-tenant-notice-projection.sql');
+    assert.ok(files.includes('011-console-domain.sql'));
+    const database = 'ct_notice_schema';
+    psql('postgres', [
+      '-c',
+      `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${database}' AND pid<>pg_backend_pid()`,
+    ]);
+    spawnSync('dropdb', ['--if-exists', database], { encoding: 'utf8' });
+    assert.equal(
+      spawnSync('createdb', [database], { encoding: 'utf8' }).status,
+      0,
+    );
+    try {
+      for (const file of files) psql(database, ['-f', `migrations/${file}`]);
+      assert.equal(
+        psql(database, [
+          '-At',
+          '-c',
+          "SELECT to_regclass('ct.notice_projection') IS NOT NULL AND to_regclass('ct.notice_deliveries') IS NOT NULL AND (SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='ct.notice_projection'::regclass)",
+        ]).trim(),
+        't',
+      );
+      assert.equal(
+        psql(database, [
+          '-At',
+          '-c',
+          "SELECT confrelid::regclass::text FROM pg_constraint WHERE conrelid='ct.notice_projection'::regclass AND contype='f'",
+        ]).trim(),
+        'ct.evidence_events',
+      );
+      const inserted = spawnSync(
+        'psql',
+        [
+          '-d',
+          database,
+          '-c',
+          "SET ROLE ct_console_reader; INSERT INTO ct.notice_projection(tenant,seq,subject_id,body,source) VALUES('a',1,'x','y','governor')",
+        ],
+        { encoding: 'utf8' },
+      );
+      assert.notEqual(inserted.status, 0);
+      assert.match(inserted.stderr, /42501|permission denied/);
+      assert.match(
+        psql(database, [
+          '-c',
+          'SET ROLE ct_console_reader',
+          '-c',
+          'SELECT count(*) FROM ct.notice_projection',
+        ]),
+        /\b0\b/,
+      );
+      for (const role of ['ct_controller', 'ct_tenant_a', 'ct_provider']) {
+        const denied = spawnSync(
+          'psql',
+          [
+            '-d',
+            database,
+            '-c',
+            `SET ROLE ${role}; INSERT INTO ct.notice_deliveries(tenant,seq) VALUES('a',1)`,
+          ],
+          { encoding: 'utf8' },
+        );
+        assert.notEqual(denied.status, 0, role);
+      }
+    } finally {
+      psql('postgres', [
+        '-c',
+        `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${database}' AND pid<>pg_backend_pid()`,
+      ]);
+      spawnSync('dropdb', ['--if-exists', database], { encoding: 'utf8' });
     }
   });
 
