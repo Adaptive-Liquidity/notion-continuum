@@ -988,10 +988,10 @@ test('an approval of the version 4 digest does not admit another revision, and U
       ).rows[0].digest,
       approved.op.digest,
     );
-    const uncertain = await publish(f, 'unknown-op', 'approved-tool');
+    const uncertain = await publish(f, 'tool-unknown-op', 'approved-tool');
     const storedUnknown = (
       await admin.query(
-        "SELECT digest,tool_revision FROM ct.operations WHERE id='unknown-op'",
+        "SELECT digest,tool_revision FROM ct.operations WHERE id='tool-unknown-op'",
       )
     ).rows[0];
     f.provider.loseAck = true;
@@ -1111,8 +1111,8 @@ test('recovery keeps a version 4 tool revision and does not rewrite a missing on
     const roundTrip = structuredClone(archive);
     roundTrip.binding = {
       ...roundTrip.binding,
-      id: 'recovery-round-trip',
-      idempotencyKey: 'recovery-round-trip',
+      id: 'tool-recovery-round-trip',
+      idempotencyKey: 'tool-recovery-round-trip',
     };
     roundTrip.digest = sha(canonical(roundTrip.binding));
     inventory = [roundTrip];
@@ -1122,7 +1122,7 @@ test('recovery keeps a version 4 tool revision and does not rewrite a missing on
     );
     const restored = (
       await admin.query(
-        "SELECT * FROM ct.operations WHERE tenant='a' AND id='recovery-round-trip'",
+        "SELECT * FROM ct.operations WHERE tenant='a' AND id='tool-recovery-round-trip'",
       )
     ).rows[0];
     assert.equal(Number(restored.contract_version), 4);
@@ -1137,7 +1137,7 @@ test('recovery keeps a version 4 tool revision and does not rewrite a missing on
     const observed = await recovery.observe(
       await f.actor('user'),
       run.id,
-      'recovery-round-trip',
+      'tool-recovery-round-trip',
     );
     assert.equal(observed.state, 'UNKNOWN');
     assert.equal(f.provider.sends, 0);
