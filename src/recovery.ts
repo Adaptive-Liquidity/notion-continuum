@@ -249,8 +249,40 @@ export class RecoveryService {
           ).rowCount
         )
           throw Error('missing historical computer record; stay blocked');
+        if (Number(o.contract_version) === 3) {
+          if (
+            o.computer_id &&
+            !(
+              await c.query(
+                'SELECT 1 FROM ct.computers WHERE tenant=$1 AND id=$2',
+                [o.tenant, o.computer_id],
+              )
+            ).rowCount
+          )
+            throw Error('missing historical manifest record; stay blocked');
+          if (
+            o.context_id &&
+            !(
+              await c.query(
+                'SELECT 1 FROM ct.context_versions WHERE tenant=$1 AND id=$2 AND version=$3',
+                [o.tenant, o.context_id, o.context_version],
+              )
+            ).rowCount
+          )
+            throw Error('missing historical manifest record; stay blocked');
+          if (
+            o.cognition_revision != null &&
+            !(
+              await c.query(
+                'SELECT 1 FROM ct.cognition_bindings WHERE tenant=$1 AND principal=$2 AND revision=$3',
+                [o.tenant, o.principal, o.cognition_revision],
+              )
+            ).rowCount
+          )
+            throw Error('missing historical manifest record; stay blocked');
+        }
         await c.query(
-          "INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,state,computer_id,placement_generation,contract_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'UNKNOWN',$19,$20,$21)",
+          "INSERT INTO ct.operations(tenant,id,principal,grant_id,epoch,generation,fence,grant_version,task_id,plan_version,provider,action,resource,params,digest,idempotency_key,cost,deadline,state,computer_id,placement_generation,contract_version,context_id,context_version,cognition_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'UNKNOWN',$19,$20,$21,$22,$23,$24)",
           [
             o.tenant,
             o.id,
@@ -273,6 +305,9 @@ export class RecoveryService {
             o.computer_id ?? null,
             o.placement_generation ?? null,
             o.contract_version,
+            o.context_id ?? null,
+            o.context_version ?? null,
+            o.cognition_revision ?? null,
           ],
         );
         const task = (

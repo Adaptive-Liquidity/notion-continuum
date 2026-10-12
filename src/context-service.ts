@@ -1,6 +1,7 @@
 import type pg from 'pg';
 import { tx, canonical, sha, append } from './db.js';
-import { enrolled, samePrincipal, identifier } from './service-auth.js';
+import { lockContextHead } from './context-lock.js';
+import { enrolled, identifier } from './service-auth.js';
 import type { VerifiedIdentity } from './identity-provider.js';
 export interface ContextInput {
   id: string;
@@ -43,21 +44,42 @@ export class ContextService {
         x.source.reference.length > 256
       )
         throw Error('context bounds');
-      const old = (
+      const peeked = (
         await c.query(
-          'SELECT * FROM ct.context_heads WHERE tenant=$1 AND id=$2 FOR UPDATE',
+          'SELECT principal FROM ct.context_heads WHERE tenant=$1 AND id=$2',
           [i.tenant, x.id],
         )
       ).rows[0];
-      if (old && i.kind === 'machine' && old.principal !== i.principal)
-        throw Error('context principal scope');
-      if ((old?.version ?? 0) !== x.expectedVersion || old?.deleted)
-        throw Error('context version/tombstone conflict');
-      if (!old)
+      let old: Record<string, any> | undefined;
+      if (!peeked && i.principal)
+        await c.query(
+          'SELECT id FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
+          [i.tenant, i.principal],
+        );
+      const current = peeked
+        ? await lockContextHead(c, i.tenant, x.id)
+        : (
+            await c.query(
+              'SELECT * FROM ct.context_heads WHERE tenant=$1 AND id=$2 FOR UPDATE',
+              [i.tenant, x.id],
+            )
+          ).rows[0];
+      if (!current) {
         await c.query(
           'INSERT INTO ct.context_heads(tenant,id,principal) VALUES($1,$2,$3)',
           [i.tenant, x.id, i.principal],
         );
+        old = (
+          await c.query(
+            'SELECT * FROM ct.context_heads WHERE tenant=$1 AND id=$2 FOR UPDATE',
+            [i.tenant, x.id],
+          )
+        ).rows[0];
+      } else old = current;
+      if (old && i.kind === 'machine' && old.principal !== i.principal)
+        throw Error('context principal scope');
+      if ((old?.version ?? 0) !== x.expectedVersion || old?.deleted)
+        throw Error('context version/tombstone conflict');
       const now = new Date(
           (await c.query('SELECT clock_timestamp() t')).rows[0].t,
         ),
@@ -108,13 +130,15 @@ export class ContextService {
     shareTenant = false,
   ) {
     return tx(this.db, async (c) => {
-      const i = await enrolled(c, actor, true),
-        r = (
-          await c.query(
-            'SELECT h.*,v.digest,v.expires FROM ct.context_heads h JOIN ct.context_versions v ON v.tenant=h.tenant AND v.id=h.id AND v.version=h.version WHERE h.tenant=$1 AND h.id=$2 FOR UPDATE OF h',
-            [i.tenant, identifier(id)],
-          )
-        ).rows[0];
+      const i = await enrolled(c, actor, true);
+      const headId = identifier(id);
+      await lockContextHead(c, i.tenant, headId);
+      const r = (
+        await c.query(
+          'SELECT h.*,v.digest,v.expires FROM ct.context_heads h JOIN ct.context_versions v ON v.tenant=h.tenant AND v.id=h.id AND v.version=h.version WHERE h.tenant=$1 AND h.id=$2',
+          [i.tenant, headId],
+        )
+      ).rows[0];
       if (
         !r ||
         r.deleted ||
@@ -140,13 +164,15 @@ export class ContextService {
   }
   async get(actor: VerifiedIdentity, id: string, expectedVersion: number) {
     const result = await tx(this.db, async (c) => {
-      const i = await enrolled(c, actor),
-        r = (
-          await c.query(
-            'SELECT v.*,h.quarantined,h.visibility,h.deleted FROM ct.context_heads h JOIN ct.context_versions v ON v.tenant=h.tenant AND v.id=h.id AND v.version=h.version WHERE h.tenant=$1 AND h.id=$2 FOR UPDATE OF h',
-            [i.tenant, identifier(id)],
-          )
-        ).rows[0];
+      const i = await enrolled(c, actor);
+      const headId = identifier(id);
+      await lockContextHead(c, i.tenant, headId);
+      const r = (
+        await c.query(
+          'SELECT v.*,h.quarantined,h.visibility,h.deleted FROM ct.context_heads h JOIN ct.context_versions v ON v.tenant=h.tenant AND v.id=h.id AND v.version=h.version WHERE h.tenant=$1 AND h.id=$2',
+          [i.tenant, headId],
+        )
+      ).rows[0];
       if (
         !r ||
         r.deleted ||
@@ -208,12 +234,8 @@ export class ContextService {
   async erase(actor: VerifiedIdentity, id: string) {
     return tx(this.db, async (c) => {
       const i = await enrolled(c, actor, true);
-      const r = (
-        await c.query(
-          'SELECT * FROM ct.context_heads WHERE tenant=$1 AND id=$2 FOR UPDATE',
-          [i.tenant, identifier(id)],
-        )
-      ).rows[0];
+      const headId = identifier(id);
+      const r = await lockContextHead(c, i.tenant, headId);
       if (!r || r.deleted) throw Error('context scope');
       await c.query(
         'UPDATE ct.context_versions SET payload=NULL,erased_at=clock_timestamp() WHERE tenant=$1 AND id=$2 AND erased_at IS NULL',

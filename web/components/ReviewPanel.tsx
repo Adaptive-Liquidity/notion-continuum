@@ -61,6 +61,12 @@ export function ReviewPanel({
             Approval records permission for this exact action. It does not
             execute it or prove success.
           </div>
+          {f.contextQuarantined === true ? (
+            <div className="decision-note">
+              Quarantined context is not an admitted fact and is not effect
+              authority.
+            </div>
+          ) : null}
           <dl className="facts">
             {[
               'principal',
@@ -74,6 +80,9 @@ export function ReviewPanel({
               'principalGeneration',
               'computerId',
               'placementGeneration',
+              'contextId',
+              'contextVersion',
+              'cognitionRevision',
               'deadline',
               'costCeiling',
               'unit',
@@ -194,6 +203,12 @@ export function ReviewPanel({
         </>
       ) : (
         <>
+          {item.kind === 'operation' && f.contextQuarantined === true ? (
+            <p className="muted">
+              Quarantined context is not an admitted fact and is not effect
+              authority.
+            </p>
+          ) : null}
           <Facts
             item={item}
             omit={[

@@ -39,13 +39,16 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
       budget.take(actor.issuer + '|' + actor.subject);
       const x = await readJsonBody(req, 32768),
         keys = routes[req.url ?? ''];
+      const optional = req.url === '/operations' ? ['context'] : [];
+      const present =
+        x && typeof x === 'object' && !Array.isArray(x) ? Object.keys(x) : [];
       if (
         !keys ||
         !x ||
         typeof x !== 'object' ||
         Array.isArray(x) ||
-        keys.length !== Object.keys(x).length ||
-        Object.keys(x).some((k) => !keys.includes(k))
+        keys.some((k) => !present.includes(k)) ||
+        present.some((k) => !keys.includes(k) && !optional.includes(k))
       )
         throw Error('request schema');
       for (const k of keys)
@@ -56,6 +59,8 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
             : typeof x[k] !== 'string')
         )
           throw Error('field type');
+      if (present.includes('context') && typeof x.context !== 'string')
+        throw Error('field type');
       let r: unknown;
       switch (req.url) {
         case '/tasks':

@@ -453,7 +453,7 @@ export class ConsoleReads {
     else if (section === 'computers')
       sql = `SELECT x.*,v.raw_state,v.provider_class,v.health,v.qualification_scope,v.observed_at,v.fresh_until,v.checkpoint_status,p.execution_mode FROM ct.computers x JOIN ct.principals p ON p.tenant=x.tenant AND p.id=x.principal LEFT JOIN ct.computer_observations v ON v.tenant=x.tenant AND v.computer=x.id AND v.generation=x.generation WHERE x.tenant=$1`;
     else if (['approvals', 'recovery', 'operation'].includes(section))
-      sql = `SELECT o.*,a.expires approval_expires,a.revision approval_revision,a.approved_by,g.revoked,g.version current_grant_version,g.expires grant_expires,g.max_cost,g.budget,g.reserved,p.active principal_active,p.epoch current_epoch,p.generation current_generation,COALESCE((SELECT jsonb_agg(jsonb_build_object('identity',s.identity_id,'digest',s.digest,'expires',s.expires)) FROM ct.assignments s WHERE s.tenant=o.tenant AND s.operation=o.id),'[]') machine_assignments FROM ct.operations o JOIN ct.grants g ON g.tenant=o.tenant AND g.id=o.grant_id JOIN ct.principals p ON p.tenant=o.tenant AND p.id=o.principal LEFT JOIN ct.approvals a ON a.tenant=o.tenant AND a.operation=o.id WHERE o.tenant=$1${section === 'operation' ? '' : ` AND o.state='${section === 'approvals' ? 'REQUESTED' : 'UNKNOWN'}'`}`;
+      sql = `SELECT o.*,ch.quarantined AS context_quarantined,a.expires approval_expires,a.revision approval_revision,a.approved_by,g.revoked,g.version current_grant_version,g.expires grant_expires,g.max_cost,g.budget,g.reserved,p.active principal_active,p.epoch current_epoch,p.generation current_generation,COALESCE((SELECT jsonb_agg(jsonb_build_object('identity',s.identity_id,'digest',s.digest,'expires',s.expires)) FROM ct.assignments s WHERE s.tenant=o.tenant AND s.operation=o.id),'[]') machine_assignments FROM ct.operations o JOIN ct.grants g ON g.tenant=o.tenant AND g.id=o.grant_id JOIN ct.principals p ON p.tenant=o.tenant AND p.id=o.principal LEFT JOIN ct.approvals a ON a.tenant=o.tenant AND a.operation=o.id LEFT JOIN ct.context_heads ch ON ch.tenant=o.tenant AND ch.id=o.context_id WHERE o.tenant=$1${section === 'operation' ? '' : ` AND o.state='${section === 'approvals' ? 'REQUESTED' : 'UNKNOWN'}'`}`;
     else if (section === 'authority')
       sql = `SELECT * FROM ct.grants WHERE tenant=$1`;
     else if (section === 'context')
@@ -660,10 +660,27 @@ export class ConsoleReads {
             grantVersion: x.grant_version,
             principalEpoch: x.epoch,
             principalGeneration: Number(x.generation),
-            ...(Number(x.contract_version) === 2
+            ...(Number(x.contract_version) >= 2 && x.computer_id
               ? {
                   computerId: x.computer_id,
                   placementGeneration: Number(x.placement_generation),
+                }
+              : {}),
+            ...(Number(x.contract_version) === 3
+              ? {
+                  ...(x.context_id
+                    ? {
+                        contextId: x.context_id,
+                        contextVersion: Number(x.context_version),
+                        contextQuarantined: x.context_quarantined === true,
+                        contextNote: x.context_quarantined
+                          ? 'Quarantined context is not an admitted fact and is not effect authority.'
+                          : 'Bound context is not effect authority.',
+                      }
+                    : {}),
+                  ...(x.cognition_revision != null
+                    ? { cognitionRevision: Number(x.cognition_revision) }
+                    : {}),
                 }
               : {}),
             deadline: new Date(x.deadline).toISOString(),

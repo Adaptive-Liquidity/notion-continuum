@@ -7,7 +7,9 @@ import {
   bindingDigest,
   canonical,
   placementAdmission,
+  manifestAdmission,
 } from './db.js';
+import { lockBoundManifest } from './context-lock.js';
 import type { Capability } from './capability.js';
 import type { ProviderAdapter } from './provider-adapter.js';
 export interface Hooks {
@@ -80,7 +82,8 @@ export class EffectController {
         [tenant, id],
       )
     ).rows[0];
-    return { control, p, g, o, identity, task, computer };
+    const manifest = await lockBoundManifest(c, o);
+    return { control, p, g, o, identity, task, computer, manifest };
   }
   private async authority(
     c: pg.PoolClient,
@@ -148,6 +151,14 @@ export class EffectController {
       actor.placementGeneration,
     );
     if (placement) return placement;
+    const manifest = manifestAdmission(
+      o,
+      l.manifest.head,
+      l.manifest.version,
+      l.manifest.cognition,
+      dbNow,
+    );
+    if (manifest) return manifest;
     if (
       task &&
       (task.status === 'CANCELLED' || task.plan_version !== o.plan_version)
