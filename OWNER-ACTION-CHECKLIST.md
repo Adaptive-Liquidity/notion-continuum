@@ -19,4 +19,4 @@ remaining live/account actions, not permission to implement an unapproved task d
 - [ ] Revoke/rotate the GitHub token exposed in chat immediately after this audit's final push. Temporary reuse was explicitly authorized for this work; that does not make it safe. Use a fresh secure write connection for future work.
 - [ ] Decide whether the canonical commercial repository should remain public; select a project license and review third-party obligations. Visibility changes cannot erase previously published history. No visibility or licensing change is performed by this audit.
 
-- [x] Credential-free PR CI and post-merge verification are present and ran on the plan's main snapshot. This closes the earlier CI-setup item, not any staging or production qualification gate.
+- [x] PR CI and post-merge verification use no repository secrets and grant only read permissions. They are present and ran on the plan's main snapshot. This closes the earlier CI-setup item, not any staging or production qualification gate.
