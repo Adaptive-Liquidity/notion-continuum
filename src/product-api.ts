@@ -9,7 +9,15 @@ export interface ActorVerifier {
 export function productApi(verifier: ActorVerifier, service: ProductService) {
   const budget = new RequestBudget(60);
   const routes: Record<string, string[]> = {
-    '/tasks': ['id', 'principal', 'objective', 'deadline'],
+    '/tasks': [
+      'id',
+      'principal',
+      'objective',
+      'deadline',
+      'organization',
+      'mandate',
+      'mandateVersion',
+    ],
     '/operations': [
       'id',
       'task',
@@ -54,7 +62,7 @@ export function productApi(verifier: ActorVerifier, service: ProductService) {
       for (const k of keys)
         if (
           k !== 'params' &&
-          (k === 'cost' || k === 'revision'
+          (k === 'cost' || k === 'revision' || k === 'mandateVersion'
             ? !Number.isSafeInteger(x[k])
             : typeof x[k] !== 'string')
         )

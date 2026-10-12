@@ -20,6 +20,8 @@ export class MandateService {
     identifier(id);
     const heading = textOf(title, 'mandate title', 200);
     const text = textOf(body, 'mandate body', 8000);
+    // Admission's FOR SHARE waits on this row lock, and the version update
+    // below waits on that share.
     const current = (
       await c.query(
         'SELECT revision,current_version FROM ct.mandates WHERE tenant=$1 AND organization=$2 AND id=$3 FOR UPDATE',

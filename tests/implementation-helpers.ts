@@ -1,5 +1,5 @@
 import { generateKeyPair, exportJWK, createLocalJWKSet, SignJWT } from 'jose';
-import { pool } from '../src/db.js';
+import { pool, tx } from '../src/db.js';
 import { IdentityVerifier } from '../src/identity-provider.js';
 import {
   CapabilitySigner,
@@ -13,6 +13,8 @@ import type {
   ProviderObservation,
 } from '../src/provider-adapter.js';
 import { gov, bootstrap, fence } from './helpers.js';
+import { OrganizationService } from '../src/regency/organization-service.js';
+import { MandateService } from '../src/regency/mandate-service.js';
 export class LedgerFixture implements ProviderAdapter {
   readonly provider = 'fixture';
   rows: ProviderObservation[] = [];
@@ -156,6 +158,49 @@ export async function fixture(prefix: string) {
       await token(kind, tenant),
     );
   }
+  const organizations = new OrganizationService();
+  const mandateService = new MandateService();
+  const admission: Record<
+    string,
+    { organization: string; mandate: string; mandateVersion: number }
+  > = {};
+  for (const tenant of ['a', 'b']) {
+    const organization = `${prefix}-org`;
+    const mandate = `${prefix}-mandate`;
+    await tx(authDb, async (c) => {
+      await organizations.create(
+        c,
+        tenant,
+        `${prefix}-owner-${tenant}`,
+        organization,
+        prefix + ' organization',
+      );
+      await organizations.addMembership(
+        c,
+        tenant,
+        organization,
+        'vera',
+        principal,
+        'steward',
+        false,
+      );
+      const recorded = await mandateService.record(
+        c,
+        tenant,
+        `${prefix}-owner-${tenant}`,
+        organization,
+        mandate,
+        'Fixture mandate',
+        'Fixture mandate for ' + prefix,
+        0,
+      );
+      admission[tenant] = {
+        organization,
+        mandate,
+        mandateVersion: recorded.version,
+      };
+    });
+  }
   async function intent(
     id: string,
     approved = false,
@@ -179,6 +224,7 @@ export async function fixture(prefix: string) {
       principal,
       objective: objective ?? 'Fixture task ' + id,
       deadline,
+      ...admission.a,
     });
     const x = {
       id,
@@ -225,6 +271,7 @@ export async function fixture(prefix: string) {
     controller,
     caps,
     intent,
+    admission,
     capability,
     productDb,
     controllerDb,

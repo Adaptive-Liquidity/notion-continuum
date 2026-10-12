@@ -40,3 +40,6 @@ psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/017-context-cognition-binding.s
 if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.notice_projection') IS NOT NULL")" != t ]; then
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/018-tenant-notice-projection.sql > .artifacts/implementation/MIGRATION-018-tenant-notice-projection.log 2>&1
 fi
+if [ "$(psql -d ct_test -Atc "SELECT 1 FROM information_schema.columns WHERE table_schema='ct' AND table_name='tasks' AND column_name='mandate'")" != 1 ]; then
+ psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/019-task-mandate-admission.sql > .artifacts/implementation/MIGRATION-019-task-mandate-admission.log 2>&1
+fi

@@ -804,7 +804,7 @@ test('Performance: 10,000 durable fixture tasks stay paginated and DOM-bounded; 
       '-v',
       'ON_ERROR_STOP=1',
       '-c',
-      "INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by) SELECT 'a','bulk-'||lpad(n::text,5,'0'),'p-focus','Volume fixture task '||n,now()+interval '1 hour','focus-owner-a' FROM generate_series(1,10000) n",
+      "INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) SELECT 'a','bulk-'||lpad(n::text,5,'0'),'p-focus','Volume fixture task '||n,now()+interval '1 hour','focus-owner-a','focus-org','focus-mandate',1 FROM generate_series(1,10000) n",
     ],
     {
       env: {

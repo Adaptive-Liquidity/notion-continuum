@@ -23,6 +23,7 @@ before(async () => {
     principal: f.principal,
     objective: '<img src=x onerror="window.pwned=true">',
     deadline: op.x.deadline,
+    ...f.admission.a,
   });
   const unknown = await f.intent('desk-unknown', true);
   f.provider.loseAck = true;

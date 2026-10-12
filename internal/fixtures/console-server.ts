@@ -96,6 +96,7 @@ await f.product.createTask(owner, {
   principal: f.principal,
   objective: 'Plan the next operating week',
   deadline: new Date(Date.now() + 3600000).toISOString(),
+  ...f.admission.a,
 });
 await coord.link(owner, 'work-next-week', 'operations', 0);
 await gov.query(

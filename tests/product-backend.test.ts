@@ -58,6 +58,7 @@ test('Backend tenant and machine-principal boundaries', async () => {
       principal: 'agent',
       objective: 'cannot impersonate',
       deadline: x.deadline,
+      ...f.admission.a,
     }),
   );
   assert.deepEqual(await f.product.list(await f.actor('machine', 'b')), []);
@@ -138,6 +139,7 @@ test('Backend checks grant scope, cost, deadline and input bounds', async () => 
       principal: f.principal,
       objective: 'bad',
       deadline: x.deadline,
+      ...f.admission.a,
     }),
   );
 });
@@ -190,6 +192,7 @@ test('Backend UNKNOWN and empty tasks are never displayed as completed', async (
     principal: f.principal,
     objective: 'No actions yet',
     deadline,
+    ...f.admission.a,
   });
   assert.equal((await f.product.status(worker, 'empty-task')).phase, 'PLANNED');
 });

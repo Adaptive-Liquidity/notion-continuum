@@ -15,6 +15,9 @@ export interface TaskInput {
   principal: string;
   objective: string;
   deadline: string;
+  organization: string;
+  mandate: string;
+  mandateVersion: number;
 }
 export interface OperationInput {
   id: string;
@@ -50,6 +53,10 @@ export class ProductService {
       samePrincipal(i, x.principal);
       identifier(x.id);
       identifier(x.principal);
+      identifier(x.organization);
+      identifier(x.mandate);
+      if (!Number.isSafeInteger(x.mandateVersion) || x.mandateVersion < 1)
+        throw Error('invalid task');
       const p = (
         await c.query(
           'SELECT * FROM ct.principals WHERE tenant=$1 AND id=$2 FOR UPDATE',
@@ -69,37 +76,115 @@ export class ProductService {
         actor.expires <= now
       )
         throw Error('invalid task');
-      const old = (
+      const same = (old: Record<string, any>) =>
+        old.principal === x.principal &&
+        old.objective === x.objective &&
+        +old.deadline === +deadline &&
+        old.organization === x.organization &&
+        old.mandate === x.mandate &&
+        Number(old.mandate_version) === x.mandateVersion;
+      const reused = (old: Record<string, any>) => ({
+        id: old.id,
+        reused: true,
+        organization: old.organization,
+        mandate: old.mandate,
+        mandateVersion: Number(old.mandate_version),
+      });
+      const existing = (
         await c.query('SELECT * FROM ct.tasks WHERE tenant=$1 AND id=$2', [
           i.tenant,
           x.id,
         ])
       ).rows[0];
-      if (old) {
-        if (
-          old.principal !== x.principal ||
-          old.objective !== x.objective ||
-          +old.deadline !== +deadline
-        )
-          throw Error('task identity conflict');
-        return { id: old.id, reused: true };
+      if (existing) {
+        if (!same(existing)) throw Error('task identity conflict');
+        return reused(existing);
       }
-      await reserveResources(c, i.tenant, 'task', x.id, p.id, {
-        units: 1,
-        jobs: 1,
-        bytes: 0,
-      });
-      await c.query(
-        'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by) VALUES($1,$2,$3,$4,$5,$6)',
-        [i.tenant, x.id, x.principal, x.objective, deadline, i.id],
-      );
-      await append(c, i.tenant, 'TASK_CREATED', {
-        task: x.id,
-        principal: x.principal,
-        identity: i.id,
-        deadline: deadline.toISOString(),
-      });
-      return { id: x.id, reused: false };
+      // FOR SHARE conflicts with a mandate update and a membership delete.
+      // The product role has SELECT only, so ct.share_mandate takes that lock.
+      const mandate = (
+        await c.query(
+          'SELECT ct.share_mandate($1, $2, $3) AS current_version',
+          [i.tenant, x.organization, x.mandate],
+        )
+      ).rows[0];
+      if (!mandate || Number(mandate.current_version) !== x.mandateVersion)
+        throw Error('current mandate required');
+      const version = (
+        await c.query(
+          'SELECT version FROM ct.mandate_versions WHERE tenant=$1 AND organization=$2 AND mandate=$3 AND version=$4',
+          [i.tenant, x.organization, x.mandate, x.mandateVersion],
+        )
+      ).rows[0];
+      if (!version) throw Error('current mandate required');
+      const member = (
+        await c.query(
+          'SELECT ct.share_vera_membership($1, $2, $3) AS subject_id',
+          [i.tenant, x.organization, x.principal],
+        )
+      ).rows[0];
+      if (!member?.subject_id) throw Error('vera membership required');
+      const raced = (
+        await c.query('SELECT * FROM ct.tasks WHERE tenant=$1 AND id=$2', [
+          i.tenant,
+          x.id,
+        ])
+      ).rows[0];
+      if (raced) {
+        if (!same(raced)) throw Error('task identity conflict');
+        return reused(raced);
+      }
+      await c.query('SAVEPOINT task_insert');
+      try {
+        await reserveResources(c, i.tenant, 'task', x.id, p.id, {
+          units: 1,
+          jobs: 1,
+          bytes: 0,
+        });
+        await c.query(
+          'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          [
+            i.tenant,
+            x.id,
+            x.principal,
+            x.objective,
+            deadline,
+            i.id,
+            x.organization,
+            x.mandate,
+            x.mandateVersion,
+          ],
+        );
+        await append(c, i.tenant, 'TASK_CREATED', {
+          task: x.id,
+          principal: x.principal,
+          identity: i.id,
+          deadline: deadline.toISOString(),
+        });
+        await c.query('RELEASE SAVEPOINT task_insert');
+      } catch (e) {
+        await c.query('ROLLBACK TO SAVEPOINT task_insert');
+        const code =
+          e && typeof e === 'object' && 'code' in e
+            ? String((e as { code?: string }).code)
+            : '';
+        if (code !== '23505') throw e;
+        const winner = (
+          await c.query('SELECT * FROM ct.tasks WHERE tenant=$1 AND id=$2', [
+            i.tenant,
+            x.id,
+          ])
+        ).rows[0];
+        if (!winner || !same(winner)) throw Error('task identity conflict');
+        return reused(winner);
+      }
+      return {
+        id: x.id,
+        reused: false,
+        organization: x.organization,
+        mandate: x.mandate,
+        mandateVersion: x.mandateVersion,
+      };
     });
   }
   async propose(actor: VerifiedIdentity, x: OperationInput) {
@@ -355,6 +440,10 @@ export class ProductService {
         revision: Number(t.revision),
         phase,
         operations,
+        organization: t.organization ?? null,
+        mandate: t.mandate ?? null,
+        mandateVersion:
+          t.mandate_version == null ? null : Number(t.mandate_version),
       };
     });
   }
@@ -363,10 +452,20 @@ export class ProductService {
       const i = await enrolled(c, actor);
       return (
         await c.query(
-          'SELECT id,principal,objective,status,revision FROM ct.tasks WHERE tenant=$1 AND ($2::text IS NULL OR principal=$2) ORDER BY id LIMIT 100',
+          'SELECT id,principal,objective,status,revision,organization,mandate,mandate_version FROM ct.tasks WHERE tenant=$1 AND ($2::text IS NULL OR principal=$2) ORDER BY id LIMIT 100',
           [i.tenant, i.kind === 'machine' ? i.principal : null],
         )
-      ).rows;
+      ).rows.map((t) => ({
+        id: t.id,
+        principal: t.principal,
+        objective: t.objective,
+        status: t.status,
+        revision: t.revision,
+        organization: t.organization ?? null,
+        mandate: t.mandate ?? null,
+        mandateVersion:
+          t.mandate_version == null ? null : Number(t.mandate_version),
+      }));
     });
   }
   async cancel(actor: VerifiedIdentity, task: string, revision: number) {

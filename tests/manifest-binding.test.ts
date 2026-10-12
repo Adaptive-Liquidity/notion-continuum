@@ -12,6 +12,7 @@ import {
   manifestAdmission,
   pool,
   sha,
+  tx,
 } from '../src/db.js';
 import { ContextService } from '../src/context-service.js';
 import { CognitionService } from '../src/cognition-service.js';
@@ -26,6 +27,7 @@ import {
 import { LocalIndependentFenceStore } from '../src/fence-store.js';
 import { RecoveryService } from '../src/recovery.js';
 import { productApi } from '../src/product-api.js';
+import { OrganizationService } from '../src/regency/organization-service.js';
 import { fixture } from './implementation-helpers.js';
 import { admin, bootstrap, fence, gov } from './helpers.js';
 import { randomBytes } from 'node:crypto';
@@ -121,6 +123,7 @@ async function publish(
     principal,
     objective: 'Manifest ' + id,
     deadline,
+    ...f.admission.a,
   });
   const x = {
     id,
@@ -175,7 +178,10 @@ async function note(
   return review;
 }
 
-async function otherMachine(name: string) {
+async function otherMachine(
+  f: Awaited<ReturnType<typeof fixture>>,
+  name: string,
+) {
   const ext = await generateKeyPair('EdDSA');
   const issuer = 'https://' + name + '.test-identity.invalid';
   const audience = 'urn:continuum:test:' + name;
@@ -189,6 +195,22 @@ async function otherMachine(name: string) {
     "INSERT INTO ct.identities(id,issuer,subject,audience,kind,tenant,principal,domain_role) VALUES($1,$2,$1,$3,'machine','a',$4,'worker')",
     [workerId, issuer, audience, principal],
   );
+  const auth = pool('ct_authority_api');
+  try {
+    await tx(auth, (c) =>
+      new OrganizationService().addMembership(
+        c,
+        'a',
+        f.admission.a.organization,
+        'vera',
+        principal,
+        'steward',
+        false,
+      ),
+    );
+  } finally {
+    await auth.end();
+  }
   const machine = new IdentityVerifier(
     {
       issuer,
@@ -583,6 +605,7 @@ test('privacy and quarantine bind metadata without admitting the payload', async
       principal: f.principal,
       objective: 'Caller cannot choose the context version',
       deadline: quarantined.x.deadline,
+      ...f.admission.a,
     });
     const forced = await f.product.propose(machine, {
       ...quarantined.x,
@@ -620,7 +643,7 @@ test('privacy and quarantine bind metadata without admitting the payload', async
       JSON.stringify(view.items[0].fields.canonicalBinding).includes('secret'),
       false,
     );
-    const other = await otherMachine('manifest-privacy');
+    const other = await otherMachine(f, 'manifest-privacy');
     await assert.rejects(
       publish(
         f,
@@ -696,6 +719,7 @@ test('privacy and quarantine bind metadata without admitting the payload', async
         principal: f.principal,
         objective: 'HTTP context binding',
         deadline,
+        ...f.admission.a,
       });
       const response = await fetch(
         'http://127.0.0.1:' +
@@ -869,7 +893,7 @@ test('admission denies a changed manifest and still allows quarantine and wider 
     );
     assert.equal(await denial(remembered.x.id), 'MANIFEST_STALE');
     await note(f, 'life-narrow', true);
-    const other = await otherMachine('manifest-life');
+    const other = await otherMachine(f, 'manifest-life');
     const narrowed = await publish(
       f,
       'life-narrow-op',
@@ -994,7 +1018,7 @@ test('shared and ownerless context races deny admission without a send', async (
   const hold = await contextDb.connect();
   try {
     await note(f, 'race-shared', true);
-    const other = await otherMachine('manifest-race');
+    const other = await otherMachine(f, 'manifest-race');
     const shared = await publish(
       f,
       'race-shared-op',
