@@ -314,10 +314,6 @@ describe('task mandate admission', { concurrency: 1 }, () => {
       /invalid task/,
     );
     assert.equal(await tasks('inactive-principal'), 0);
-    await gov.query(
-      'UPDATE ct.principals SET active=true WHERE tenant=$1 AND id=$2',
-      ['a', 'p-outsider'],
-    );
     await tx(auth, async (c) => {
       await organizations.create(
         c,
