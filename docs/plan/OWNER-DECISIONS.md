@@ -2,7 +2,10 @@
 
 Recorded for the current roadmap on 2026-10-12. This document records the owner's
 existing scope. It does not approve deployment, donor copying, spending, or live
-gates. A later section records only a scope the owner has explicitly accepted.
+gates. D01–D04 stay as recorded below. The ENG-026 choices stay scoped to that
+task. D05–D12, recorded below on the same date, stop at the limit and missing
+inputs in each section. They do not close every subdecision and do not prove
+qualification.
 
 ## D01 — approved architecture, integration still unqualified
 
@@ -79,14 +82,135 @@ start a workflow or send an external action.
 
 Affected task: ENG-026.
 
+## D05 — restricted pinned reuse, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Reuse NEXUS and AEON through
+restricted, pinned integrations. Verify licensing and provenance before copying
+or distributing donor code. Do not change repository visibility or choose a new
+product license.
+
+This direction does not close every licensing or packaging subdecision and does
+not prove qualification. Still missing: licensing and provenance evidence before
+any donor copy or distribution. Visibility and the product license stay as they
+are.
+
+Affected tasks stay inside that limit: ENG-013, ENG-014, ENG-019, ENG-051, and
+the publication half of ENG-052.
+
+## D06 — existing WorkOS sign-in, separate workload credentials, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Use Cael's existing WorkOS account
+for human sign-in. Keep separately enrolled, short-lived workload credentials
+for agents. Identify the required account settings and obtain credentials
+securely. Never place them in chat or Git.
+
+This direction does not close every identity subdecision and does not prove
+qualification. Still missing: the WorkOS account settings and a secure way to
+supply credentials. Live sign-in stays blocked until then. Workload credentials
+stay out of chat and Git.
+
+Affected tasks stay inside that limit: the live half of ENG-010, the live
+gateway of ENG-022, and ENG-037.
+
+## D07 — one controlled file write, then read-back, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Build the first protected-action
+adapter around one controlled file write in a dedicated GitHub test repository,
+followed by authoritative read-back. Live execution requires the named
+repository, scope, credentials, and an exact authorization for that one write.
+
+This direction does not close every provider subdecision and does not prove
+qualification. Still missing: the test repository name, scope, credentials, and
+that exact authorization. Until then the adapter can be built but not executed
+live.
+
+Affected tasks stay inside that limit: ENG-017, ENG-039, and external channels
+for ENG-034.
+
+## D08 — local development and a costed hosting proposal, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Continue development and testing
+locally. Prepare a costed customer-hosting proposal covering servers, databases,
+worker isolation, backups, region, and recovery targets. New infrastructure
+purchases remain unapproved.
+
+This direction does not close every hosting subdecision and does not prove
+qualification. A costed hosting proposal can be written. No purchase is
+approved. No numeric recovery target is approved. The future live-database
+procedure remains a separate unaccepted proposal.
+
+Affected tasks stay inside that limit: ENG-016 beyond a design note, ENG-038,
+and the managed halves of ENG-015 and ENG-040.
+
+## D09 — compare schedulers without selecting one, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Evaluate pg-boss and Temporal
+against the required workload and recovery tests. Recommend the simplest
+qualifying option with measured evidence. Final selection waits for approved
+comparison criteria.
+
+This direction does not select a scheduler and does not prove qualification.
+Still missing: comparison criteria for pg-boss and Temporal. No scheduler is
+selected. The scheduler ledger stays HELD.
+
+Affected tasks stay inside that limit: ENG-029 stays reference-only, and
+ENG-041 may not choose.
+
+## D10 — first autonomy milestone, 2026-10-12
+
+Cael approved this direction on 2026-10-12. The first autonomy milestone
+requires a real model, one VERA completing a defined application objective,
+independent functionality checks, and safe resumption after interruption.
+Fixtures prove plumbing only. Propose broader numerical targets before
+evaluating against them.
+
+This direction does not close every measurement subdecision and does not prove
+qualification. Still missing: a proposal for broader numerical targets. The
+autonomy milestone is not met by fixtures. Whether a fixture gateway is enough
+to start ENG-023 remains open.
+
+Affected tasks stay inside that limit: ENG-025, ENG-036's volume target,
+ENG-041's measurement rule, ENG-045, ENG-046, ENG-048, ENG-049, and ENG-050.
+
+## D11 — isolated owner pilot, billing disabled, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Start with the isolated owner
+pilot. Keep Stripe billing disabled. Propose retention, deletion, backup,
+disclosure, and commercial policies before customer use. Do not invent an
+approved retention period.
+
+This direction does not close every commercial subdecision and does not prove
+qualification. Still missing: those proposed policies. No retention period is
+approved. Stripe stays disabled.
+
+Affected tasks stay inside that limit: ENG-024's retention policy, ENG-035,
+ENG-047, and ENG-051.
+
+## D12 — independent review before any live release, 2026-10-12
+
+Cael approved this direction on 2026-10-12. Require independent release review
+and mandatory qualification evidence. Live deployment, shadow, and canary
+require separate authorization.
+
+This direction does not prove qualification. Still missing: that independent
+review and the qualification evidence. No live deployment, shadow, or canary is
+authorized.
+
+Affected tasks stay inside that limit: ENG-006's live review, ENG-042,
+ENG-043's live cutover, ENG-044, and ENG-052.
+
 ## Open decisions
 
-D05–D12 remain unapproved in the scopes cataloged in CURRENT-PLAN.md. The
-fixture-versus-live model milestone and the future live-database procedure also
-remain open. ENG-026's six choices above are limited to that task. A documentation
-merge does not settle the remaining decisions. Record later owner decisions here
-with date, exact scope, evidence reference and affected tasks. A newer file or an
-agent recommendation is not approval.
+D05–D12 above are the directions Cael approved on 2026-10-12. Each one stops at
+the limit and missing inputs in its section. They do not close every
+subdecision and do not prove qualification. ENG-026's six choices above stay
+limited to that task.
+
+These choices also remain open: whether a fixture gateway is enough for the
+local ENG-023 milestone, and the future live-database procedure. A documentation
+merge does not settle the remaining decisions or promote a ledger. Record later
+owner decisions here with date, exact scope, evidence reference and affected
+tasks. A newer file or an agent recommendation is not approval.
 
 Production BLOCKED; scheduler HELD; canary NO-GO. Merges, releases and live gate
 activation require their own authorization and evidence.

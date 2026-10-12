@@ -9,9 +9,11 @@ task map: [CURRENT-PLAN.md](CURRENT-PLAN.md). Owner scope lives in
    `git fetch origin refs/heads/main:refs/remotes/origin/main` before selecting work.
 2. Compare the plan snapshot with actual merged code and main checks. Read the
    relevant catalog entry, owner decisions and task proposal. A partial slice is
-   not the whole feature. Next product slice is ENG-026 work admission. Its six
-   choices were accepted for that task only on 2026-10-12; see OWNER-DECISIONS.md.
-   No donor integration starts automatically from reading a plan.
+   not the whole feature. Pull request #19 merged the ENG-026 work-admission
+   slice only for the behavior it demonstrated. The next product priority is the
+   ENG-011 tool-manifest proposal, not implementation. D05–D12 are recorded in
+   OWNER-DECISIONS.md with their limits and missing inputs. They do not prove
+   qualification. No donor integration starts automatically from reading a plan.
 3. Use the frozen safety/recovery contracts and applicable versioned extensions.
    Read `docs/ARCHITECTURE.md`, `docs/interface/PRODUCT-CONTRACT.md`,
    `docs/interface/FOCUS-DESK-DESIGN.md` and relevant gap/traceability entries.
