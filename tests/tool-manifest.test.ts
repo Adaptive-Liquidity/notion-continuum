@@ -87,7 +87,7 @@ after(async () => {
 function psql(database: string, args: string[]) {
   const result = spawnSync(
     'psql',
-    ['-d', database, '-v', 'ON_ERROR_STOP=1', ...args],
+    ['-d', database, '-q', '-v', 'ON_ERROR_STOP=1', ...args],
     { encoding: 'utf8' },
   );
   assert.equal(result.status, 0, result.stderr || result.stdout);
@@ -1280,6 +1280,7 @@ test('concurrent tool appends are gapless and do not lock context or cognition',
       await quick.query('RESET statement_timeout').catch(() => undefined);
       quick.release();
     }
+    await holder.query('ROLLBACK');
     const source = (
       await admin.query(
         "SELECT pg_get_functiondef('ct.append_tool_manifest(text,text,text)'::regprocedure) AS body",
