@@ -734,10 +734,12 @@ test('Regency records stay visible and never change a grant or approval', async 
   assert.deepEqual(await grants(), beforeGrants);
   assert.equal(await approvals(), beforeApprovals);
   const view = await reads.read(owner, 'governance');
-  assert.equal(view.items[0].title, 'Asentxia');
-  assert.equal(view.items[0].fields.effectAuthority, false);
+  const recorded = view.items.find((item) => item.id === 'regency-org');
+  assert.ok(recorded);
+  assert.equal(recorded.title, 'Asentxia');
+  assert.equal(recorded.fields.effectAuthority, false);
   assert.equal(
-    (view.items[0].fields.note as string).includes('does not authorize'),
+    (recorded.fields.note as string).includes('does not authorize'),
     true,
   );
   assert.equal(
@@ -806,7 +808,9 @@ test('Regency records stay visible and never change a grant or approval', async 
     false,
   );
   const current = await reads.read(owner, 'governance');
-  const seat = (current.items[0].fields.memberships as any[]).find(
+  const currentOrg = current.items.find((item) => item.id === 'regency-org');
+  assert.ok(currentOrg);
+  const seat = (currentOrg.fields.memberships as any[]).find(
     (member) => member.ownerSeat,
   );
   assert.equal(
@@ -840,15 +844,17 @@ test('Regency records stay visible and never change a grant or approval', async 
     'DENIED',
   );
   const kept = await reads.read(owner, 'governance');
-  assert.equal(kept.items[0].title, 'Asentxia Desk');
+  const keptOrg = kept.items.find((item) => item.id === 'regency-org');
+  assert.ok(keptOrg);
+  assert.equal(keptOrg.title, 'Asentxia Desk');
   assert.equal(
-    (kept.items[0].fields.mandates as any[]).find(
+    (keptOrg.fields.mandates as any[]).find(
       (mandate) => mandate.id === 'operating',
     ).body,
     'Plan and work inside permissions already granted.',
   );
   assert.ok(
-    (kept.items[0].fields.memberships as any[]).some(
+    (keptOrg.fields.memberships as any[]).some(
       (member) => member.ownerSeat && member.subjectId === seat.subjectId,
     ),
   );
