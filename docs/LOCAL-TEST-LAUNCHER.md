@@ -7,7 +7,9 @@ install runtimes, start databases, alter sudo/helper settings, or stop shared se
 Copy `tools/local-test-profile.example.json` to a private location outside Git and
 replace its four paths with verified Linux paths. Keep accounts, passwords and
 machine-specific paths out of the repository. Current CI pins are Node 24.14.1
-backend, Node 22.23.3 frontend, PostgreSQL 17.10. Update launcher pins alongside CI
+backend and Node 22.23.3 frontend. PostgreSQL follows CI's major-17 policy; its
+packages are not pinned to one minor. Exact binary and server versions are recorded.
+Update launcher pins alongside CI
 when a runtime upgrade is approved. See `docs/TESTING.md` for canonical semantics.
 
 ```sh
@@ -19,7 +21,8 @@ CT_RESET_LOCAL_FIXTURE=yes CT_RESET_CONSOLE_FIXTURE=yes \
 
 `check` reads configuration/runtime/database state only. It requires the fixture
 server on loopback port 55432 to already belong to this checkout's `.local/pgdata`,
-and the restricted helper to point to its `.local/computer-fixtures`. Symlink
+and the restricted helper to point to its `.local/computer-fixtures` and match the
+current repository helper bytes. Symlink
 workarounds are refused. A foreign cluster or helper root produces a refusal;
 coordinate a separately authorized fixture handover instead of taking it over.
 

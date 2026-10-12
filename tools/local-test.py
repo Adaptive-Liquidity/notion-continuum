@@ -10,7 +10,6 @@ import signal
 import stat
 import subprocess
 import sys
-import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -78,12 +77,13 @@ def preflight(profile):
     for name, binary, expected in (
         ("backend", Path(profile["node24Bin"]) / "node", "v24.14.1"),
         ("frontend", Path(profile["node22Bin"]) / "node", "v22.23.3"),
-        ("postgres", Path(profile["pgBin"]) / "postgres", "postgres (PostgreSQL) 17.10"),
+        ("postgres", Path(profile["pgBin"]) / "postgres", None),
     ):
         if not binary.is_file() or not os.access(binary, os.X_OK):
             raise ValueError("Missing executable: " + name)
         versions[name] = output([str(binary), "--version"], env)
-        if versions[name] != expected:
+        matches = versions[name] == expected if expected else bool(re.fullmatch(r"postgres \(PostgreSQL\) 17\.\d+(?:\s.*)?", versions[name]))
+        if not matches:
             raise ValueError("Runtime differs from current CI pin: " + name)
     if not Path(profile["chromium"]).is_file() or not os.access(profile["chromium"], os.X_OK):
         raise ValueError("Chromium executable missing.")
@@ -93,6 +93,8 @@ def preflight(profile):
         metadata = path.lstat()
         if not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != 0 or metadata.st_mode & 0o022:
             raise ValueError("Fixture helper/config ownership or permissions unsafe.")
+    if helper.read_bytes() != (ROOT / "tools" / "continuum-fixture-priv.py").read_bytes():
+        raise ValueError("Installed fixture helper differs from current source; no reinstall performed.")
     settings = dict(line.split("=", 1) for line in config.read_text().splitlines()
                     if line and not line.startswith("#"))
     fixtures = ROOT / ".local" / "computer-fixtures"
@@ -102,8 +104,8 @@ def preflight(profile):
         raise ValueError("Fixture helper Node differs from the profile.")
     require_owned_database(database_query("SHOW data_directory", env))
     versions["server"] = database_query("SHOW server_version", env)
-    if versions["server"].split()[0] != "17.10":
-        raise ValueError("Fixture server differs from the PostgreSQL pin.")
+    if not re.fullmatch(r"17\.\d+", versions["server"].split()[0]):
+        raise ValueError("Fixture server differs from the PostgreSQL 17 policy.")
     # Authentication must work noninteractively; the launcher never starts a server.
     return env, versions
 
@@ -111,7 +113,7 @@ def preflight(profile):
 class Lease:
     """Shared by cooperating launches for this Linux user, regardless of worktree."""
     def __init__(self, path=None):
-        self.path = path or Path(tempfile.gettempdir()) / ("continuum-local-tests-" + str(os.getuid()) + ".lock")
+        self.path = path or Path("/tmp") / ("continuum-local-tests-" + str(os.getuid()) + ".lock")
 
     def __enter__(self):
         fd = os.open(self.path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
@@ -171,12 +173,12 @@ def execute(mode, tests, profile):
             if parent.is_symlink():
                 raise ValueError("Linked evidence directory refused.")
         directory.mkdir(parents=True, mode=0o700)
-        before = source_identity(env)
-        record = {"mode": mode, "versions": versions, "before": before,
-                  "gitHead": output(["git", "rev-parse", "HEAD"], env),
+        record = {"mode": mode, "versions": versions,
                   "status": "INCOMPLETE", "databaseLifecycle": "existing owned server retained"}
         status = 130
         try:
+            before = record["before"] = source_identity(env)
+            record["gitHead"] = output(["git", "rev-parse", "HEAD"], env)
             with (directory / "run.log").open("w") as log:
                 for command in commands:
                     status = run_child(command, env, log)
@@ -190,6 +192,9 @@ def execute(mode, tests, profile):
                 record["status"] = "PASS" if status == 0 else "FAIL"
         except KeyboardInterrupt:
             status = 130
+            raise
+        except Exception:
+            status = 2
             raise
         finally:
             record["exitCode"] = status

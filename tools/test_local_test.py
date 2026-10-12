@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -150,6 +151,64 @@ class LocalLauncherTests(unittest.TestCase):
                 record = json.loads(next(root.glob(".artifacts/local-launcher/*/result.json")).read_text())
                 self.assertEqual(record["status"], "INCOMPLETE" if interrupt else "SOURCE_CHANGED")
                 self.assertEqual(record["exitCode"], 130 if interrupt else 2)
+
+    def test_default_lease_ignores_temporary_directory_environment(self):
+        with patch.object(tempfile, "gettempdir", side_effect=["/first", "/second"]):
+            self.assertEqual(launcher.Lease().path, launcher.Lease().path)
+
+    def test_installed_helper_bytes_must_match_current_source(self):
+        profile = {"node24Bin": "/runtime/node24/bin", "node22Bin": "/runtime/node22/bin",
+                   "pgBin": "/runtime/pg17/bin", "chromium": "/runtime/chromium"}
+        config = "node=/runtime/node24/bin/node\nfixtures=" + str(launcher.ROOT / ".local/computer-fixtures")
+        def bytes_for(path):
+            return b"old privileged code" if str(path).startswith("/usr/local") else b"current privileged code"
+        with patch.dict(os.environ, {}, clear=True), patch.object(Path, "is_file", return_value=True), \
+                patch.object(Path, "is_symlink", return_value=False), \
+                patch.object(Path, "lstat", return_value=SimpleNamespace(st_mode=0o100644, st_uid=0)), \
+                patch.object(Path, "read_text", return_value=config), \
+                patch.object(Path, "read_bytes", bytes_for), patch.object(os, "access", return_value=True), \
+                patch.object(launcher, "output", side_effect=["v24.14.1", "v22.23.3", "postgres (PostgreSQL) 17.10"]), \
+                patch.object(launcher, "database_query", side_effect=[str(launcher.ROOT / ".local/pgdata"), "17.10"]):
+            with self.assertRaisesRegex(ValueError, "helper.*source"):
+                launcher.preflight(profile)
+
+    def test_evidence_survives_initial_interrupt_and_final_digest_failure(self):
+        for first_interrupt in (True, False):
+            with tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                digest_results = [KeyboardInterrupt] if first_interrupt else [{"sourceDigest": "before"}, ValueError("digest failed")]
+                with patch.object(launcher, "ROOT", root), patch.object(launcher, "Lease"), \
+                        patch.object(launcher, "preflight", return_value=({}, {})), \
+                        patch.object(launcher, "database_query", return_value="0"), \
+                        patch.object(launcher, "source_identity", side_effect=digest_results), \
+                        patch.object(launcher, "output", return_value="head"), \
+                        patch.object(launcher, "run_child", return_value=0):
+                    with self.assertRaises(KeyboardInterrupt if first_interrupt else ValueError):
+                        launcher.execute("focused", ["example.test.js"], {})
+                records = list(root.glob(".artifacts/local-launcher/*/result.json"))
+                self.assertEqual(len(records), 1)
+                record = json.loads(records[0].read_text())
+                self.assertEqual(record["status"], "INCOMPLETE")
+                self.assertEqual(record["exitCode"], 130 if first_interrupt else 2)
+
+    def test_postgres_follows_ci_major_policy_and_records_minor(self):
+        profile = {"node24Bin": "/runtime/node24/bin", "node22Bin": "/runtime/node22/bin",
+                   "pgBin": "/runtime/pg17/bin", "chromium": "/runtime/chromium"}
+        config = "node=/runtime/node24/bin/node\nfixtures=" + str(launcher.ROOT / ".local/computer-fixtures")
+        for major in (17, 18):
+            with patch.dict(os.environ, {}, clear=True), patch.object(Path, "is_file", return_value=True), \
+                    patch.object(Path, "is_symlink", return_value=False), \
+                    patch.object(Path, "lstat", return_value=SimpleNamespace(st_mode=0o100644, st_uid=0)), \
+                    patch.object(Path, "read_text", return_value=config), \
+                    patch.object(Path, "read_bytes", return_value=b"same helper"), patch.object(os, "access", return_value=True), \
+                    patch.object(launcher, "output", side_effect=["v24.14.1", "v22.23.3", "postgres (PostgreSQL) " + str(major) + ".11"]), \
+                    patch.object(launcher, "database_query", side_effect=[str(launcher.ROOT / ".local/pgdata"), str(major) + ".11"]):
+                if major == 17:
+                    _, versions = launcher.preflight(profile)
+                    self.assertEqual(versions["server"], "17.11")
+                else:
+                    with self.assertRaisesRegex(ValueError, "Runtime differs"):
+                        launcher.preflight(profile)
 
 
 if __name__ == "__main__":
