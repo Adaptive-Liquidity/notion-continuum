@@ -8,7 +8,7 @@ or releasing production. Read [START-HERE.md](START-HERE.md) and
 
 Production stays BLOCKED. The scheduler stays HELD. Canary stays NO-GO.
 
-Current `main`, fetched 2026-10-12: `c6072deed1bb73c2ed6b89830ead23fe31f14777`, the merge of pull request #19. Fetch `main` again before implementation.
+Current `main`, fetched 2026-10-12: `83626cd48a0f98d0afd7bc79e38185b4a2acb768`, the merge of pull request #20. Fetch `main` again before implementation.
 
 This plan consolidates the prior acceptance map and later verified merge history.
 The owner-approved D01–D04 scopes are recorded in OWNER-DECISIONS.md. D05–D12 are
@@ -76,7 +76,7 @@ These product choices remain open:
 1. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
 2. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
 3. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
-4. Publication and the remaining task designs. The choices above stay open. Pull request #19 merged only the ENG-026 work-admission behavior it demonstrated. Later ENG-026 project-command behavior remains open. The private environment supplement stays outside Git.
+4. Publication and the remaining task designs. The choices above stay open. Pull request #19 merged only the ENG-026 work-admission behavior it demonstrated. Later ENG-026 project-command behavior remains open. The ENG-011 tool-manifest recommendation is drafted and waiting for review. The private environment supplement stays outside Git.
 
 ## What is already built, tested, and merged
 
@@ -92,6 +92,7 @@ These product choices remain open:
 | #16 | `5b3b2de` | Tracked agent startup instructions | Machine-specific settings stay outside Git |
 | #17 | `21df0150` | Local test launcher and run evidence | The launcher does not install runtimes or start a database |
 | #19 | `c6072dee` | ENG-026 work admission only. A new task names a current mandate and an active VERA with a `vera` membership in that organization. The task stores the organization, mandate, and accepted version. Historical tasks stay unbound. An identical authorized repeat returns the stored result, and a changed binding conflicts. Direct inserts share the same locks. Task and command records stay off the tenant-notice path. A mandate creates no grant, approval, workflow, or permission to send | Later ENG-026 project-command behavior. Live gates |
+| #20 | `83626cd` | Recorded D05–D12 limits and the merged admission slice in the plan. No product code | Each direction stays inside its written limit. No donor copy and no live gate |
 
 Pull requests #3, #4, #5, #8, and #9 are also on this `main`. They are CodeQL remediation, review and CI evidence, a dependency update, ENG-006 post-merge verification, and merge-evidence identity. ENG-001 through ENG-006 are recorded complete in revision 3 against older commits. This pass did not re-run them. Their acceptance text stays binding. ENG-006’s live independent review stays NOT RUN. D12 records that independent review is required; it does not supply the review.
 
@@ -101,29 +102,33 @@ NEXUS and AEON-IQ integration has not started. The recommendation’s 192 NEXUS 
 
 ### Hosted checks
 
-On current `main` `c6072deed1bb73c2ed6b89830ead23fe31f14777`, post-merge run `38261032152` succeeded. Compare merged code with pull request evidence succeeded. Secret scan succeeded. Canonical local verification succeeded. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
+On current `main` `83626cd48a0f98d0afd7bc79e38185b4a2acb768`, post-merge run `38267672705` succeeded. Compare merged code with pull request evidence succeeded. Secret scan succeeded. Canonical local verification succeeded. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
 
 The job “Confirm product build and blocked gates” was skipped because full verification ran. In `.github/workflows/main-verification.yml` that job runs only when the evidence decision is `reuse`. When the decision is not reuse, the workflow skips it and calls the full PR workflow instead. The skip is the designed branch, not a missing check.
 
-The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. The following step requires qualification enforcement and release enforcement to exit 1. Both of those ran and passed inside the canonical job on `c6072dee`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
+The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. The following step requires qualification enforcement and release enforcement to exit 1. That gate-confirmation step passed inside the canonical job on `83626cd`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
 
-The same designed skip appears on earlier merges, including pull request #15 run `38203399745` and `21df0150` run `38220893744`. This revision read the job conclusions on `c6072dee`.
+The same designed skip appears on earlier merges, including pull request #15 run `38203399745`, `21df0150` run `38220893744`, and pull request #19 run `38261032152`. This revision read the job conclusions on `83626cd`.
 
-Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`. Pull request #19 merged after its required checks. The main evidence for this snapshot is run `38261032152`.
+Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`. Pull request #19 merged after its required checks. The main evidence for this snapshot is run `38267672705`.
 
 The tracked qualification file on this commit still says overall BLOCKED, scheduler HELD, and canary NO-GO. The release file still says production is not ready. A passing check that those commands exit 1 is evidence that the ledgers stayed blocked. It is not a promotion.
 
-A private local canonical run on an earlier commit stays outside Git. It is not evidence for `c6072dee` and does not move a live gate.
+A private local canonical run on an earlier commit stays outside Git. It is not evidence for `83626cd` and does not move a live gate.
 
 ## Dependency order and task selection
 
-Pull request #19 merged the ENG-026 work-admission slice, and only the behavior
-that pull request demonstrated. The next product priority is the ENG-011
-tool-manifest proposal, not implementation of that binding. This order is a
-priority guide, not authorization to code every row. A task is ready only when
-its required **slices** are verified on current main, its design is accepted,
-and its owner gates are satisfied. If a row is held, report it; independent
-ready work may be proposed without skipping requirements.
+Pull request #20 recorded D05–D12 at `83626cd`. Pull request #19 remains the
+ENG-026 work-admission slice, and only the behavior that pull request
+demonstrated. The ENG-011 tool-manifest recommendation is
+[ENG-011-TOOL-MANIFEST-PROPOSAL.md](ENG-011-TOOL-MANIFEST-PROPOSAL.md). It is
+waiting for review. It is not an owner approval and it does not implement a
+binding. Pull request #14 remains context and cognition binding and contract
+extension v3. This order is a priority guide, not authorization to code every
+row. A task is ready only when its required **slices** are verified on current
+main, its design is accepted, and its owner gates are satisfied. If a row is
+held, report it; independent ready work may be proposed without skipping
+requirements.
 
 Do not require completion of an entire umbrella task when a named local slice is
 the prerequisite. Do not use a local slice to close its live/managed/retention half.
@@ -133,7 +138,7 @@ The individual catalog below retains the full acceptance obligations.
 |---|---|---|---|
 | 0 | Publish plan, starting point and decision record | Owner review of this focused documentation PR | No product implementation |
 | 1 | ENG-026 work-admission slice, merged in #19 | Merged ENG-007 records and ENG-012 notice foundation | Merged only for the admission behavior pull request #19 demonstrated. Later project-command behavior and live gates stay open |
-| 2 | ENG-011 tool-manifest proposal, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Next product priority is the proposal, not implementation. Do not label v3 context/cognition binding a tool manifest |
+| 2 | ENG-011 tool-manifest recommendation, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Recommendation drafted and waiting for review. Implementation waits for that review. Pull request #14 is context and cognition binding and contract extension v3 |
 | 3 | ENG-013 NEXUS adapter, then ENG-014 boundary tests | ENG-006 and the required ENG-011 bindings/interfaces; ENG-008 existing v1 safeguards | D05 if copying/packaging donor source; no production qualification from donor tests |
 | 4 | Separate application workspace | ENG-014 credential boundary and runtime interfaces | Exec/filesystem/test isolation is distinct from NEXUS WASM; no secrets or unapproved network |
 | 5 | ENG-020 fuller context admission, then ENG-019 restricted AEON interface, then ENG-021 recall/extraction | ENG-007/012 foundations; interfaces for ENG-019; ENG-013 plus ENG-019/020 for ENG-021 | D06 for live identity and D05 for donor copying; deterministic local tests do not close live gates |
@@ -214,7 +219,7 @@ Requirement: real human and workload identity seams. Acceptance: local wrong-sub
 
 ### ENG-011
 
-Requirement: versioned tool, model, and context manifests. Acceptance: tool, model, or context drift denies execution when the approval binding cares. An index rebuild cannot create authority. Dependencies: ENG-007 and ENG-009. Status: partial. Pull request #14 merged context/cognition binding and contract extension v3; it did not add a tool-manifest table or complete the tool-manifest acceptance. An explicit cognition revision of zero is rejected. Context is still not authority. Owner gate: D02 and D03, in the revision 3 scopes.
+Requirement: versioned tool, model, and context manifests. Acceptance: tool, model, or context drift denies execution when the approval binding cares. An index rebuild cannot create authority. Dependencies: ENG-007 and ENG-009. Status: partial. Pull request #14 merged context and cognition binding and contract extension v3. That pull request has no tool-manifest table and does not complete the tool-manifest acceptance. An explicit cognition revision of zero is rejected. Context is still not authority. The tool-manifest recommendation is [ENG-011-TOOL-MANIFEST-PROPOSAL.md](ENG-011-TOOL-MANIFEST-PROPOSAL.md). It is waiting for review. This documentation change does not implement it and does not approve it. Owner gate: D02 and D03, in the revision 3 scopes.
 
 ### ENG-012
 
@@ -393,6 +398,8 @@ Requirement: one recoverable release manifest. Acceptance: a clean checkout repr
    them against merged code. Current main must still be fetched before each task.
 3. ENG-009, ENG-011 and ENG-012 are partial umbrella tasks. A merged scoped PR does
    not complete multi-Computer support, tool manifests or all future event kinds.
+   The tool-manifest recommendation is a document. Merging it does not complete
+   ENG-011.
 4. The interface's gated-memory and shared-writable-Computer restrictions remain.
    D01 does not turn on a live engine or remove them. Propose a versioned amendment
    if a later design conflicts; never silently weaken a frozen safety contract.
