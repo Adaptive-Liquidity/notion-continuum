@@ -17,14 +17,17 @@ ALTER TABLE ct.tasks
 CREATE OR REPLACE FUNCTION ct.guard_task() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN
  IF ROW(NEW.tenant,NEW.id,NEW.principal,NEW.objective,NEW.plan_version,NEW.deadline,NEW.created_by,NEW.organization,NEW.mandate,NEW.mandate_version) IS DISTINCT FROM ROW(OLD.tenant,OLD.id,OLD.principal,OLD.objective,OLD.plan_version,OLD.deadline,OLD.created_by,OLD.organization,OLD.mandate,OLD.mandate_version) OR (OLD.status='CANCELLED' AND NEW.status<>'CANCELLED') THEN RAISE EXCEPTION 'immutable task intent/cancellation';END IF;
  IF NEW.status<>OLD.status AND NEW.revision<>OLD.revision+1 THEN RAISE EXCEPTION 'task CAS';END IF;RETURN NEW;END$$;
-CREATE FUNCTION ct.admit_task_mandate() RETURNS trigger LANGUAGE plpgsql AS $$DECLARE v bigint; active boolean; BEGIN
+CREATE FUNCTION ct.admit_task_mandate() RETURNS trigger LANGUAGE plpgsql AS $$DECLARE v bigint; active boolean; member text; BEGIN
  IF NEW.organization IS NULL OR NEW.mandate IS NULL OR NEW.mandate_version IS NULL THEN RAISE EXCEPTION 'task mandate required'; END IF;
- SELECT current_version INTO v FROM ct.mandates WHERE tenant=NEW.tenant AND organization=NEW.organization AND id=NEW.mandate;
+ -- Same order as product admission: principal, mandate, then VERA membership.
+ -- FOR SHARE conflicts with a principal update, a mandate update, and a membership delete.
+ SELECT p.active INTO active FROM ct.principals p WHERE p.tenant=NEW.tenant AND p.id=NEW.principal FOR SHARE;
+ IF active IS DISTINCT FROM true THEN RAISE EXCEPTION 'inactive principal'; END IF;
+ SELECT ct.share_mandate(NEW.tenant, NEW.organization, NEW.mandate) INTO v;
  IF v IS NULL OR v<>NEW.mandate_version THEN RAISE EXCEPTION 'mandate is not current'; END IF;
  IF NOT EXISTS(SELECT 1 FROM ct.mandate_versions WHERE tenant=NEW.tenant AND organization=NEW.organization AND mandate=NEW.mandate AND version=NEW.mandate_version) THEN RAISE EXCEPTION 'mandate version missing'; END IF;
- SELECT p.active INTO active FROM ct.principals p WHERE p.tenant=NEW.tenant AND p.id=NEW.principal;
- IF active IS DISTINCT FROM true THEN RAISE EXCEPTION 'inactive principal'; END IF;
- IF NOT EXISTS(SELECT 1 FROM ct.memberships m WHERE m.tenant=NEW.tenant AND m.organization=NEW.organization AND m.subject_kind='vera' AND m.subject_id=NEW.principal) THEN RAISE EXCEPTION 'vera membership required'; END IF;
+ SELECT ct.share_vera_membership(NEW.tenant, NEW.organization, NEW.principal) INTO member;
+ IF member IS NULL THEN RAISE EXCEPTION 'vera membership required'; END IF;
  RETURN NEW;END$$;
 CREATE TRIGGER task_mandate_admission BEFORE INSERT ON ct.tasks FOR EACH ROW EXECUTE FUNCTION ct.admit_task_mandate();
 DO $$DECLARE t text; BEGIN FOREACH t IN ARRAY ARRAY['organizations','memberships','mandates','mandate_versions'] LOOP

@@ -427,6 +427,125 @@ describe('task mandate admission', { concurrency: 1 }, () => {
     assert.deepEqual(await effects(), beforeEffects);
   });
 
+  test('a direct insert cannot commit a mandate that advanced', async () => {
+    const beforeEffects = await effects();
+    const ownerId = f.prefix + '-owner-a';
+    await tx(auth, (c) =>
+      mandates.record(
+        c,
+        'a',
+        ownerId,
+        f.admission.a.organization,
+        'direct-lock-mandate',
+        'Direct',
+        'Version one.',
+        0,
+      ),
+    );
+    const holder = await admin.connect();
+    const product = await f.productDb.connect();
+    let pending: Promise<unknown> = Promise.resolve();
+    try {
+      await holder.query('BEGIN');
+      const locked = (
+        await holder.query(
+          'SELECT revision FROM ct.mandates WHERE tenant=$1 AND organization=$2 AND id=$3 FOR UPDATE',
+          ['a', f.admission.a.organization, 'direct-lock-mandate'],
+        )
+      ).rows[0];
+      await product.query('BEGIN');
+      pending = product.query(
+        "INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) VALUES('a','direct-lock-task',$1,'Direct insert waits',now()+interval '1 hour',$2,$3,'direct-lock-mandate',1)",
+        [f.principal, ownerId, f.admission.a.organization],
+      );
+      await waitForLock('direct-lock-task');
+      await mandates.record(
+        holder,
+        'a',
+        ownerId,
+        f.admission.a.organization,
+        'direct-lock-mandate',
+        'Direct',
+        'Version two.',
+        Number(locked.revision),
+      );
+      await holder.query('COMMIT');
+      await assert.rejects(pending, /mandate is not current/);
+      assert.equal(await tasks('direct-lock-task'), 0);
+    } finally {
+      await product.query('ROLLBACK').catch(() => undefined);
+      await holder.query('ROLLBACK').catch(() => undefined);
+      product.release();
+      holder.release();
+      await pending.catch(() => undefined);
+    }
+    const membership = Number(
+      (
+        await admin.query(
+          "SELECT revision FROM ct.memberships WHERE tenant='a' AND organization=$1 AND subject_kind='vera' AND subject_id=$2",
+          [f.admission.a.organization, f.principal],
+        )
+      ).rows[0].revision,
+    );
+    const gate = await f.productDb.connect();
+    const remover = await auth.connect();
+    let inserted: Promise<unknown> = Promise.resolve();
+    let removing: Promise<unknown> = Promise.resolve();
+    try {
+      await gate.query('BEGIN');
+      inserted = gate.query(
+        "INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) VALUES('a','direct-member-task',$1,'Direct insert holds membership',now()+interval '1 hour',$2,$3,$4,$5)",
+        [
+          f.principal,
+          ownerId,
+          f.admission.a.organization,
+          f.admission.a.mandate,
+          f.admission.a.mandateVersion,
+        ],
+      );
+      await inserted;
+      removing = (async () => {
+        await remover.query('BEGIN');
+        const removed = await organizations.removeMembership(
+          remover,
+          'a',
+          f.admission.a.organization,
+          'vera',
+          f.principal,
+          membership,
+        );
+        await remover.query('COMMIT');
+        return removed;
+      })();
+      await waitForLock('ct.memberships');
+      await gate.query('COMMIT');
+      assert.equal(((await removing) as { removed: boolean }).removed, true);
+      assert.equal(
+        Number((await taskRow('direct-member-task')).mandate_version),
+        f.admission.a.mandateVersion,
+      );
+    } finally {
+      await gate.query('ROLLBACK').catch(() => undefined);
+      await remover.query('ROLLBACK').catch(() => undefined);
+      gate.release();
+      remover.release();
+      await inserted.catch(() => undefined);
+      await removing.catch(() => undefined);
+    }
+    await tx(auth, (c) =>
+      organizations.addMembership(
+        c,
+        'a',
+        f.admission.a.organization,
+        'vera',
+        f.principal,
+        'steward',
+        false,
+      ),
+    );
+    assert.deepEqual(await effects(), beforeEffects);
+  });
+
   test('an identical stored request is reused after the mandate advances', async () => {
     const due = deadline();
     const worker = await f.actor('machine');
