@@ -1,7 +1,8 @@
 # Owner decision record
 
 Recorded for the current roadmap on 2026-10-12. This document records the owner's
-existing scope; it does not approve implementation proposals or deployment.
+existing scope. It does not approve deployment, donor copying, spending, or live
+gates. A later section records only a scope the owner has explicitly accepted.
 
 ## D01 — approved architecture, integration still unqualified
 
@@ -56,13 +57,36 @@ Effect Controller separately enforces consequential actions. No competing govern
 database or second primary interface. A role, membership or mandate is not an effect
 grant or approval.
 
+## ENG-026 — accepted for this task only, 2026-10-12
+
+Cael approved these six choices for ENG-026 only. This is not an approval of
+D05–D12, donor copying, spending, merge, deploy, or live gates. A mandate does
+not create a grant, an approval, or permission to send. Creating a task does not
+start a workflow or send an external action.
+
+1. Every product task-creation path must supply a current mandate. The human
+   command is not a special case, and the machine API is not exempt.
+2. Eligibility is an active VERA principal who has a `vera` membership in the
+   mandate's organization. An active principal with no membership is not enough.
+   A human membership is not enough.
+3. Store the organization, the mandate, and the accepted version on the new task.
+4. Historical tasks stay unbound and cannot be backfilled.
+5. The task and the human command stay in their own records. They are not stored
+   through the ENG-012 tenant-notice path.
+6. An authenticated, authorized repeat of an identical stored request returns the
+   existing result and creates no new work even if the mandate has since advanced.
+   A changed binding conflicts.
+
+Affected task: ENG-026.
+
 ## Open decisions
 
-D05–D12 remain unapproved in the scopes cataloged in CURRENT-PLAN.md. ENG-026's
-mandate/eligibility/notice choices, the fixture-versus-live model milestone and the
-future live-database procedure also remain open. A documentation merge does not
-settle them. Record later owner decisions here with date, exact scope, evidence
-reference and affected tasks. A newer file or an agent recommendation is not approval.
+D05–D12 remain unapproved in the scopes cataloged in CURRENT-PLAN.md. The
+fixture-versus-live model milestone and the future live-database procedure also
+remain open. ENG-026's six choices above are limited to that task. A documentation
+merge does not settle the remaining decisions. Record later owner decisions here
+with date, exact scope, evidence reference and affected tasks. A newer file or an
+agent recommendation is not approval.
 
 Production BLOCKED; scheduler HELD; canary NO-GO. Merges, releases and live gate
 activation require their own authorization and evidence.

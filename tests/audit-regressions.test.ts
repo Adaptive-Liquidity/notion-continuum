@@ -236,6 +236,7 @@ test('AUDIT-PROVIDER: product proposals use the canonical public GitHub identifi
       principal: f.principal,
       objective: 'Read the fixed public immutable commit',
       deadline,
+      ...f.admission.a,
     });
     const input = {
       id: 'audit-public-read-operation',
@@ -294,7 +295,7 @@ test('AUDIT-TENANT-FK: tenant-local creator writes are constrained', async () =>
     let code = '';
     try {
       await f.productDb.query(
-        'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by) VALUES($1,$2,$3,$4,$5,$6)',
+        'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
         [
           'a',
           'audit-cross-tenant-creator',
@@ -302,6 +303,9 @@ test('AUDIT-TENANT-FK: tenant-local creator writes are constrained', async () =>
           'Owned local FK integrity canary',
           new Date(Date.now() + 3600000),
           f.prefix + '-owner-b',
+          f.admission.a.organization,
+          f.admission.a.mandate,
+          f.admission.a.mandateVersion,
         ],
       );
     } catch (e) {
@@ -309,7 +313,7 @@ test('AUDIT-TENANT-FK: tenant-local creator writes are constrained', async () =>
     }
     assert.equal(code, '23503');
     await f.productDb.query(
-      'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by) VALUES($1,$2,$3,$4,$5,$6)',
+      'INSERT INTO ct.tasks(tenant,id,principal,objective,deadline,created_by,organization,mandate,mandate_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
       [
         'a',
         'audit-local-creator',
@@ -317,6 +321,9 @@ test('AUDIT-TENANT-FK: tenant-local creator writes are constrained', async () =>
         'Owned local FK integrity canary',
         new Date(Date.now() + 3600000),
         f.prefix + '-owner-a',
+        f.admission.a.organization,
+        f.admission.a.mandate,
+        f.admission.a.mandateVersion,
       ],
     );
   } finally {

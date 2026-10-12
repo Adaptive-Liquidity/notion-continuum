@@ -7,6 +7,36 @@ import {
   type ConsoleItem,
 } from '@continuum/contracts';
 import { read } from '@/lib/api';
+function mandateChoices(items: ConsoleItem[], organization: string) {
+  const org = items.find((item) => item.id === organization);
+  const raw = org?.fields.mandates;
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((entry) => {
+    if (!entry || typeof entry !== 'object') return [];
+    const row = entry as { id?: unknown; version?: unknown; title?: unknown };
+    const version = Number(row.version);
+    if (
+      typeof row.id !== 'string' ||
+      !Number.isSafeInteger(version) ||
+      version < 1
+    )
+      return [];
+    return [
+      {
+        id: row.id,
+        version,
+        title: typeof row.title === 'string' ? row.title : row.id,
+      },
+    ];
+  });
+}
+function firstBinding(items: ConsoleItem[]) {
+  for (const item of items) {
+    const choice = mandateChoices(items, item.id)[0];
+    if (choice) return { organization: item.id, mandate: choice.id };
+  }
+  return null;
+}
 export function CreationForm({
   kind,
   canAct,
@@ -23,7 +53,10 @@ export function CreationForm({
   serverTime: string;
 }) {
   const [agents, setAgents] = useState<ConsoleItem[]>([]),
+    [governance, setGovernance] = useState<ConsoleItem[]>([]),
     [principal, setPrincipal] = useState(''),
+    [organization, setOrganization] = useState(''),
+    [mandate, setMandate] = useState(''),
     [objective, setObjective] = useState(''),
     [action, setAction] = useState<'write' | 'readCommit'>('write');
   const [expiry, setExpiry] = useState(
@@ -32,6 +65,8 @@ export function CreationForm({
     [max, setMax] = useState(1),
     [budget, setBudget] = useState(5),
     [error, setError] = useState('');
+  const choices = mandateChoices(governance, organization);
+  const selected = choices.find((choice) => choice.id === mandate);
   useEffect(() => {
     read('agents')
       .then((r) => {
@@ -48,11 +83,24 @@ export function CreationForm({
       })
       .catch(() => setError('Agent registry unavailable.'));
   }, []);
+  useEffect(() => {
+    if (kind !== 'task') return;
+    read('governance')
+      .then((r) => {
+        setGovernance(r.items);
+        const binding = firstBinding(r.items);
+        if (!binding) return;
+        setOrganization(binding.organization);
+        setMandate(binding.mandate);
+      })
+      .catch(() => setError('Governance registry unavailable.'));
+  }, [kind]);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!canAct || busy) return;
     const time = new Date(expiry + 'Z').toISOString(),
       id = (kind === 'task' ? 'task-' : 'grant-') + crypto.randomUUID();
+    if (kind === 'task' && !selected) return;
     await onCommand({
       schema_version: 1,
       idempotency_key: crypto.randomUUID(),
@@ -61,7 +109,14 @@ export function CreationForm({
       expected_version: 0,
       input:
         kind === 'task'
-          ? { principal, objective, deadline: time }
+          ? {
+              principal,
+              objective,
+              deadline: time,
+              organization,
+              mandate: selected!.id,
+              mandateVersion: selected!.version,
+            }
           : {
               principal,
               action,
@@ -81,7 +136,7 @@ export function CreationForm({
       </h2>
       <p className="muted">
         {kind === 'task'
-          ? 'This records work only. No operation, workflow or external action is started.'
+          ? 'This records work only. No operation, workflow or external action is started. A mandate does not authorize an effect.'
           : 'A grant does not assign a worker, approve a proposal or dispatch an effect.'}
       </p>
       <label>
@@ -99,16 +154,50 @@ export function CreationForm({
         </select>
       </label>
       {kind === 'task' ? (
-        <label>
-          Work objective
-          <textarea
-            rows={5}
-            value={objective}
-            onChange={(e) => setObjective(e.target.value)}
-            maxLength={8000}
-            required
-          />
-        </label>
+        <>
+          <label>
+            Organization
+            <select
+              value={organization}
+              onChange={(e) => {
+                const next = e.target.value;
+                setOrganization(next);
+                setMandate(mandateChoices(governance, next)[0]?.id ?? '');
+              }}
+              required
+            >
+              {governance.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Current mandate
+            <select
+              value={mandate}
+              onChange={(e) => setMandate(e.target.value)}
+              required
+            >
+              {choices.map((choice) => (
+                <option key={choice.id} value={choice.id}>
+                  {choice.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Work objective
+            <textarea
+              rows={5}
+              value={objective}
+              onChange={(e) => setObjective(e.target.value)}
+              maxLength={8000}
+              required
+            />
+          </label>
+        </>
       ) : (
         <>
           <label>
@@ -168,7 +257,9 @@ export function CreationForm({
         <button
           className="primary"
           type="submit"
-          disabled={!canAct || busy || !principal}
+          disabled={
+            !canAct || busy || !principal || (kind === 'task' && !selected)
+          }
         >
           {kind === 'task' ? 'Record task' : 'Create bounded grant'}
         </button>

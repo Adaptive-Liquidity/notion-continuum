@@ -139,6 +139,9 @@ export const CommandInputs = {
       principal: Identifier,
       objective: z.string().min(1).max(8000),
       deadline: z.string().datetime(),
+      organization: Identifier,
+      mandate: Identifier,
+      mandateVersion: z.number().int().safe().gte(1),
     })
     .strict(),
   approve: z

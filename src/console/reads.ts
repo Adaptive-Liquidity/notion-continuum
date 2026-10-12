@@ -532,6 +532,10 @@ export class ConsoleReads {
           })),
           businessGoal: 'Not automatically proven by effects',
           workflow: 'No workflow admission inferred from task creation',
+          organization: x.organization ?? null,
+          mandate: x.mandate ?? null,
+          acceptedMandateVersion:
+            x.mandate_version == null ? null : Number(x.mandate_version),
         },
       );
     }

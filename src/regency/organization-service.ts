@@ -116,6 +116,18 @@ export class OrganizationService {
   ) {
     identifier(organization);
     identifier(subjectId);
+    await c.query(
+      'SELECT id FROM ct.organizations WHERE tenant=$1 AND id=$2 FOR UPDATE',
+      [tenant, organization],
+    );
+    const locked = (
+      await c.query(
+        'SELECT revision FROM ct.memberships WHERE tenant=$1 AND organization=$2 AND subject_kind=$3 AND subject_id=$4 FOR UPDATE',
+        [tenant, organization, subjectKind, subjectId],
+      )
+    ).rows[0];
+    if (!locked || Number(locked.revision) !== expected)
+      throw Error('object version conflict');
     const row = (
       await c.query(
         'DELETE FROM ct.memberships WHERE tenant=$1 AND organization=$2 AND subject_kind=$3 AND subject_id=$4 AND revision=$5 RETURNING subject_id',

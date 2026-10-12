@@ -111,6 +111,7 @@ test('A06 concurrent same-key task creation has one atomic result; changed body 
       principal: f.principal,
       objective: 'Recorded task, not executed work',
       deadline: new Date(Date.now() + 3600000).toISOString(),
+      ...f.admission.a,
     });
   const results = await Promise.all([
     commands.execute(owner, body),
@@ -665,6 +666,7 @@ test('Stage commands remain qualification-pending, even with a signed fresh owne
         principal: f.principal,
         objective: 'not a live effect',
         deadline: new Date(Date.now() + 10000).toISOString(),
+        ...f.admission.a,
       }),
     ),
   );

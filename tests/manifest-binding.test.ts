@@ -121,6 +121,7 @@ async function publish(
     principal,
     objective: 'Manifest ' + id,
     deadline,
+    ...f.admission.a,
   });
   const x = {
     id,
@@ -583,6 +584,7 @@ test('privacy and quarantine bind metadata without admitting the payload', async
       principal: f.principal,
       objective: 'Caller cannot choose the context version',
       deadline: quarantined.x.deadline,
+      ...f.admission.a,
     });
     const forced = await f.product.propose(machine, {
       ...quarantined.x,
@@ -696,6 +698,7 @@ test('privacy and quarantine bind metadata without admitting the payload', async
         principal: f.principal,
         objective: 'HTTP context binding',
         deadline,
+        ...f.admission.a,
       });
       const response = await fetch(
         'http://127.0.0.1:' +

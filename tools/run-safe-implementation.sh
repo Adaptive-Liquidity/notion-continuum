@@ -40,6 +40,7 @@ run CONTINUITY dist/tests/continuity.test.js
 run PLACEMENT-BINDING dist/tests/placement-binding.test.js
 run MANIFEST-BINDING dist/tests/manifest-binding.test.js
 run EVENT-ENVELOPE dist/tests/event-envelope.test.js
+run TASK-ADMISSION dist/tests/task-admission.test.js
 run FONT-NOTICES dist/tests/font-notices.test.js
 run REVIEW-REMEDIATION dist/tests/review-remediation.test.js
 run DEPENDENCY-OVERRIDES dist/tests/dependency-overrides.test.js

@@ -64,7 +64,7 @@ deploy, copy donor trees, provision resources, or relax frozen contracts.
 
 These product choices are also open:
 
-1. ENG-026 binding. Revision 3 requires an eligible VERA and a current mandate before work admission. It does not say whether every existing task-creation caller must supply a mandate, or only the human command. It does not say whether eligibility is the active principal alone or also an organization membership. It does not say whether the command must be stored through the ENG-012 notice path. Existing fixtures create tasks without a mandate. The phase text says ENG-026 stays on today’s task model.
+1. ENG-026 binding. Settled for ENG-026 only on 2026-10-12 in OWNER-DECISIONS.md. Every product task-creation path supplies a current mandate, eligibility is an active VERA member of that organization, the task stores the accepted version, historical tasks stay unbound, task and command records stay out of the ENG-012 notice path, and an identical authorized repeat returns the stored result. That decision does not approve D05–D12, donor copying, spending, merge, deploy, or live gates.
 2. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
 3. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
 4. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
@@ -108,8 +108,9 @@ A private local canonical run on this same commit is recorded in the private env
 
 ## Dependency order and task selection
 
-After publishing this plan, the next product work is the ENG-026 proposal. Its
-three design choices remain open. This order is a priority guide, not authorization
+After publishing this plan, the next product work is the ENG-026 work-admission
+slice. Its six choices are recorded in OWNER-DECISIONS.md for that task only.
+This order is a priority guide, not authorization
 to code every row. A task is ready only when its required **slices** are verified on
 current main, its design is accepted, and its owner gates are satisfied. If a row is
 held, report it; independent ready work may be proposed without skipping requirements.
@@ -121,7 +122,7 @@ The individual catalog below retains the full acceptance obligations.
 | Priority | Work | Prerequisites | Remaining boundary |
 |---|---|---|---|
 | 0 | Publish plan, starting point and decision record | Owner review of this focused documentation PR | No product implementation |
-| 1 | ENG-026 proposal, then accepted work-admission slice | Merged ENG-007 records and ENG-012 notice foundation | Mandate enforcement, eligibility and notice-path choices remain open |
+| 1 | ENG-026 accepted work-admission slice | Merged ENG-007 records and ENG-012 notice foundation | Six ENG-026 choices are recorded for that task only. D05–D12 stay open |
 | 2 | ENG-011 remaining tool-manifest binding, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Scoped proposals first; do not label v3 context/cognition binding a tool manifest |
 | 3 | ENG-013 NEXUS adapter, then ENG-014 boundary tests | ENG-006 and the required ENG-011 bindings/interfaces; ENG-008 existing v1 safeguards | D05 if copying/packaging donor source; no production qualification from donor tests |
 | 4 | Separate application workspace | ENG-014 credential boundary and runtime interfaces | Exec/filesystem/test isolation is distinct from NEXUS WASM; no secrets or unapproved network |
@@ -263,7 +264,7 @@ Requirement: semantic truth separate from retrieval. Acceptance: false or uncert
 
 ### ENG-026
 
-Requirement: project and task commands that do not send effects. Acceptance: duplicate commands are looked up. Creating a task does not start a workflow or send. Admission needs an eligible VERA and a current mandate. Dependencies: ENG-007 and ENG-012. Status: not started as this admission rule. Duplicate command lookup and a non-effect task create already exist. The mandate check does not. There is no separate ENG-026 proposal. Owner gate: D02, D03, and D04, in the revision 3 scopes. The three binding choices in the decision section are still open.
+Requirement: project and task commands that do not send effects. Acceptance: duplicate commands are looked up. Creating a task does not start a workflow or send. Admission needs an eligible VERA and a current mandate. Dependencies: ENG-007 and ENG-012. Status: the work-admission slice is authorized for ENG-026 only by the 2026-10-12 record in OWNER-DECISIONS.md. Duplicate command lookup and a non-effect task create already exist. This slice adds the mandate check. It does not close later project-command work, and it is not a merge or a live-gate change. Owner gate: D02, D03, and D04, in the revision 3 scopes.
 
 ### ENG-027
 
