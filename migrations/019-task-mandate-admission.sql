@@ -30,6 +30,28 @@ CREATE TRIGGER task_mandate_admission BEFORE INSERT ON ct.tasks FOR EACH ROW EXE
 DO $$DECLARE t text; BEGIN FOREACH t IN ARRAY ARRAY['organizations','memberships','mandates','mandate_versions'] LOOP
  EXECUTE format('CREATE POLICY regency_product_read ON ct.%I FOR SELECT TO ct_product_api USING(true)', t);
 END LOOP;END$$;
+CREATE FUNCTION ct.share_mandate(p_tenant text, p_organization text, p_id text)
+RETURNS bigint LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $$
+DECLARE v bigint;
+BEGIN
+  SELECT m.current_version INTO v FROM ct.mandates m
+  WHERE m.tenant = p_tenant AND m.organization = p_organization AND m.id = p_id
+  FOR KEY SHARE;
+  RETURN v;
+END $$;
+CREATE FUNCTION ct.share_vera_membership(p_tenant text, p_organization text, p_subject text)
+RETURNS text LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $$
+DECLARE s text;
+BEGIN
+  SELECT m.subject_id INTO s FROM ct.memberships m
+  WHERE m.tenant = p_tenant AND m.organization = p_organization
+    AND m.subject_kind = 'vera' AND m.subject_id = p_subject
+  FOR KEY SHARE;
+  RETURN s;
+END $$;
 RESET ROLE;
+REVOKE ALL ON FUNCTION ct.share_mandate(text, text, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION ct.share_vera_membership(text, text, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION ct.share_mandate(text, text, text), ct.share_vera_membership(text, text, text) TO ct_product_api, ct_authority_api;
 GRANT SELECT ON ct.organizations,ct.memberships,ct.mandates,ct.mandate_versions TO ct_product_api;
 COMMIT;

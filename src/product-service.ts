@@ -100,9 +100,12 @@ export class ProductService {
         if (!same(existing)) throw Error('task identity conflict');
         return reused(existing);
       }
+      // KEY SHARE conflicts with the mandate edit's FOR UPDATE and with
+      // membership DELETE. The product role has SELECT only, so the lock is
+      // taken by ct.share_mandate rather than a direct locking select.
       const mandate = (
         await c.query(
-          'SELECT current_version FROM ct.mandates WHERE tenant=$1 AND organization=$2 AND id=$3 FOR UPDATE',
+          'SELECT ct.share_mandate($1, $2, $3) AS current_version',
           [i.tenant, x.organization, x.mandate],
         )
       ).rows[0];
@@ -117,11 +120,11 @@ export class ProductService {
       if (!version) throw Error('current mandate required');
       const member = (
         await c.query(
-          "SELECT subject_id FROM ct.memberships WHERE tenant=$1 AND organization=$2 AND subject_kind='vera' AND subject_id=$3 FOR UPDATE",
+          'SELECT ct.share_vera_membership($1, $2, $3) AS subject_id',
           [i.tenant, x.organization, x.principal],
         )
       ).rows[0];
-      if (!member) throw Error('vera membership required');
+      if (!member?.subject_id) throw Error('vera membership required');
       const raced = (
         await c.query('SELECT * FROM ct.tasks WHERE tenant=$1 AND id=$2', [
           i.tenant,

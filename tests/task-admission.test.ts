@@ -585,7 +585,7 @@ describe('task mandate admission', { concurrency: 1 }, () => {
         mandate: 'race-mandate',
         mandateVersion: 1,
       });
-      await waitForLock('ct.mandates');
+      await waitForLock('share_mandate');
       await mandates.record(
         holder,
         'a',
