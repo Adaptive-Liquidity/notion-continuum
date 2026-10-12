@@ -139,6 +139,9 @@ jobs:
           test -x "$CHROMIUM_PATH"
           echo "CT_CHROMIUM_PATH=$CHROMIUM_PATH" >> "$GITHUB_ENV"
 
+      - name: Local launcher safety tests (no database mutation)
+        run: python3 -m unittest discover -s tools -p test_local_test.py
+
       - name: Format check
         run: npm run format:check
 
