@@ -37,3 +37,6 @@ if [ "$(psql -d ct_test -Atc "SELECT 1 FROM information_schema.columns WHERE tab
  psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/016-placement-generation.sql > .artifacts/implementation/MIGRATION-016-placement-generation.log 2>&1
 fi
 psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/017-context-cognition-binding.sql > .artifacts/implementation/MIGRATION-017-context-cognition-binding.log 2>&1
+if [ "$(psql -d ct_test -Atc "SELECT to_regclass('ct.notice_projection') IS NOT NULL")" != t ]; then
+ psql -v ON_ERROR_STOP=1 -d ct_test -f migrations/018-tenant-notice-projection.sql > .artifacts/implementation/MIGRATION-018-tenant-notice-projection.log 2>&1
+fi
