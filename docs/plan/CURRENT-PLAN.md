@@ -93,7 +93,7 @@ These product choices remain open:
 | #17 | `21df0150` | Local test launcher and run evidence | The launcher does not install runtimes or start a database |
 | #19 | `c6072dee` | ENG-026 work admission only. A new task names a current mandate and an active VERA with a `vera` membership in that organization. The task stores the organization, mandate, and accepted version. Historical tasks stay unbound. An identical authorized repeat returns the stored result, and a changed binding conflicts. Direct inserts share the same locks. Task and command records stay off the tenant-notice path. A mandate creates no grant, approval, workflow, or permission to send | Later ENG-026 project-command behavior. Live gates |
 
-Pull requests #3, #4, #5, #8, and #9 are also on this `main`. They are CodeQL remediation, review and CI evidence, a dependency update, ENG-006 post-merge verification, and merge-evidence identity. ENG-001 through ENG-006 are recorded complete in revision 3 against older commits. This pass did not re-run them. Their acceptance text stays binding. ENG-006’s live independent review stays NOT RUN until D12.
+Pull requests #3, #4, #5, #8, and #9 are also on this `main`. They are CodeQL remediation, review and CI evidence, a dependency update, ENG-006 post-merge verification, and merge-evidence identity. ENG-001 through ENG-006 are recorded complete in revision 3 against older commits. This pass did not re-run them. Their acceptance text stays binding. ENG-006’s live independent review stays NOT RUN. D12 records that independent review is required; it does not supply the review.
 
 Migrations on this `main` run from 001 through 019. Frozen M1 was not edited.
 
@@ -188,7 +188,7 @@ Requirement: review fixes for redaction, Runloop mapping, and locked installs. A
 
 ### ENG-006
 
-Requirement: the product build rejects fixture sign-in. Acceptance: no fixture route in the product artifact, and local suites at the repaired SHA. Dependencies: ENG-002 through ENG-005. Status: local evidence was recorded on `dc5f5b34`. The canonical job on `21df0150` ran the product-build isolation and fixture-boundary tests and passed. That is later local evidence for the build check. It does not close the live independent review. Owner gate: D12 for that live review, which stays NOT RUN.
+Requirement: the product build rejects fixture sign-in. Acceptance: no fixture route in the product artifact, and local suites at the repaired SHA. Dependencies: ENG-002 through ENG-005. Status: local evidence was recorded on `dc5f5b34`. The canonical job on `21df0150` ran the product-build isolation and fixture-boundary tests and passed. That is later local evidence for the build check. It does not close the live independent review. Owner gate: D12, recorded 2026-10-12, requires independent release review and qualification evidence before live deployment, shadow, or canary. That review stays NOT RUN, and those live actions still need separate authorization.
 
 ### ENG-007
 
@@ -206,11 +206,11 @@ Dependencies: ENG-007 for the phase that recorded the split. The future features
 
 ### ENG-009
 
-Requirement: a stable VERA id across model and Computer replacement, with separate epoch, enrollment version, and placement generation. Acceptance: replacement keeps the id. Suspended or retired principals get no new effects. A stale machine, principal, or placement rejects. Two Computers cannot reuse one placement grant. Dependencies: ENG-007. Status: partial. Pull request #13 merged the id and the counter split for one Computer. Suspend, retire, and a second Computer stayed out of that pull request. Phase A is only the identity and stale-worker slice. Owner gate: D03, in the revision 3 scope. That scope does not implement multi-Computer placement. D08 is not required for the local slice and is required before a managed host.
+Requirement: a stable VERA id across model and Computer replacement, with separate epoch, enrollment version, and placement generation. Acceptance: replacement keeps the id. Suspended or retired principals get no new effects. A stale machine, principal, or placement rejects. Two Computers cannot reuse one placement grant. Dependencies: ENG-007. Status: partial. Pull request #13 merged the id and the counter split for one Computer. Suspend, retire, and a second Computer stayed out of that pull request. Phase A is only the identity and stale-worker slice. Owner gate: D03, in the revision 3 scope. That scope does not implement multi-Computer placement. D08, recorded 2026-10-12, keeps development local and allows a costed hosting proposal. No purchase and no numeric recovery target are approved, so a managed host stays blocked. The local slice does not need that purchase.
 
 ### ENG-010
 
-Requirement: real human and workload identity seams. Acceptance: local wrong-subject, audience, expiry, replay, and tenant tests. An untrusted machine cannot enroll itself as owner. Dependencies: ENG-006. Status: not started as this task. Offline seams may be stubbed. Live sign-in stays NOT RUN. Owner gate: D06, still unapproved.
+Requirement: real human and workload identity seams. Acceptance: local wrong-subject, audience, expiry, replay, and tenant tests. An untrusted machine cannot enroll itself as owner. Dependencies: ENG-006. Status: not started as this task. Offline seams may be stubbed. Live sign-in stays NOT RUN. Owner gate: D06, recorded 2026-10-12, uses the existing WorkOS account for human sign-in and separately enrolled, short-lived workload credentials. Still missing: the WorkOS account settings and a secure way to supply credentials. Live sign-in stays blocked. Credentials stay out of chat and Git.
 
 ### ENG-011
 
@@ -222,7 +222,7 @@ Requirement: one tenant-qualified event envelope and rebuildable projections. Ac
 
 ### ENG-013
 
-Requirement: contained computation through a pinned runtime. Acceptance: denied module, path, fuel, memory, timeout, and fork. Rollback is local. A fake capsule is not provider success. A speculative branch does not send. Dependencies: ENG-006 and ENG-011. Status: not started. A fuel-meter unit test and the local UID test are evaluation evidence, not completion. The 192 donor tests are not this acceptance. Owner gate: D01 architecture approved; adapter design and acceptance remain separate. D05 if the change would copy donor source.
+Requirement: contained computation through a pinned runtime. Acceptance: denied module, path, fuel, memory, timeout, and fork. Rollback is local. A fake capsule is not provider success. A speculative branch does not send. Dependencies: ENG-006 and ENG-011. Status: not started. A fuel-meter unit test and the local UID test are evaluation evidence, not completion. The 192 donor tests are not this acceptance. Owner gate: D01 architecture approved; adapter design and acceptance remain separate. D05, recorded 2026-10-12, allows restricted, pinned reuse. Copying or distributing donor code still waits on licensing and provenance evidence. Visibility and the product license stay as they are.
 
 ### ENG-014
 
@@ -230,23 +230,23 @@ Requirement: the runtime cannot mint authority or read provider credentials. Acc
 
 ### ENG-015
 
-Requirement: a logical Computer distinct from placement, with fenced replacement and no automatic resume. Acceptance: kill and reconstruct keep the Computer and VERA id, hashes, and pending work. A stale host or snapshot does not become a sender. Dependencies: ENG-009 and ENG-014. Status: partial. Phase A and pull request #13 cover identity and a stale worker for one Computer. They do not add suspend, retire, a second Computer, or managed-host destruction. Owner gate: D03 for the identity split. D08 for managed-host destruction. Local lifecycle can proceed without D08.
+Requirement: a logical Computer distinct from placement, with fenced replacement and no automatic resume. Acceptance: kill and reconstruct keep the Computer and VERA id, hashes, and pending work. A stale host or snapshot does not become a sender. Dependencies: ENG-009 and ENG-014. Status: partial. Phase A and pull request #13 cover identity and a stale worker for one Computer. They do not add suspend, retire, a second Computer, or managed-host destruction. Owner gate: D03 for the identity split. D08, recorded 2026-10-12, keeps development local and allows a costed hosting proposal. Managed-host destruction stays blocked because no purchase and no numeric recovery target are approved. Local lifecycle can proceed without that purchase.
 
 ### ENG-016
 
-Requirement: human view and control leases. Acceptance: missing, expired, cross-tenant, stale-generation, and disconnect cases fail closed. Human input is not an autonomous effect. Dependencies: ENG-015. Status: design only. It is not a substitute for ENG-015. Owner gate: D08, unapproved.
+Requirement: human view and control leases. Acceptance: missing, expired, cross-tenant, stale-generation, and disconnect cases fail closed. Human input is not an autonomous effect. Dependencies: ENG-015. Status: design only. It is not a substitute for ENG-015. Owner gate: D08, recorded 2026-10-12, keeps development local and allows a costed hosting proposal. No purchase is approved, so managed control stays blocked. This design note is not that purchase.
 
 ### ENG-017
 
-Requirement: a credentialled provider manifest and read-only observation. Acceptance: lost ack, timeout, mismatch, partial result, and stale key stay UNKNOWN or single-send. Observation cannot dispatch. SSRF and credential forwarding reject. Dependencies: the staging sequence’s protected-provider gate. Status: not started. The public GitHub GET is not this action. Owner gate: D07, unapproved.
+Requirement: a credentialled provider manifest and read-only observation. Acceptance: lost ack, timeout, mismatch, partial result, and stale key stay UNKNOWN or single-send. Observation cannot dispatch. SSRF and credential forwarding reject. Dependencies: the staging sequence’s protected-provider gate. Status: not started. The public GitHub GET is not this action. Owner gate: D07, recorded 2026-10-12, is one controlled file write in a dedicated GitHub test repository, followed by authoritative read-back. Still missing: the repository name, scope, credentials, and an exact authorization for that write. The adapter can be built but not executed live.
 
 ### ENG-018
 
-Requirement: the controller keeps v1 bytes and current checks. Acceptance: crashes at admission, send, and verify. Revoke, expiry, context, and placement races do not admit stale work. One logical operation has at most one possible send. UNKNOWN cannot be hidden by a new id. Dependencies: ENG-003, ENG-008’s authorized safeguards, ENG-011, ENG-014, and ENG-017. Status: partial. Phase A covers UNKNOWN, read-back, and a stale generation on one fixture operation. It does not add an ActionBinding v2. The protected-provider half waits on ENG-017. Owner gate: D02 and D03 for the current checks. D07 for the protected-provider half.
+Requirement: the controller keeps v1 bytes and current checks. Acceptance: crashes at admission, send, and verify. Revoke, expiry, context, and placement races do not admit stale work. One logical operation has at most one possible send. UNKNOWN cannot be hidden by a new id. Dependencies: ENG-003, ENG-008’s authorized safeguards, ENG-011, ENG-014, and ENG-017. Status: partial. Phase A covers UNKNOWN, read-back, and a stale generation on one fixture operation. It does not add an ActionBinding v2. The protected-provider half waits on ENG-017. Owner gate: D02 and D03 for the current checks. D07, recorded 2026-10-12, allows that one file-write adapter to be built. The protected-provider half stays blocked until the named repository, scope, credentials, and exact write authorization exist. Live execution is not authorized.
 
 ### ENG-019
 
-Requirement: audit and adapt the pinned AEON-IQ lineage. Acceptance: no tenant selected by header alone. Credential scope and ACL on every exposed route. No product-config dev bypass. No implicit default tenant. Dependencies: ENG-006 and ENG-011. Status: not started. At pin `d5866e85`, route handlers were observed not to read the constructed credential scope. The 14 donor scope tests do not close this task. Close the gap through a restricted authenticated interface with proven enforcement. Do not expose the donor proxy/management server to workers or Focus Desk; a front door alone is not proof that unsafe routes are unreachable. The original plan’s sentence that this task can be skipped if it only restates D01 is not followed. The acceptance stays. Owner gate: D01 architecture approved; integration acceptance remains required. D06 for live identity. D05 if source would be copied.
+Requirement: audit and adapt the pinned AEON-IQ lineage. Acceptance: no tenant selected by header alone. Credential scope and ACL on every exposed route. No product-config dev bypass. No implicit default tenant. Dependencies: ENG-006 and ENG-011. Status: not started. At pin `d5866e85`, route handlers were observed not to read the constructed credential scope. The 14 donor scope tests do not close this task. Close the gap through a restricted authenticated interface with proven enforcement. Do not expose the donor proxy/management server to workers or Focus Desk; a front door alone is not proof that unsafe routes are unreachable. The original plan’s sentence that this task can be skipped if it only restates D01 is not followed. The acceptance stays. Owner gate: D01 architecture approved; integration acceptance remains required. D06, recorded 2026-10-12, names the existing WorkOS account and separate workload credentials; live identity stays blocked until account settings and a secure credential supply exist. D05, recorded 2026-10-12, allows restricted pinned reuse; copying source still waits on licensing and provenance evidence.
 
 ### ENG-020
 
@@ -258,7 +258,7 @@ Requirement: derived recall and extraction. Acceptance: two tenants with the sam
 
 ### ENG-022
 
-Requirement: a replaceable model gateway. Acceptance: malformed tool output, outage, truncation, and partial streams do not execute. A model swap keeps the principal and does not repeat an effect. Dependencies: ENG-010, ENG-011, and ENG-021. Status: not started. No hidden provider fallback. Owner gate: D06 and D10, both unapproved. See the open choice about a fixture gateway for the local milestone.
+Requirement: a replaceable model gateway. Acceptance: malformed tool output, outage, truncation, and partial streams do not execute. A model swap keeps the principal and does not repeat an effect. Dependencies: ENG-010, ENG-011, and ENG-021. Status: not started. No hidden provider fallback. Owner gate: D06 and D10, both recorded 2026-10-12. D06 still lacks WorkOS account settings and a secure credential supply, so the live gateway stays blocked. D10 requires a real model for the first autonomy milestone and says fixtures prove plumbing only; broader numerical targets are still only a required proposal. Whether a fixture gateway is enough for the local milestone remains open.
 
 ### ENG-023
 
@@ -266,11 +266,11 @@ Requirement: typed plans. Acceptance: forged tenant, action, approval, completio
 
 ### ENG-024
 
-Requirement: durable artifacts and retention. Acceptance: corrupt, missing, traversal, cross-tenant, duplicate, and quota failures reject. Erasure stops retrieval and derived resurrection. Legal holds stay explicit. Dependencies: ENG-020 and ENG-015. Status: partial for containment. Object-store digest tests cover today’s containment. The integrity path the milestone needs is the digest the checker rereads. Retention policy is still required and is not started. Owner gate: D11 for retention policy, unapproved. The milestone may use today’s quarantine and digests. It may not invent a retention policy.
+Requirement: durable artifacts and retention. Acceptance: corrupt, missing, traversal, cross-tenant, duplicate, and quota failures reject. Erasure stops retrieval and derived resurrection. Legal holds stay explicit. Dependencies: ENG-020 and ENG-015. Status: partial for containment. Object-store digest tests cover today’s containment. The integrity path the milestone needs is the digest the checker rereads. Retention policy is still required and is not started. Owner gate: D11, recorded 2026-10-12, starts with the isolated owner pilot and keeps Stripe disabled. Retention, deletion, backup, disclosure, and commercial policies are still missing, and no retention period is approved. The milestone may use today’s quarantine and digests. It may not invent a retention policy.
 
 ### ENG-025
 
-Requirement: semantic truth separate from retrieval. Acceptance: false or uncertain episodes do not become verified outcomes. Revoked readers cannot use a cache. Compacted state stays attributable and creates no authority. Dependencies: ENG-020, ENG-021, and ENG-024. Status: not started. Owner gate: D10. No numeric quality target until that decision.
+Requirement: semantic truth separate from retrieval. Acceptance: false or uncertain episodes do not become verified outcomes. Revoked readers cannot use a cache. Compacted state stays attributable and creates no authority. Dependencies: ENG-020, ENG-021, and ENG-024. Status: not started. Owner gate: D10, recorded 2026-10-12. Fixtures prove plumbing only. A proposal for broader numerical targets is still missing, so no numeric quality target is approved.
 
 ### ENG-026
 
@@ -286,7 +286,7 @@ Requirement: dependencies, claims, and handoffs. Acceptance: one winner for a ra
 
 ### ENG-029
 
-Requirement: both reference schedulers, as references only. Acceptance: long fixture waits, partial jobs, worker kills, and retained v1 and v2 keep ids and authority. History has no provider token. Local waits are not a 24-hour staging proof. Dependencies: ENG-018, ENG-023, and ENG-028. Status: partial. Reference scheduler code and Phase A’s single-effect continuity exist. They do not close this list and they do not choose an engine. Owner gate: no scheduler selection is authorized. Existing reference tests may be extended under a scoped task; D09/D10 remain required for ENG-041.
+Requirement: both reference schedulers, as references only. Acceptance: long fixture waits, partial jobs, worker kills, and retained v1 and v2 keep ids and authority. History has no provider token. Local waits are not a 24-hour staging proof. Dependencies: ENG-018, ENG-023, and ENG-028. Status: partial. Reference scheduler code and Phase A’s single-effect continuity exist. They do not close this list and they do not choose an engine. Owner gate: D09, recorded 2026-10-12, allows evaluation of pg-boss and Temporal and a recommendation backed by measured evidence. Comparison criteria are still missing, so no scheduler is selected. The scheduler ledger stays HELD. Existing reference tests may be extended under a scoped task. D10’s broader numerical targets are also still only a required proposal, and both missing inputs stay required before ENG-041 may choose.
 
 ### ENG-030
 
@@ -310,79 +310,79 @@ Requirement: evidence lineage and recovery ownership. Acceptance: cross-tenant l
 
 ### ENG-034
 
-Requirement: incidents and notifications. Acceptance: repeated delivery does not resolve an incident or duplicate an effect. A channel timeout stays unknown. Dependencies: ENG-012 and full ENG-030. Status: partial for in-app dedup, acknowledgement, and read separation, as recorded in the older gap register. That register was not re-audited against this commit. External delivery is not started. Owner gate: D07 for external channels. In-app notices can exist before a live channel.
+Requirement: incidents and notifications. Acceptance: repeated delivery does not resolve an incident or duplicate an effect. A channel timeout stays unknown. Dependencies: ENG-012 and full ENG-030. Status: partial for in-app dedup, acknowledgement, and read separation, as recorded in the older gap register. That register was not re-audited against this commit. External delivery is not started. Owner gate: D07, recorded 2026-10-12, for external channels. The one file-write adapter can be built, but live execution and external delivery stay blocked until the test repository, scope, credentials, and exact write authorization exist. In-app notices can exist before a live channel.
 
 ### ENG-035
 
-Requirement: reservations, usage, and commercial readiness. Acceptance: concurrent reservations do not overspend. Unmeasured money is labeled unknown. Refunds need new authority. Billing controls stay absent until configured. Dependencies: ENG-010, ENG-017, and ENG-024. Status: partial for test-unit reservations. Real token, money, and billing freshness are not qualified. Owner gate: D11, unapproved. Test units stay test units.
+Requirement: reservations, usage, and commercial readiness. Acceptance: concurrent reservations do not overspend. Unmeasured money is labeled unknown. Refunds need new authority. Billing controls stay absent until configured. Dependencies: ENG-010, ENG-017, and ENG-024. Status: partial for test-unit reservations. Real token, money, and billing freshness are not qualified. Owner gate: D11, recorded 2026-10-12. The isolated owner pilot keeps Stripe disabled. Retention, deletion, backup, disclosure, and commercial policies are still missing, and no retention period is approved. Test units stay test units.
 
 ### ENG-036
 
-Requirement: accessible high-volume behavior. Acceptance: no optimistic success, color-only status, or inaccessible exact-action text. Dependencies: ENG-031 through ENG-035. Status: partial for the older local Chromium, axe, keyboard, and reflow evidence. Native screen-reader review and manual zoom review stay NOT RUN. Owner gate: D10. Do not invent a latency or volume target.
+Requirement: accessible high-volume behavior. Acceptance: no optimistic success, color-only status, or inaccessible exact-action text. Dependencies: ENG-031 through ENG-035. Status: partial for the older local Chromium, axe, keyboard, and reflow evidence. Native screen-reader review and manual zoom review stay NOT RUN. Owner gate: D10, recorded 2026-10-12. Broader numerical targets still need a proposal. Do not invent a latency or volume target.
 
 ### ENG-037
 
-Requirement: live staging identity. Acceptance: real stale, audience, subject, replay, and cross-tenant cases deny. A disabled machine cannot use an already-issued capability. Dependencies: ENG-010’s live half. Status: not started. Owner gate: D06, unapproved.
+Requirement: live staging identity. Acceptance: real stale, audience, subject, replay, and cross-tenant cases deny. A disabled machine cannot use an already-issued capability. Dependencies: ENG-010’s live half. Status: not started. Owner gate: D06, recorded 2026-10-12. Live sign-in stays blocked until WorkOS account settings and a secure credential supply exist. Workload credentials stay out of chat and Git.
 
 ### ENG-038
 
-Requirement: live managed Computer isolation. Acceptance: a compromised worker cannot bypass the controller. Old host credentials are fenced. A restored host does not dispatch by itself. Dependencies: ENG-015’s managed path. Status: not started. Owner gate: D08, unapproved.
+Requirement: live managed Computer isolation. Acceptance: a compromised worker cannot bypass the controller. Old host credentials are fenced. A restored host does not dispatch by itself. Dependencies: ENG-015’s managed path. Status: not started. Owner gate: D08, recorded 2026-10-12. Development stays local. A costed hosting proposal may be written. No purchase is approved, so live managed isolation stays blocked.
 
 ### ENG-039
 
-Requirement: protected provider qualification. Acceptance: no unapproved, duplicate, or fallback send. A 404 is not proof of no effect. An observer can reconcile and cannot send. Dependencies: ENG-017. Status: not started. Owner gate: D07, unapproved.
+Requirement: protected provider qualification. Acceptance: no unapproved, duplicate, or fallback send. A 404 is not proof of no effect. An observer can reconcile and cannot send. Dependencies: ENG-017. Status: not started. Owner gate: D07, recorded 2026-10-12. The adapter direction is one controlled file write followed by authoritative read-back. Qualification and live execution stay blocked until the test repository name, scope, credentials, and exact write authorization exist.
 
 ### ENG-040
 
-Requirement: HA, PITR, and independent fencing. Acceptance: a restored snapshot cannot resurrect authority or resend. An incomplete journal stays blocked. Dependencies: the local recovery work already on `main` is not this live gate. Status: local recovery guards exist. Live HA and PITR are NOT RUN. Owner gate: D08 and D11. No numeric RPO or RTO is invented here.
+Requirement: HA, PITR, and independent fencing. Acceptance: a restored snapshot cannot resurrect authority or resend. An incomplete journal stays blocked. Dependencies: the local recovery work already on `main` is not this live gate. Status: local recovery guards exist. Live HA and PITR are NOT RUN. Owner gate: D08 and D11, both recorded 2026-10-12. No purchase is approved, and no numeric recovery target or retention period is approved. Live HA and PITR stay NOT RUN. No numeric RPO or RTO is invented here.
 
 ### ENG-041
 
-Requirement: a measured scheduler choice. Acceptance: choose only after the real workload and the stated simplicity rule. An undecided result stays HELD. Dependencies: ENG-029. Status: not started. The scheduler ledger stays HELD. Owner gate: D09 and D10, both unapproved.
+Requirement: a measured scheduler choice. Acceptance: choose only after the real workload and the stated simplicity rule. An undecided result stays HELD. Dependencies: ENG-029. Status: not started. The scheduler ledger stays HELD. Owner gate: D09 and D10, both recorded 2026-10-12. D09 allows a measured comparison and withholds selection until comparison criteria exist. D10 withholds numerical targets until a proposal exists. Neither input is supplied. The scheduler ledger stays HELD. No scheduler is selected.
 
 ### ENG-042
 
-Requirement: release gates and independent review. Acceptance: every mandatory gate has scoped evidence. PARTIAL does not pass. Production approval stays separate. Dependencies: the gates it reviews. Status: not started. Owner gate: D12, unapproved.
+Requirement: release gates and independent review. Acceptance: every mandatory gate has scoped evidence. PARTIAL does not pass. Production approval stays separate. Dependencies: the gates it reviews. Status: not started. Owner gate: D12, recorded 2026-10-12, requires independent release review and mandatory qualification evidence. That review and evidence are still missing. Live deployment, shadow, and canary require separate authorization.
 
 ### ENG-043
 
-Requirement: compatible retirement. Acceptance: old and new bindings stay readable. Incompatible versions gain no authority. Unresolved effects stay UNKNOWN. Dependencies: the binding versions already on `main` for the readable-history rule. Status: not started as a retirement cutover. Owner gate: D03 is approved for the identity rule. D12 is still required. No live cutover.
+Requirement: compatible retirement. Acceptance: old and new bindings stay readable. Incompatible versions gain no authority. Unresolved effects stay UNKNOWN. Dependencies: the binding versions already on `main` for the readable-history rule. Status: not started as a retirement cutover. Owner gate: D03 is approved for the identity rule. D12, recorded 2026-10-12, still requires independent review, qualification evidence, and separate authorization before any live cutover. No live cutover.
 
 ### ENG-044
 
-Requirement: shadow and a one-principal canary. Acceptance: owner sign-off before activation. No dual sender. Rollback preserves UNKNOWN. Dependencies: ENG-042’s release evidence. Status: not started. Owner gate: D12. Canary stays NO-GO.
+Requirement: shadow and a one-principal canary. Acceptance: owner sign-off before activation. No dual sender. Rollback preserves UNKNOWN. Dependencies: ENG-042’s release evidence. Status: not started. Owner gate: D12, recorded 2026-10-12. Shadow and canary require separate authorization, which is still missing. Canary stays NO-GO.
 
 ### ENG-045
 
-Requirement: discovery and negative evidence. Acceptance: research checks AC-1 through AC-3. A self-certified report is not proof. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10, unapproved.
+Requirement: discovery and negative evidence. Acceptance: research checks AC-1 through AC-3. A self-certified report is not proof. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10, recorded 2026-10-12. Broader numerical targets still need a proposal before evaluation.
 
 ### ENG-046
 
-Requirement: acceptance-gated repair. Acceptance: AC-4 through AC-7. The verifier catches seeded faults. Uncertainty is not a retry. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10, unapproved.
+Requirement: acceptance-gated repair. Acceptance: AC-4 through AC-7. The verifier catches seeded faults. Uncertainty is not a retry. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10, recorded 2026-10-12. Broader numerical targets still need a proposal before evaluation.
 
 ### ENG-047
 
-Requirement: verifier-supervised learning. Acceptance: B-AC1 through B-AC7, including seeded false positives equal to zero. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10 and D11, both unapproved.
+Requirement: verifier-supervised learning. Acceptance: B-AC1 through B-AC7, including seeded false positives equal to zero. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10 and D11, both recorded 2026-10-12. Numerical targets still need a proposal. Retention, deletion, backup, disclosure, and commercial policies are still missing, and no retention period is approved. Stripe stays disabled.
 
 ### ENG-048
 
-Requirement: a goal-graph envelope. Acceptance: C-AC1 through C-AC8. Finite trials are not universal proof. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10. D02’s no-delegation rule still bounds any suballocation. That rule does not authorize ENG-008’s future delegation features.
+Requirement: a goal-graph envelope. Acceptance: C-AC1 through C-AC8. Finite trials are not universal proof. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10, recorded 2026-10-12. Broader numerical targets still need a proposal. D02’s no-delegation rule still bounds any suballocation. That rule does not authorize ENG-008’s future delegation features.
 
 ### ENG-049
 
-Requirement: recursive improvement without trust expansion. Acceptance: independent lift, zero base regressions, and rejection of a candidate that edits the gate. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10 and D12, both unapproved.
+Requirement: recursive improvement without trust expansion. Acceptance: independent lift, zero base regressions, and rejection of a candidate that edits the gate. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D10 and D12, both recorded 2026-10-12. Numerical targets still need a proposal. Independent release review, qualification evidence, and separate live authorization are still missing.
 
 ### ENG-050
 
-Requirement: portable continuity. Acceptance: the declared kill, move, evict, and rotate matrix keeps identity and stops old-host effects. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D08 and D10, both unapproved.
+Requirement: portable continuity. Acceptance: the declared kill, move, evict, and rotate matrix keeps identity and stops old-host effects. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D08 and D10, both recorded 2026-10-12. No purchase or numeric recovery target is approved. Broader numerical targets still need a proposal.
 
 ### ENG-051
 
-Requirement: optional portfolio adapters. Acceptance: every named component has a disposition. No silent install of old projects. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D05 and D11, both unapproved.
+Requirement: optional portfolio adapters. Acceptance: every named component has a disposition. No silent install of old projects. Dependencies: none that put it on the product path. Status: not started. It stays out of the product path. Owner gate: D05 and D11, both recorded 2026-10-12. Donor copy or distribution still waits on licensing and provenance evidence. Visibility and the product license stay as they are. Commercial and retention policies are still missing, and no retention period is approved.
 
 ### ENG-052
 
-Requirement: one recoverable release manifest. Acceptance: a clean checkout reproduces the build. Adopted dependencies have provenance and license records. Dependencies: the release gate it packages. Status: not started. Owner gate: D05 and D12, both unapproved.
+Requirement: one recoverable release manifest. Acceptance: a clean checkout reproduces the build. Adopted dependencies have provenance and license records. Dependencies: the release gate it packages. Status: not started. Owner gate: D05 and D12, both recorded 2026-10-12. Provenance and license records are still required before copying or distributing donor code. Visibility and the product license stay as they are. Independent review, qualification evidence, and separate live authorization are still missing.
 
 ## Conflicts and limits
 
