@@ -82,6 +82,10 @@ start a workflow or send an external action.
 
 Affected task: ENG-026.
 
+## ENG-011 — tool-manifest direction, 2026-10-13
+
+On 2026-10-13 Cael approved the ENG-011 tool-manifest direction without reviewing the details. This record keeps the earlier approval history and is not a re-verification of every acceptance bullet. Tool execution, donor copy, NEXUS, AEON-IQ, a model gateway, and a live send stay outside that approval.
+
 ## D05 — restricted pinned reuse, 2026-10-12
 
 Cael approved this direction on 2026-10-12. Reuse NEXUS and AEON through
