@@ -1,9 +1,16 @@
 # Versioned adapter interfaces
 
-Status: recommendation for review, written 2026-10-12 against `main`
+Status: accepted on 2026-10-13 for the next defined slice only. Written
+2026-10-12 as a recommendation against `main`
 `18dc8ce5531f7cf57e8f2c9a508c8339d164d4c1` (merge of pull request #22).
 Publishing this document does not approve the change, authorize implementation,
 copy donor source, start an adapter, or move a ledger.
+
+On 2026-10-13 an independent review of this text was complete. Cael accepts it
+for the next defined slice only: recording the bounded-computation version 1
+contract and the fail-closed cases. That acceptance does not copy donor source,
+integrate NEXUS, or authorize live execution. It is not a broader approval, and
+this document does not implement that slice.
 
 Production stays BLOCKED. The scheduler stays HELD. Canary stays NO-GO.
 
@@ -69,9 +76,10 @@ provider task. It is not `bounded-computation`.
 
 ## Smallest later change
 
-A later implementation pull request, after this recommendation is accepted,
-records the interface without a runtime and the fail-closed cases below. It
-still does not start the NEXUS adapter and does not copy donor source.
+On 2026-10-13 Cael accepted only the recording slice described below. This
+document does not implement it. A later pull request records the interface
+without a runtime and the fail-closed cases below. It still does not start the
+NEXUS adapter and does not copy donor source.
 
 That later pull request:
 
@@ -149,6 +157,8 @@ These stay out of the later slice as well:
 
 D01–D04 and the recorded D05–D12 directions stay inside the limits in
 [OWNER-DECISIONS.md](OWNER-DECISIONS.md). This text does not close a missing
-input, select a scheduler, or approve a live gate. Implementation waits for a
-separate acceptance of this recommendation. Acceptance of this text is not
-permission to start the NEXUS adapter.
+input, select a scheduler, or approve a live gate. On 2026-10-13 Cael accepted
+this text for the next defined slice only: recording the bounded-computation
+version 1 contract and the fail-closed cases. That acceptance is not a broader
+approval. It does not implement the slice, copy donor source, start NEXUS
+integration, or authorize live execution.
