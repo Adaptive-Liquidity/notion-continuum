@@ -8,7 +8,7 @@ or releasing production. Read [START-HERE.md](START-HERE.md) and
 
 Production stays BLOCKED. The scheduler stays HELD. Canary stays NO-GO.
 
-Current `main`, fetched 2026-10-12: `18dc8ce5531f7cf57e8f2c9a508c8339d164d4c1`, the merge of pull request #22. Fetch `main` again before implementation.
+Current `main`, fetched 2026-10-13: `c4246d0df995a6ef1d4479087ac2d9c6146d8823`, the merge of pull request #23. Fetch `main` again before implementation.
 
 This plan consolidates the prior acceptance map and later verified merge history.
 The owner-approved D01–D04 scopes are recorded in OWNER-DECISIONS.md. D05–D12 are
@@ -73,10 +73,10 @@ ENG-026's six choices stay scoped to that task in OWNER-DECISIONS.md. They are n
 
 These product choices remain open:
 
-1. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. Do not start ENG-023 until you say whether a fixture gateway is enough for that local milestone.
+1. Local autonomy versus ENG-022. Revision 3 says the local useful-autonomy milestone does not require D06. ENG-023 lists ENG-022 as a prerequisite, and ENG-022’s live gateway waits on D06 and D10. On 2026-10-13 Cael approved a deterministic fixture gateway for building and testing a limited ENG-023 slice. It does not count as the real-model autonomy milestone and waives no other prerequisites. This plan does not start ENG-023.
 2. D01 approves a restricted memory integration direction, not enabling a gated memory engine in production or shared writable Team Computers. Preserve the interface restrictions and pass ENG-019/021 before claiming integration. Any incompatible contract change needs a separately reviewed proposal.
 3. The large live-database upgrade is a proposal. It is not accepted and it is not the next product pull request.
-4. Publication and the remaining task designs. The choices above stay open. Pull request #19 merged only the ENG-026 work-admission behavior it demonstrated. Later ENG-026 project-command behavior remains open. Pull request #22 merged only the ENG-011 tool-manifest slice it demonstrated. Context and cognition binding remains the contract extension v3 slice from pull request #14. ENG-011 stays partial. The versioned adapter-interface recommendation is drafted and waiting for review. The private environment supplement stays outside Git.
+4. Publication and the remaining task designs. The choices above stay open. Pull request #19 merged only the ENG-026 work-admission behavior it demonstrated. Later ENG-026 project-command behavior remains open. Pull request #22 merged only the ENG-011 tool-manifest slice it demonstrated. Context and cognition binding remains the contract extension v3 slice from pull request #14. ENG-011 stays partial. On 2026-10-13 Cael approved the ENG-011 tool-manifest direction without reviewing the details. That approval is not a re-verification of every acceptance bullet. Tool execution, donor copy, NEXUS, AEON-IQ, a model gateway, and a live send stay outside it. Pull request #23 published the versioned adapter-interface proposal. An independent review of that text is done. Cael accepts it only for the next defined slice: recording the bounded-computation version 1 contract and the fail-closed cases. That is not a broader approval. It does not copy donor source, integrate NEXUS, authorize live execution, or implement the slice. The private environment supplement stays outside Git.
 
 ## What is already built, tested, and merged
 
@@ -91,10 +91,12 @@ These product choices remain open:
 | #15 | `e52bb37` | ENG-012 for `TENANT_NOTICE` only. Migration 018 | Other event kinds and a bus |
 | #16 | `5b3b2de` | Tracked agent startup instructions | Machine-specific settings stay outside Git |
 | #17 | `21df0150` | Local test launcher and run evidence | The launcher does not install runtimes or start a database |
+| #18 | `0a02ad2` | Published the completion plan, starting point, and scoped agent handover. No product code | Later product slices. No donor copy and no live gate |
 | #19 | `c6072dee` | ENG-026 work admission only. A new task names a current mandate and an active VERA with a `vera` membership in that organization. The task stores the organization, mandate, and accepted version. Historical tasks stay unbound. An identical authorized repeat returns the stored result, and a changed binding conflicts. Direct inserts share the same locks. Task and command records stay off the tenant-notice path. A mandate creates no grant, approval, workflow, or permission to send | Later ENG-026 project-command behavior. Live gates |
 | #20 | `83626cd` | Recorded D05–D12 limits and the merged admission slice in the plan. No product code | Each direction stays inside its written limit. No donor copy and no live gate |
 | #21 | `2372931` | The ENG-011 tool-manifest recommendation. No product code | Not an implementation. Pull request #22 later merged only the slice that document describes |
 | #22 | `18dc8ce` | ENG-011 tool-manifest slice only. Contract extension v4 and migration 020. A proposal that names a tool stores that id and the current revision as version 4. A newer revision, a missing manifest, or a cross-tenant id denies admission and does not send. Rebuilding the index creates no grant, approval, or operation. Recovery keeps the original tool revision and does not rewrite a missing revision as an older contract version. Version 1, 2, and 3 rows stay unchanged. A tool revision is not a grant, an approval, or permission to send | The rest of ENG-011. Context and cognition binding remains pull request #14 and contract extension v3. No adapter. Live gates |
+| #23 | `c4246d0` | Recorded the merged tool-manifest slice and published the versioned adapter-interface proposal. No product code | The proposal is not implemented here. No donor copy, no NEXUS integration, and no live execution |
 
 Pull requests #3, #4, #5, #8, and #9 are also on this `main`. They are CodeQL remediation, review and CI evidence, a dependency update, ENG-006 post-merge verification, and merge-evidence identity. ENG-001 through ENG-006 are recorded complete in revision 3 against older commits. This pass did not re-run them. Their acceptance text stays binding. ENG-006’s live independent review stays NOT RUN. D12 records that independent review is required; it does not supply the review.
 
@@ -104,32 +106,39 @@ NEXUS and AEON-IQ integration has not started. Pull request #22 did not start it
 
 ### Hosted checks
 
-On current `main` `18dc8ce5531f7cf57e8f2c9a508c8339d164d4c1`, post-merge run `38321396636` succeeded. Compare merged code with pull request evidence succeeded. That job's decision was `full` because required pull request evidence is missing. Secret scan succeeded. Canonical local verification succeeded. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
+On current `main` `c4246d0df995a6ef1d4479087ac2d9c6146d8823`, post-merge run `38328074467` succeeded. Compare merged code with pull request evidence succeeded. Secret scan succeeded. Canonical local verification succeeded. Inside that canonical job, “Run guarded canonical verification” passed and “Confirm production gates remain blocked” passed.
 
 The job “Confirm product build and blocked gates” was skipped because full verification ran. In `.github/workflows/main-verification.yml` that job runs only when the evidence decision is `reuse`. When the decision is not reuse, the workflow skips it and calls the full PR workflow instead. The skip is the designed branch, not a missing check.
 
-The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. It also runs `npm test`, which is `tools/run-safe-implementation.sh` and includes `tests/tool-manifest.test.ts`. The following step requires qualification enforcement and release enforcement to exit 1. That gate-confirmation step passed inside the canonical job on `18dc8ce`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
+The full canonical command covers the same product-build and gate questions that the reuse job would have run, and it covers more. `tools/run-canonical-tests.sh` builds the ordinary product frontend and runs `fixture-boundaries.test.js` and `product-build-isolation.test.js`. It also runs `npm test`, which is `tools/run-safe-implementation.sh` and includes `tests/tool-manifest.test.ts`. The following step requires qualification enforcement and release enforcement to exit 1. That gate-confirmation step passed inside the canonical job on `c4246d0`. `docs/TESTING.md` describes the canonical command as including those builds and the unchanged gate enforcement.
 
-The same designed skip appears on earlier merges, including pull request #15 run `38203399745`, `21df0150` run `38220893744`, pull request #19 run `38261032152`, and `83626cd` run `38267672705`. This revision read the job conclusions on `18dc8ce`.
+The same designed skip appears on earlier merges, including pull request #15 run `38203399745`, `21df0150` run `38220893744`, pull request #19 run `38261032152`, `83626cd` run `38267672705`, and `18dc8ce` run `38321396636`. This revision read the job conclusions on `c4246d0`.
 
-Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`. Pull request #19 merged after its required checks. The main evidence for this snapshot is run `38321396636`.
+Pull-request head runs also passed canonical verification and secret scan: #15 run `38202614789`, #16 run `38219028426`, #17 run `38220099430`. Pull request #19 merged after its required checks. The main evidence for this snapshot is run `38328074467`.
 
 The tracked qualification file on this commit still says overall BLOCKED, scheduler HELD, and canary NO-GO. The release file still says production is not ready. A passing check that those commands exit 1 is evidence that the ledgers stayed blocked. It is not a promotion.
 
-A private local canonical run on an earlier commit stays outside Git. It is not evidence for `18dc8ce` and does not move a live gate.
+A private local canonical run on an earlier commit stays outside Git. It is not evidence for `c4246d0` and does not move a live gate.
 
 ## Dependency order and task selection
 
-Pull request #22 merged the ENG-011 tool-manifest slice at `18dc8ce`, and only
-the behavior that pull request demonstrated. Context and cognition binding
-remains pull request #14 and contract extension v3. ENG-011 stays partial. The
-next plan item is the versioned adapter-interface recommendation,
-[VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md](VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md).
-It is waiting for review. It is not an owner approval, it does not implement an
-interface, and it does not start the NEXUS adapter. D05 still requires
-licensing and provenance evidence before any donor copy. Pull request #20
-recorded D05–D12 at `83626cd`. Pull request #19 remains the ENG-026
-work-admission slice, and only the behavior that pull request demonstrated.
+Pull request #23 is current `main` at `c4246d0`. It published the versioned
+adapter-interface proposal and recorded the merged tool-manifest slice. It did
+not implement an interface. An independent review of that proposal text is
+done. Cael accepts it only for the next defined slice: recording the
+bounded-computation version 1 contract and the fail-closed cases. That is not
+a broader approval. It does not copy donor source, integrate NEXUS, authorize
+live execution, or implement the slice. Pull request #22 merged the ENG-011
+tool-manifest slice at `18dc8ce`, and only the behavior that pull request
+demonstrated. Context and cognition binding remains pull request #14 and
+contract extension v3. ENG-011 stays partial. On 2026-10-13 Cael approved the
+ENG-011 tool-manifest direction without reviewing the details. That approval
+is not a re-verification of every acceptance bullet. Tool execution, donor
+copy, NEXUS, AEON-IQ, a model gateway, and a live send stay outside it. D05
+still requires licensing and provenance evidence before any donor copy. Pull
+request #20 recorded D05–D12 at `83626cd`. Pull request #18 published this
+plan. Pull request #19 remains the ENG-026 work-admission slice, and only the
+behavior that pull request demonstrated.
 This order is a priority guide, not authorization to code every row. A task is
 ready only when its required **slices** are verified on current main, its
 design is accepted, and its owner gates are satisfied. If a row is held, report
@@ -143,14 +152,14 @@ The individual catalog below retains the full acceptance obligations.
 |---|---|---|---|
 | 0 | Publish plan, starting point and decision record | Owner review of this focused documentation PR | No product implementation |
 | 1 | ENG-026 work-admission slice, merged in #19 | Merged ENG-007 records and ENG-012 notice foundation | Merged only for the admission behavior pull request #19 demonstrated. Later project-command behavior and live gates stay open |
-| 2 | ENG-011 tool-manifest slice, merged in #22, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Tool slice merged only for the behavior pull request #22 demonstrated. ENG-011 stays partial. Context and cognition binding remains pull request #14 and contract extension v3. The adapter-interface recommendation is drafted and waiting for review. It is not an implementation and it does not start the NEXUS adapter |
+| 2 | ENG-011 tool-manifest slice, merged in #22, then versioned adapter interfaces | Merged ENG-007 and ENG-009 identity slice; D01–D04 | Tool slice merged only for the behavior pull request #22 demonstrated. ENG-011 stays partial. Context and cognition binding remains pull request #14 and contract extension v3. The adapter-interface proposal is accepted only for recording the bounded-computation version 1 contract and the fail-closed cases. That is not a broader approval, not an implementation, and not a NEXUS integration |
 | 3 | ENG-013 NEXUS adapter, then ENG-014 boundary tests | ENG-006 and the required ENG-011 bindings/interfaces; ENG-008 existing v1 safeguards | Not started. The adapter-interface recommendation does not start it. D05 still requires licensing and provenance evidence before any donor copy. Donor tests are not production qualification |
 | 4 | Separate application workspace | ENG-014 credential boundary and runtime interfaces | Exec/filesystem/test isolation is distinct from NEXUS WASM; no secrets or unapproved network |
 | 5 | ENG-020 fuller context admission, then ENG-019 restricted AEON interface, then ENG-021 recall/extraction | ENG-007/012 foundations; interfaces for ENG-019; ENG-013 plus ENG-019/020 for ENG-021 | D06 for live identity and D05 for donor copying; deterministic local tests do not close live gates |
 | 6 | ENG-009 remaining lifecycle scopes, then ENG-015 local lifecycle and ENG-024 artifact integrity | ENG-007; ENG-014; ENG-020 | Separate suspend/retire/multi-Computer proposals. D08 for managed hosts, D11 for retention |
 | 7 | Independent milestone checker slice | Separate workspace and artifact integrity | Reread digest, independently run application tests, and check objective; not full ENG-030 |
 | 8 | ENG-010 identity seams and its approved live half; ENG-037 live identity qualification | ENG-006 | D06 before live identity. Offline seams remain partial; no invented issuer or credentials |
-| 9 | ENG-022 model gateway, then ENG-023 typed plans | ENG-010, ENG-011 bindings, ENG-021; ENG-026 for ENG-023 | D06/D10 live gateway gates. A narrower fixture gateway for the local milestone still needs a scoped decision |
+| 9 | ENG-022 model gateway, then ENG-023 typed plans | ENG-010, ENG-011 bindings, ENG-021; ENG-026 for ENG-023 | D06/D10 live gateway gates. A deterministic fixture gateway is approved only for building and testing a limited ENG-023 slice. It is not the real-model milestone and waives no other prerequisite. This plan does not start ENG-023 |
 | 10 | Useful-autonomy milestone | Phase A continuity, ENG-014, ENG-023, ENG-024 integrity and independent checker slice | Hold while the model-gateway choice is unresolved; no full ENG-030 or scheduler choice required |
 | 11 | ENG-028 dependencies/handoffs, then ENG-027 collectives | ENG-026 and ENG-009 relevant identity slice; ENG-007/008 safeguards for collectives | No pooled or transferred effect grants |
 | 12 | ENG-017 protected provider, ENG-039 qualification, then ENG-018 remaining controller crash/race coverage | Current immutable bindings; ENG-003/008/011/014 for controller tests | D07 before protected external action; existing fixture evidence remains partial |
@@ -224,7 +233,7 @@ Requirement: real human and workload identity seams. Acceptance: local wrong-sub
 
 ### ENG-011
 
-Requirement: versioned tool, model, and context manifests. Acceptance: tool, model, or context drift denies execution when the approval binding cares. An index rebuild cannot create authority. Dependencies: ENG-007 and ENG-009. Status: partial. Pull request #14 merged context and cognition binding and contract extension v3. An explicit cognition revision of zero is rejected. Context is still not authority. Pull request #22, merge `18dc8ce`, implemented the accepted tool-manifest recommendation for that slice only. The record is [ENG-011-TOOL-MANIFEST-PROPOSAL.md](ENG-011-TOOL-MANIFEST-PROPOSAL.md). Contract extension v4 and migration 020 store a tool id and the current revision on a version 4 operation. A newer revision, a missing manifest, or a cross-tenant id denies admission and does not send. Rebuilding the tool index creates no grant, approval, or operation. Recovery keeps the original tool revision and does not rewrite a missing revision as an older contract version. Version 1, 2, and 3 rows stay unchanged. A tool revision is not a grant, an approval, or permission to send. The slice does not execute a tool and does not call an adapter. It does not complete ENG-011. Context and cognition binding remains the v3 slice from pull request #14. The versioned adapter interfaces are the separate recommendation [VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md](VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md). That recommendation is waiting for review. This documentation change does not implement it and does not approve it. Owner gate: D02 and D03, in the revision 3 scopes.
+Requirement: versioned tool, model, and context manifests. Acceptance: tool, model, or context drift denies execution when the approval binding cares. An index rebuild cannot create authority. Dependencies: ENG-007 and ENG-009. Status: partial. Pull request #14 merged context and cognition binding and contract extension v3. An explicit cognition revision of zero is rejected. Context is still not authority. Pull request #22, merge `18dc8ce`, implemented the accepted tool-manifest recommendation for that slice only. The record is [ENG-011-TOOL-MANIFEST-PROPOSAL.md](ENG-011-TOOL-MANIFEST-PROPOSAL.md). Contract extension v4 and migration 020 store a tool id and the current revision on a version 4 operation. A newer revision, a missing manifest, or a cross-tenant id denies admission and does not send. Rebuilding the tool index creates no grant, approval, or operation. Recovery keeps the original tool revision and does not rewrite a missing revision as an older contract version. Version 1, 2, and 3 rows stay unchanged. A tool revision is not a grant, an approval, or permission to send. The slice does not execute a tool and does not call an adapter. It does not complete ENG-011. Context and cognition binding remains the v3 slice from pull request #14. The versioned adapter interfaces are the separate recommendation [VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md](VERSIONED-ADAPTER-INTERFACES-PROPOSAL.md). Cael accepts that text only for recording the bounded-computation version 1 contract and the fail-closed cases. That is not a broader approval, and this documentation change does not implement it. Owner gate: D02 and D03, in the revision 3 scopes.
 
 ### ENG-012
 
@@ -268,11 +277,11 @@ Requirement: derived recall and extraction. Acceptance: two tenants with the sam
 
 ### ENG-022
 
-Requirement: a replaceable model gateway. Acceptance: malformed tool output, outage, truncation, and partial streams do not execute. A model swap keeps the principal and does not repeat an effect. Dependencies: ENG-010, ENG-011, and ENG-021. Status: not started. No hidden provider fallback. Owner gate: D06 and D10, both recorded 2026-10-12. D06 still lacks WorkOS account settings and a secure credential supply, so the live gateway stays blocked. D10 requires a real model for the first autonomy milestone and says fixtures prove plumbing only; broader numerical targets are still only a required proposal. Whether a fixture gateway is enough for the local milestone remains open.
+Requirement: a replaceable model gateway. Acceptance: malformed tool output, outage, truncation, and partial streams do not execute. A model swap keeps the principal and does not repeat an effect. Dependencies: ENG-010, ENG-011, and ENG-021. Status: not started. No hidden provider fallback. Owner gate: D06 and D10, both recorded 2026-10-12. D06 still lacks WorkOS account settings and a secure credential supply, so the live gateway stays blocked. D10 requires a real model for the first autonomy milestone and says fixtures prove plumbing only; broader numerical targets are still only a required proposal. A deterministic fixture gateway is approved only for building and testing a limited ENG-023 slice. It does not count as the real-model autonomy milestone and waives no other prerequisite.
 
 ### ENG-023
 
-Requirement: typed plans. Acceptance: forged tenant, action, approval, completion, stale plan, and arbitrary tool requests reject. Harmless computation can proceed while consequential steps wait. Dependencies: ENG-022 and ENG-026. Status: not started. A model sentence is not a plan. The full adversarial protocol fixtures remain part of this task even after the milestone uses a plan. Owner gate: none of its own. It waits on the ENG-022 choice because of that dependency.
+Requirement: typed plans. Acceptance: forged tenant, action, approval, completion, stale plan, and arbitrary tool requests reject. Harmless computation can proceed while consequential steps wait. Dependencies: ENG-022 and ENG-026. Status: not started. A model sentence is not a plan. The full adversarial protocol fixtures remain part of this task even after the milestone uses a plan. Owner gate: none of its own. A deterministic fixture gateway may be used to build and test a limited slice. It does not count as the real-model autonomy milestone, waives no other prerequisite, and this plan does not start the implementation.
 
 ### ENG-024
 
@@ -410,9 +419,12 @@ Requirement: one recoverable release manifest. Acceptance: a clean checkout repr
 4. The interface's gated-memory and shared-writable-Computer restrictions remain.
    D01 does not turn on a live engine or remove them. Propose a versioned amendment
    if a later design conflicts; never silently weaken a frozen safety contract.
-5. The local autonomy versus live model-gateway choice remains open. Fixture tests
-   can prove a protocol slice but do not demonstrate live model quality or full
-   autonomous engineering. Do not declare that milestone complete from stub output.
+5. The live model gateway and the real-model autonomy milestone remain open. A
+   deterministic fixture gateway is approved only for building and testing a
+   limited ENG-023 slice. It does not count as that milestone and waives no
+   other prerequisite. Fixture tests can prove a protocol slice but do not
+   demonstrate live model quality or full autonomous engineering. Do not declare
+   that milestone complete from stub output. This plan does not start ENG-023.
 6. The gap/traceability registers contain historical local dispositions. They were
    not fully re-audited against this snapshot. A later demonstrated failure reopens
    the finding; an older PASS is not fresh evidence.

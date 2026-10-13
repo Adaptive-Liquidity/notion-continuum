@@ -3,8 +3,14 @@
 Offline engineering does not wait for these. They unlock live staging tests, not production approval. Never paste secrets into chat, Notion, reports or Git.
 
 For the maintained roadmap and D01–D04's approved scope, read
-`docs/plan/START-HERE.md` and `docs/plan/OWNER-DECISIONS.md`. The items below are
-remaining live/account actions, not permission to implement an unapproved task design.
+`docs/plan/START-HERE.md` and `docs/plan/OWNER-DECISIONS.md`. D05, D08, and D09
+in that decision record bound the items below. D05 is restricted pinned reuse:
+licensing and provenance evidence are still required before any donor copy, and
+visibility and the product license stay as they are. D08 keeps development
+local and allows a costed hosting proposal; no purchase and no numeric recovery
+target are approved. D09 allows a pg-boss and Temporal comparison and selects
+no scheduler. The scheduler ledger stays HELD. The items below are remaining
+live/account actions, not permission to implement an unapproved task design.
 
 - [ ] Set up **WorkOS/AuthKit staging sign-in**, MFA, the staging domain and exact sign-in redirect URLs.
 - [ ] Connect **renewable, short-lived machine identity** and approve which tenant/person each staging worker may act for.
