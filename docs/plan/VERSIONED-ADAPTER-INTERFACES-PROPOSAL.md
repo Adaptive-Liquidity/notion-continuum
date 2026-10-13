@@ -39,8 +39,12 @@ do not close ENG-013 or ENG-014.
 ## The interface this recommendation names
 
 One proposed interface id: `bounded-computation`. Version 1 is the contract
-below. A later version is a separate reviewed extension. An unknown interface
-id or an unknown version fails closed and does not send.
+below. A later version is a separate reviewed extension. While no runtime
+exists, naming the interface stores no operation, grant, or approval and does
+not send. After a later accepted implementation, `bounded-computation` version
+1 is the supported contract and is not rejected merely because the caller named
+it. An unknown interface id or an unknown version fails closed and does not
+send.
 
 `bounded-computation` version 1 is the boundary ENG-013 will later implement.
 A request may name only the tenant, a computation id, and the bounds already
@@ -66,21 +70,28 @@ provider task. It is not `bounded-computation`.
 ## Smallest later change
 
 A later implementation pull request, after this recommendation is accepted,
-records the interface and the fail-closed denial. It still does not start the
-NEXUS adapter and does not copy donor source.
+records the interface without a runtime and the fail-closed cases below. It
+still does not start the NEXUS adapter and does not copy donor source.
 
 That later pull request:
 
 - Writes the version 1 contract for `bounded-computation` without a runtime.
-- Rejects a caller that names `bounded-computation`, any other version, or an
-  unknown interface id. The rejection stores no operation, grant, or approval,
-  and it does not send.
+- While no runtime exists, a caller that names `bounded-computation` stores no
+  operation, grant, or approval, and it does not send.
+- An unknown interface id or an unknown version fails closed and does not send.
+  That denial stores no operation, grant, or approval, and it stays after a
+  runtime exists.
 - Leaves version 1, 2, 3, and 4 operation digests unchanged. It does not add
   contract version 5. It does not edit `docs/M1-SAFETY-CONTRACTS.md` or
   contract extensions v2, v3, or v4.
 - Does not add a file from the NEXUS pin
   `e1c3d3c75d58f609c617e7a87cb05e84ea437d64` or the AEON-IQ pin
   `d5866e85edb3a7f7ea7186854655981ca73760f4`.
+
+The no-runtime denial is not the rule for the supported contract. After a
+later accepted implementation, `bounded-computation` version 1 is the supported
+contract and is not rejected merely because the caller named it. Unknown
+interface ids and unknown versions stay fail-closed and do not send.
 
 This recommendation does not choose that pull request's files and does not add
 them now. A stored interface row is not part of this proposal. If a later
@@ -96,14 +107,20 @@ A later implementation is acceptable only when these hold on that commit:
 1. Frozen M1 bytes and contract extensions v2, v3, and v4 stay unchanged.
    Existing version 1, 2, 3, and 4 operation digests stay unchanged. No
    contract version 5 is added.
-2. A caller that names `bounded-computation`, another version, or an unknown
-   interface id is rejected. The rejection stores no operation and does not
-   send, grant, approve, admit a fact, load a module, or read a provider
-   credential. The result is not `COMMITTED`.
-3. An operation that does not name the interface keeps its previous contract
+2. While no runtime exists, a caller that names `bounded-computation` stores no
+   operation, grant, or approval and does not send. It does not approve, admit
+   a fact, load a module, or read a provider credential. The result is not
+   `COMMITTED`. That denial does not stay in force after a later accepted
+   implementation. `bounded-computation` version 1 is then the supported
+   contract and is not rejected merely because the caller named it.
+3. An unknown interface id or an unknown version fails closed and does not
+   send, including after a runtime exists. The denial stores no operation,
+   grant, or approval, and it does not approve, admit a fact, load a module,
+   or read a provider credential. The result is not `COMMITTED`.
+4. An operation that does not name the interface keeps its previous contract
    version. The existing effect-provider checks still apply. The public GitHub
    read still cannot write.
-4. The tree contains no file copied from the NEXUS pin or the AEON-IQ pin.
+5. The tree contains no file copied from the NEXUS pin or the AEON-IQ pin.
    `qualification/PRODUCTION-GATES.json` and `docs/RELEASE-GATES.json` stay
    unchanged. Qualification enforcement and release enforcement still exit 1.
 
