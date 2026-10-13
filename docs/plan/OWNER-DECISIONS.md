@@ -166,8 +166,10 @@ evaluating against them.
 
 This direction does not close every measurement subdecision and does not prove
 qualification. Still missing: a proposal for broader numerical targets. The
-autonomy milestone is not met by fixtures. Whether a fixture gateway is enough
-to start ENG-023 remains open.
+autonomy milestone is not met by fixtures. On 2026-10-13 Cael approved a
+deterministic fixture gateway for building and testing a limited ENG-023 slice.
+It does not count as the real-model autonomy milestone and waives no other
+prerequisites.
 
 Affected tasks stay inside that limit: ENG-025, ENG-036's volume target,
 ENG-041's measurement rule, ENG-045, ENG-046, ENG-048, ENG-049, and ENG-050.
@@ -206,11 +208,12 @@ the limit and missing inputs in its section. They do not close every
 subdecision and do not prove qualification. ENG-026's six choices above stay
 limited to that task.
 
-These choices also remain open: whether a fixture gateway is enough for the
-local ENG-023 milestone, and the future live-database procedure. A documentation
-merge does not settle the remaining decisions or promote a ledger. Record later
-owner decisions here with date, exact scope, evidence reference and affected
-tasks. A newer file or an agent recommendation is not approval.
+These choices also remain open: the future live-database procedure. The
+2026-10-13 fixture-gateway approval above covers only a limited ENG-023 slice.
+A documentation merge does not settle the remaining decisions or promote a
+ledger. Record later owner decisions here with date, exact scope, evidence
+reference and affected tasks. A newer file or an agent recommendation is not
+approval.
 
 Production BLOCKED; scheduler HELD; canary NO-GO. Merges, releases and live gate
 activation require their own authorization and evidence.
