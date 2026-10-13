@@ -1311,3 +1311,56 @@ test('concurrent tool appends are gapless and do not lock context or cognition',
     await f.close();
   }
 });
+
+test('an empty tool string does not save an operation', async () => {
+  const f = await fixture('empty-tool');
+  try {
+    const owner = await f.actor('user');
+    const actor = await f.actor('machine');
+    const deadline = new Date(Date.now() + 3600000).toISOString();
+    await f.authority.createGrant(owner, {
+      id: 'g-empty-tool',
+      principal: f.principal,
+      action: 'write',
+      resource: 'fixture-object',
+      expires: deadline,
+      maxCost: 5,
+      budget: 20,
+    });
+    await f.product.createTask(actor, {
+      id: 't-empty-tool',
+      principal: f.principal,
+      objective: 'Empty tool string',
+      deadline,
+      ...f.admission.a,
+    });
+    await assert.rejects(
+      f.product.propose(actor, {
+        id: 'empty-tool-op',
+        task: 't-empty-tool',
+        grant: 'g-empty-tool',
+        provider: 'fixture',
+        action: 'write',
+        resource: 'fixture-object',
+        params: { value: 'empty' },
+        cost: 1,
+        deadline,
+        tool: '',
+      }),
+      /invalid identifier/,
+    );
+    assert.equal(
+      Number(
+        (
+          await admin.query(
+            "SELECT count(*)::int AS n FROM ct.operations WHERE id='empty-tool-op'",
+          )
+        ).rows[0].n,
+      ),
+      0,
+    );
+    assert.equal(f.provider.sends, 0);
+  } finally {
+    await f.close();
+  }
+});
