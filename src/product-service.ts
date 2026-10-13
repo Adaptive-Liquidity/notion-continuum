@@ -344,7 +344,7 @@ export class ProductService {
         o.context_version = Number(head.version);
       }
       if (o.context_id || o.cognition_revision != null) o.contract_version = 3;
-      if (x.tool) {
+      if (x.tool !== undefined) {
         const toolId = identifier(x.tool);
         await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
           'tool-manifest|' + i.tenant + '|' + toolId,
