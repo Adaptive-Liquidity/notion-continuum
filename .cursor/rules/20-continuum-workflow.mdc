@@ -40,7 +40,7 @@ Use small reviewable commits. Keep production status truthful.
 - Request Copilot review once per review-ready batch, after relevant checks pass. Do not repeatedly request whole-PR reviews for unchanged code or already-addressed feedback.
 - Check whether a review or CI run is already pending before requesting another. Request a further review only for substantive changes or unresolved concerns that need it.
 - Prefer GitHub-hosted Ubuntu 24.04 runners. Do not route public PR jobs onto a personal WSL machine or create paid runners without owner authorization.
-- Main requires the named CI checks and resolved review threads. This is a solo-developer repository; another reviewer's approval is not required. Owner merge authorization remains separate; do not bypass protection.
+- The Project coordinator may merge only after applicable final-head checks pass, a genuine independent review by someone other than the author covers the changes, relevant comments are answered and addressed, and unresolved valid findings are cleared. Skipped bots or green badges are not review evidence. No force-push, no direct push to main, no protection bypass. After each merge, confirm main's checks pass before continuing. Workers do not merge.
 
 Authorization:
 - Scoped fixes, task-branch commits, non-force pushes, and draft PR updates are allowed when the owner has authorized that work.

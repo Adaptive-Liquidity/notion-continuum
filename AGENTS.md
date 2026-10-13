@@ -34,6 +34,12 @@ Commit and non-force push only authorized scope. Validate review comments agains
 current code before fixing or resolving them. Avoid overlapping bot reviews and
 duplicate successful CI runs. Do not merge, deploy, provision paid resources, change
 visibility/licensing, or start shadow/canary without separate owner authorization.
+The Project coordinator may merge only after applicable final-head checks pass, a
+genuine independent review by someone other than the author covers the changes,
+relevant comments are answered and addressed, and unresolved valid findings are
+cleared. Skipped bots or green badges are not review evidence. No force-push, no
+direct push to main, no protection bypass. After each merge, confirm main's checks
+pass before continuing. Workers do not merge.
 Never commit credentials, private archives or unreviewed untracked handoff files.
 
 ## Local safety
