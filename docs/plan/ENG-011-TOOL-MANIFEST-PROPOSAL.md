@@ -1,11 +1,21 @@
 # ENG-011 tool-manifest recommendation
 
-Status: recommendation for review, written 2026-10-12 against `main`
+Status: accepted recommendation. Written 2026-10-12 against `main`
 `83626cd48a0f98d0afd7bc79e38185b4a2acb768` (merge of pull request #20).
-Publishing this document does not approve the change, authorize implementation,
-copy donor source, or move a ledger.
+Pull request #22, merge `18dc8ce5531f7cf57e8f2c9a508c8339d164d4c1`, implemented
+only the slice this document describes. That merge does not complete ENG-011.
+Context and cognition binding remains contract extension v3 from pull request
+#14, merge `2cdf6aa`. This revision records that fact. It is not a new
+approval, and it does not authorize an adapter.
 
 Production stays BLOCKED. The scheduler stays HELD. Canary stays NO-GO.
+
+## What merged
+
+Pull request #22 implemented this slice and no more. Migration
+`020-tool-manifest.sql` and `docs/M1-CONTRACT-EXTENSION-v4.md` are on that
+merge. `tests/tool-manifest.test.ts` is the acceptance list below. Context and
+cognition binding was not part of that pull request. No adapter was added.
 
 ## What this is
 
@@ -22,17 +32,17 @@ context head or a greater cognition revision. An explicit cognition revision of
 zero is rejected. Context is still not authority.
 
 That is the model and context portion of ENG-011. It is not a tool manifest.
-There is no tool-manifest table. `ct.artifact_manifests` and
-`ct.computers.manifest_digest` are artifact and placement records. An
-operation's `provider`, `action`, and `resource` are the effect binding, not a
-versioned tool definition.
+`ct.artifact_manifests` and `ct.computers.manifest_digest` remain artifact and
+placement records. An operation's `provider`, `action`, and `resource` remain
+the effect binding, not a versioned tool definition. Pull request #22 added
+`ct.tool_manifests` for this slice only.
 
 Model drift in the cognition revision and context drift in the context head
-stay as they are. This recommendation covers only the missing tool binding.
+stay as they are. This recommendation covers only the tool binding.
 
 ## Smallest change
 
-A later implementation pull request, after this recommendation is accepted,
+Pull request #22 is the implementation pull request for this slice only. It
 adds contract extension v4 and migration `020-tool-manifest.sql`. It does not
 edit `docs/M1-SAFETY-CONTRACTS.md`, migrations 001 through 019, or the bytes of
 contract extensions v2 and v3. Historical version 1, 2, and 3 rows stay on
@@ -103,21 +113,23 @@ The same read-only operation projection that already returns a context id and a
 cognition revision also returns the bound tool id and tool revision. That
 pass-through is not a Focus Desk screen.
 
-Files for that later pull request:
+Files pull request #22 changed for this slice:
 
 - `migrations/020-tool-manifest.sql`
-- `docs/M1-CONTRACT-EXTENSION-v4.md`, written from this recommendation only
-  after it is accepted
+- `docs/M1-CONTRACT-EXTENSION-v4.md`, written from this recommendation
 - `src/db.ts`, `src/product-service.ts`, `src/context-lock.ts`,
   `src/controller.ts`, `src/recovery.ts`, `src/evidence-export.ts`,
   `src/console/reads.ts`, and `src/console/contracts.ts`
 - `tests/tool-manifest.test.ts`
 
+That pull request also updated the call sites and fixture setup those files
+required. It did not add an adapter.
+
 `tests/manifest-binding.test.ts` stays the context and cognition regression.
 
 ## Acceptance tests
 
-A later implementation is acceptable only when these hold on that commit:
+These checks are the slice that pull request #22 demonstrated:
 
 1. Migration 020 leaves existing version 1, 2, and 3 digests, contract
    versions, and context and cognition columns unchanged. A tool column on a
@@ -150,10 +162,8 @@ A later implementation is acceptable only when these hold on that commit:
 
 ## Out of scope
 
-This recommendation does not implement the binding. It does not add migration
-020, a version 4 contract file, or a tool table.
-
-These stay out of the later slice as well:
+Pull request #22 added the binding this document describes. These stayed out
+of that slice:
 
 - Editing the frozen M1 contract or rewriting stored version 1, 2, or 3
   digests.
@@ -173,5 +183,5 @@ These stay out of the later slice as well:
 
 D01–D04 and the recorded D05–D12 directions stay inside the limits in
 [OWNER-DECISIONS.md](OWNER-DECISIONS.md). This text does not close a missing
-input, select a scheduler, or approve a live gate. Implementation waits for a
-separate acceptance of this recommendation.
+input, select a scheduler, or approve a live gate. Pull request #22 implemented
+this slice. It did not complete ENG-011, and it did not add an adapter.
